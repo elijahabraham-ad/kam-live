@@ -3,7 +3,12 @@
    tap-target sizes, internal link integrity, and reduced-motion rendering. */
 import { chromium } from "playwright-core";
 
-const BASE = process.argv[2] || "http://localhost:4500";
+const RAW = process.argv[2] || "http://localhost:4500";
+/* The site is served from the root locally and from /kam-live/ on the preview.
+   Split the origin from the path prefix so the same suite runs against both. */
+const u = new URL(RAW);
+const PREFIX = u.pathname.replace(/\/$/, "");
+const BASE = u.origin + PREFIX;
 const b = await chromium.launch({ executablePath: process.env.SCROLLCRAFT_CHROME });
 const fails = [];
 const ok = (m) => console.log("  ok   " + m);
@@ -30,7 +35,9 @@ console.log("\nlink integrity");
   for (const path of paths) {
     await p.goto(BASE + path, { waitUntil: "domcontentloaded" });
     const hrefs = await p.$$eval("a[href]", (as) => as.map((a) => a.getAttribute("href")));
-    hrefs.filter((h) => h && h.startsWith("/")).forEach((h) => all.add(h.split("#")[0].split("?")[0]));
+    hrefs
+      .filter((h) => h && h.startsWith("/"))
+      .forEach((h) => all.add(h.split("#")[0].split("?")[0].slice(PREFIX.length) || "/"));
   }
   let broken = 0;
   for (const href of all) {
@@ -57,7 +64,7 @@ console.log("\nmobile menu");
   if (!(await p.isVisible("[data-menu]"))) ok("escape closes"); else bad("escape does not close");
   await p.click("[data-menu-open]");
   await p.waitForTimeout(150);
-  await p.click("[data-menu] a[href='/give/']");
+  await p.click(`[data-menu] a[href='${PREFIX}/give/']`);
   await p.waitForTimeout(400);
   if (p.url().includes("/give/")) ok("menu link navigates"); else bad("menu link did not navigate: " + p.url());
   await p.close();
