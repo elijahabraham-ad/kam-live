@@ -22,6 +22,20 @@ const ROOT = dirname(fileURLToPath(import.meta.url));
 const DIST = join(ROOT, "dist");
 const STATIC = join(ROOT, "static");
 
+/* Where the site is served from.
+   BASE_PATH is "" for a site at the root of its own domain, and "/kam-live"
+   (no trailing slash) for a GitHub project Pages URL. Every page is authored
+   with root-absolute paths; the prefix is applied once here rather than being
+   threaded through nineteen page modules. */
+const BASE = (process.env.BASE_PATH || "").replace(/\/$/, "");
+
+/* Rewrite root-absolute internal URLs. Leaves //host, http(s):, mailto:, tel:
+   and #anchors alone. */
+function rebase(html) {
+  if (!BASE) return html;
+  return html.replace(/\b(href|src|content)="\/(?!\/)/g, `$1="${BASE}/`);
+}
+
 const run = promisify(execFile);
 
 /* In serve mode every rebuild runs in a FRESH child process.
@@ -88,7 +102,7 @@ async function build() {
   for (const page of pages) {
     const file = outPath(page.path);
     await mkdir(dirname(file), { recursive: true });
-    await writeFile(file, render(page), "utf8");
+    await writeFile(file, rebase(render(page)), "utf8");
   }
 
   await copyDir(STATIC, DIST);
@@ -108,9 +122,13 @@ async function build() {
     "utf8"
   );
 
+  /* A preview served from a project Pages URL must not be indexed: it would
+     compete with the real domain for the same content. */
   await writeFile(
     join(DIST, "robots.txt"),
-    `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`,
+    BASE
+      ? `# Preview build. Not the live site.\nUser-agent: *\nDisallow: /\n`
+      : `User-agent: *\nAllow: /\n\nSitemap: ${origin}/sitemap.xml\n`,
     "utf8"
   );
 

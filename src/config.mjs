@@ -36,9 +36,12 @@ export const site = {
     youtube: "TBD",
   },
 
-  // Set this to the live domain before launch. Used for canonical URLs,
-  // sitemap.xml and social share cards.
-  origin: "https://kingdomassemblymissions.org",
+  // The live domain. Used for canonical URLs, sitemap.xml and share cards.
+  // While the site is previewing on a GitHub project Pages URL, the build
+  // overrides this with SITE_ORIGIN + BASE_PATH so canonicals stay honest.
+  origin:
+    (process.env.SITE_ORIGIN || "https://kingdomassemblymissions.org").replace(/\/$/, "") +
+    (process.env.BASE_PATH || "").replace(/\/$/, ""),
 };
 
 export const nav = [

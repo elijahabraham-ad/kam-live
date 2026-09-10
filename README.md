@@ -66,3 +66,16 @@ node lab/shots.mjs      http://localhost:4500/ out   # frames across the scroll
 ```
 
 They need a Chromium binary; point `SCROLLCRAFT_CHROME` at one.
+
+## Deploying
+
+GitHub Actions builds and publishes to GitHub Pages on every push to `main`.
+
+While the site previews at the project Pages URL, `.github/workflows/deploy.yml`
+sets `BASE_PATH` and `SITE_ORIGIN`, which prefixes every internal path and makes
+`robots.txt` disallow indexing so the preview never competes with the real
+domain.
+
+**When the real domain is connected:** delete those two `env` lines from the
+workflow, add a `static/CNAME` file containing the domain, point the domain's
+DNS at GitHub Pages, and set `site.origin` in `src/config.mjs`.

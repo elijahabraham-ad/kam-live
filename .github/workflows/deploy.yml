@@ -23,6 +23,12 @@ jobs:
         with:
           node-version: 22
       - name: Build the site
+        # Previewing on the project Pages URL, so the build prefixes every
+        # internal path and marks the preview noindex. When the real domain is
+        # connected, delete these two env lines and add the CNAME.
+        env:
+          BASE_PATH: /kam-live
+          SITE_ORIGIN: https://elijahabraham-ad.github.io
         run: node build.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
