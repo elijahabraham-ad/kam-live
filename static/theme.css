@@ -1,0 +1,809 @@
+/* ===========================================================================
+   Kingdom Assembly Missions
+   Theme on top of scrollcraft.css. The engine is the mechanism and is never
+   edited; everything below is this brand's own markup and tokens.
+
+   The page hard-cuts between two grounds (near-black and cream) because it is
+   a chaptered editorial, not one continuous place. A single accent stop cannot
+   clear 4.5:1 on both grounds, so the accent is one hue at two lightnesses,
+   redefined per ground alongside the ink.
+   ========================================================================= */
+
+:root {
+  /* --- dark ground (the default) --- */
+  --sc-canvas:     #0B0A08;
+  --sc-surface:    #16130E;
+  --sc-ink:        #F6F1E5;
+  --sc-ink-soft:   #A99C86;
+  --sc-accent:     #D9B450;
+  --sc-accent-ink: #14100A;
+
+  /* brand extras */
+  --gold-lo:  #7A5C0D;   /* the accent's dark stop, for cream grounds */
+  --gold-hi:  #EFDCA6;   /* highlight only, never body text */
+  --cream:    #F4EDDF;
+  --cream-2:  #EAE0CB;
+  --ink-dark: #14110C;
+  --ink-dark-soft: #59503F;
+
+  --sc-hairline: color-mix(in oklab, var(--sc-accent) 26%, transparent);
+  --sc-hairline-strong: color-mix(in oklab, var(--sc-accent) 52%, transparent);
+
+  --sc-font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --sc-font-text: "Instrument Sans", system-ui, -apple-system, sans-serif;
+  --sc-font-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --sc-r-sm: 2px; --sc-r-md: 3px; --sc-r-lg: 4px; --sc-r-pill: 999px;
+  --sc-maxw: 78rem;
+  --sc-shadow-color: 38 40% 3%;
+
+  --bar-h: 4.75rem;
+  --sc-section: clamp(3.5rem, 7vw, 8.5rem);
+}
+
+/* Fraunces reads better with a touch less optical weight at display sizes and
+   its soft axis off. This is optical correction, not decoration. */
+.sc-display, h1, h2, h3, .display {
+  font-family: var(--sc-font-display);
+  font-variation-settings: "SOFT" 0, "WONK" 0;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------- grounds -- */
+/* Redefining --sc-ink on a subtree does NOT re-ink text whose colour already
+   resolved on body. Restate `color` every time the token is restated. */
+.ground--dark {
+  background: var(--sc-canvas);
+  --sc-ink: #F6F1E5; --sc-ink-soft: #A99C86;
+  --sc-accent: #D9B450; --sc-accent-ink: #14100A;
+  --sc-hairline: color-mix(in oklab, #D9B450 26%, transparent);
+  --sc-hairline-strong: color-mix(in oklab, #D9B450 52%, transparent);
+  color: var(--sc-ink);
+}
+.ground--cream {
+  background: var(--cream);
+  --sc-ink: var(--ink-dark); --sc-ink-soft: var(--ink-dark-soft);
+  --sc-accent: var(--gold-lo); --sc-accent-ink: #FFFDF7;
+  --sc-surface: #FFFFFF;
+  --sc-hairline: color-mix(in oklab, #14110C 16%, transparent);
+  --sc-hairline-strong: color-mix(in oklab, #7A5C0D 60%, transparent);
+  --sc-shadow-color: 38 24% 30%;
+  color: var(--sc-ink);
+}
+.ground--ink {           /* the deepest ground, for the peak and the close */
+  background: #060504;
+  --sc-ink: #F6F1E5; --sc-ink-soft: #A99C86;
+  --sc-accent: #D9B450; --sc-accent-ink: #14100A;
+  color: var(--sc-ink);
+}
+
+body { background: var(--sc-canvas); }
+.sc-grain { opacity: 0.045; }
+
+/* ---------------------------------------------------------------- layout -- */
+.wrap { width: 100%; max-width: var(--sc-maxw); margin-inline: auto; padding-inline: var(--sc-gutter); }
+.wrap--narrow { max-width: 54rem; }
+.wrap--mid { max-width: 64rem; }
+.sec { padding-block: var(--sc-section); position: relative; }
+.sec--tight { padding-block: clamp(3rem, 6vw, 6rem); }
+/* A flow section straight after a pinned act should not add another screen of
+   air on top of the stage's exit travel. */
+.sec--after-pin { padding-block-start: clamp(2rem, 4vw, 4rem); }
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  padding: var(--sc-3) var(--sc-5); font-weight: 600;
+}
+.skip:focus { left: var(--sc-4); top: var(--sc-4); }
+
+/* ------------------------------------------------------------ typography -- */
+.h-xl { font-size: var(--sc-t-4xl); line-height: 0.98; letter-spacing: -0.028em; margin: 0; text-wrap: balance; }
+.h-lg { font-size: var(--sc-t-3xl); line-height: 1.02; letter-spacing: -0.024em; margin: 0; text-wrap: balance; }
+.h-md { font-size: var(--sc-t-2xl); line-height: 1.08; letter-spacing: -0.018em; margin: 0; text-wrap: balance; }
+.h-sm { font-size: var(--sc-t-xl); line-height: 1.16; letter-spacing: -0.012em; margin: 0; text-wrap: balance; }
+
+@media (max-width: 700px) {
+  /* --sc-t-4xl floors at 3.4rem, which is a desktop floor. On a phone it wraps
+     a real headline to six lines. */
+  .h-xl { font-size: var(--sc-t-2xl); }
+  .h-lg { font-size: var(--sc-t-xl); }
+}
+
+.lede {
+  font-size: var(--sc-t-lg); line-height: 1.46; letter-spacing: -0.014em;
+  max-width: 44ch; margin: 0; text-wrap: pretty; color: var(--sc-ink);
+}
+.body { max-width: 64ch; margin: 0; color: var(--sc-ink-soft); text-wrap: pretty; line-height: 1.68; }
+.body + .body { margin-top: var(--sc-4); }
+.body strong { color: var(--sc-ink); font-weight: 600; }
+
+.rule-label {
+  display: block; font-family: var(--sc-font-text);
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--sc-accent);
+}
+.rule-label--soft { color: var(--sc-ink-soft); }
+
+.stack > * + * { margin-top: var(--sc-4); }
+.stack > :is(h1,h2,h3) { margin-top: var(--sc-7); }
+.stack > :is(h1,h2,h3):first-child { margin-top: 0; }
+.stack > .rule-label + :is(h1,h2,h3) { margin-top: var(--sc-3); }
+
+.scripture {
+  font-family: var(--sc-font-display); font-style: italic; font-weight: 300;
+  font-size: var(--sc-t-lg); line-height: 1.5; color: var(--sc-ink);
+  max-width: 40ch; margin: 0; border-inline-start: 1px solid var(--sc-hairline-strong);
+  padding-inline-start: var(--sc-5);
+}
+.scripture cite {
+  display: block; margin-top: var(--sc-3); font-style: normal;
+  font-family: var(--sc-font-text); font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-accent);
+}
+
+.tba {
+  font-family: var(--sc-font-text); font-size: 0.82em; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--sc-ink-soft); border-bottom: 1px dashed var(--sc-hairline-strong);
+  padding-bottom: 1px;
+}
+
+/* ---------------------------------------------------------------- rules --- */
+.hairline { height: 1px; border: 0; background: var(--sc-hairline); margin: 0; }
+.gold-rule {
+  height: 2px; border: 0; margin: 0; width: min(100%, 7rem);
+  background: linear-gradient(90deg, var(--sc-accent), color-mix(in oklab, var(--sc-accent) 12%, transparent));
+}
+
+/* --------------------------------------------------------------- buttons -- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.55em;
+  font-family: var(--sc-font-text); font-weight: 600; font-size: 0.95rem;
+  letter-spacing: 0.02em; line-height: 1; white-space: nowrap;
+  padding: 0.95em 1.6em; border-radius: var(--sc-r-md);
+  border: 1px solid transparent; cursor: pointer; text-decoration: none;
+  transition: background-color 140ms var(--sc-ease-out), color 140ms var(--sc-ease-out),
+              border-color 140ms var(--sc-ease-out), transform 120ms var(--sc-ease-out),
+              box-shadow 140ms var(--sc-ease-out);
+}
+.btn:active { transform: translateY(1px); }
+.btn--gold {
+  background: var(--sc-accent); color: var(--sc-accent-ink);
+  box-shadow: 0 1px 2px hsl(var(--sc-shadow-color) / 0.34), 0 6px 16px -6px hsl(var(--sc-shadow-color) / 0.4);
+}
+.btn--gold:hover { background: color-mix(in oklab, var(--sc-accent) 84%, #FFFFFF); }
+.btn--line {
+  background: transparent; color: var(--sc-ink);
+  border-color: var(--sc-hairline-strong);
+}
+.btn--line:hover { border-color: var(--sc-accent); color: var(--sc-accent); }
+.btn--lg { font-size: 1.02rem; padding: 1.05em 2em; }
+.btn[disabled], .btn[aria-disabled="true"] { opacity: 0.55; pointer-events: none; }
+
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--sc-3); align-items: center; }
+
+/* text link that is not a button */
+.tlink {
+  display: inline-flex; align-items: center; gap: 0.4em;
+  font-weight: 600; color: var(--sc-accent); text-decoration: none;
+  border-bottom: 1px solid color-mix(in oklab, var(--sc-accent) 40%, transparent);
+  padding-bottom: 2px; transition: border-color 140ms var(--sc-ease-out);
+}
+.tlink:hover { border-bottom-color: var(--sc-accent); }
+.tlink::after { content: "\2192"; transition: transform 160ms var(--sc-ease-out); }
+@media (hover: hover) and (pointer: fine) { .tlink:hover::after { transform: translateX(3px); } }
+
+/* ------------------------------------------------------------------ bar --- */
+.bar {
+  position: sticky; top: 0; z-index: var(--sc-z-chrome);
+  display: flex; align-items: center; gap: var(--sc-5);
+  height: var(--bar-h); padding-inline: var(--sc-gutter);
+  background: color-mix(in oklab, #0B0A08 88%, transparent);
+  backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid color-mix(in oklab, #D9B450 18%, transparent);
+  color: #F6F1E5;
+}
+.bar__mark { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: inherit; margin-inline-end: auto; }
+.bar__mark img { width: auto; height: 2.5rem; }
+.bar__mark-txt { display: grid; line-height: 1; }
+.bar__mark-txt b {
+  font-family: var(--sc-font-text); font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase; color: #C8BBA2;
+}
+.bar__mark-txt i {
+  font-family: var(--sc-font-display); font-style: normal; font-weight: 600;
+  font-size: 1.12rem; letter-spacing: 0.03em; color: #F6F1E5; margin-top: 0.15em;
+}
+.bar__nav { display: flex; align-items: center; gap: clamp(0.9rem, 1.7vw, 1.9rem); }
+.bar__link {
+  font-size: 0.82rem; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase;
+  color: #CFC4AE; text-decoration: none; padding-block: 0.4rem;
+  border-bottom: 1px solid transparent; transition: color 140ms var(--sc-ease-out), border-color 140ms var(--sc-ease-out);
+}
+.bar__link:hover { color: #F6F1E5; }
+.bar__link[aria-current="page"] { color: #D9B450; border-bottom-color: #D9B450; }
+.bar__end { display: flex; align-items: center; gap: var(--sc-3); }
+.bar__give { padding: 0.7em 1.35em; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; }
+
+.bar__burger {
+  display: none; align-items: center; gap: 0.55rem;
+  background: none; border: 0; padding: 0.5rem 0.25rem; cursor: pointer; color: #F6F1E5;
+  min-height: 44px;
+}
+/* The bars are stacked inside their own box. Three bare spans as flex children
+   of the button lay out in a row and read as three dashes. */
+.bar__burger-ico { display: grid; gap: 4px; width: 20px; }
+.bar__burger-ico i { display: block; height: 1.5px; background: currentColor; }
+.bar__burger em {
+  font-style: normal; font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+}
+
+@media (max-width: 1020px) {
+  .bar__nav { display: none; }
+  .bar__burger { display: inline-flex; }
+}
+@media (max-width: 560px) {
+  /* GIVE is the primary action on the site and it stays reachable at every
+     width. The wordmark's kicker line goes first instead. */
+  .bar__mark-txt b { display: none; }
+  .bar__give { padding: 0.5em 0.95em; font-size: 0.74rem; letter-spacing: 0.08em; min-height: 44px; }
+  .bar__burger em { display: none; }
+  .bar { gap: var(--sc-3); padding-inline: var(--sc-4); }
+}
+
+/* ----------------------------------------------------------------- menu --- */
+.menu {
+  position: fixed; inset: 0; z-index: 120;
+  background: #0B0A08;
+  padding: var(--sc-5) var(--sc-gutter) var(--sc-7);
+  display: grid; grid-template-rows: auto 1fr auto; gap: var(--sc-6);
+  overflow-y: auto; color: #F6F1E5;
+}
+.menu[hidden] { display: none; }
+.menu__head { display: flex; align-items: center; justify-content: space-between; }
+.menu__close {
+  background: none; border: 1px solid color-mix(in oklab, #D9B450 40%, transparent);
+  color: #F6F1E5; padding: 0.6em 1.1em; border-radius: var(--sc-r-md);
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer;
+}
+.menu__nav { display: grid; align-content: center; gap: var(--sc-2); }
+.menu__nav a {
+  font-family: var(--sc-font-display); font-size: clamp(1.9rem, 8vw, 3rem);
+  font-weight: 500; letter-spacing: -0.02em; color: #F6F1E5; text-decoration: none;
+  padding-block: 0.16em; border-bottom: 1px solid color-mix(in oklab, #F6F1E5 10%, transparent);
+}
+.menu__nav a:hover { color: #D9B450; }
+.menu__foot { display: grid; gap: var(--sc-2); }
+.menu__foot a { color: #CFC4AE; text-decoration: none; font-weight: 500; }
+.menu__foot a:hover { color: #F6F1E5; }
+.menu__help { color: #D9B450 !important; font-weight: 700 !important; }
+
+/* =========================================================== HOME: title -- */
+.title-page {
+  position: relative; min-height: calc(100svh - var(--bar-h));
+  display: grid; align-items: center;
+  padding-block: clamp(3rem, 9vh, 7rem);
+  overflow: clip;
+}
+.title-page__plate {
+  position: absolute; inset: 0; pointer-events: none;
+  display: grid; place-items: center; opacity: 0.16;
+}
+.title-page__plate img { width: min(46rem, 92vw); height: auto; filter: saturate(0.7); }
+.title-page__glow {
+  position: absolute; left: 50%; top: 46%; translate: -50% -50%;
+  width: min(58rem, 120vw); aspect-ratio: 1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in oklab, #D9B450 13%, transparent) 0%, transparent 62%);
+}
+.title-page__inner { position: relative; z-index: 2; }
+.title-page__seal {
+  display: flex; align-items: center; gap: var(--sc-4);
+  margin-bottom: var(--sc-6);
+}
+.title-page__seal img { height: 4.5rem; width: auto; }
+.title-page__seal span {
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--sc-accent); line-height: 1.8;
+}
+.title-page h1 { max-width: 15ch; }
+.title-page__sub { margin-top: var(--sc-5); max-width: 48ch; font-size: var(--sc-t-lg); line-height: 1.5; color: var(--sc-ink-soft); }
+.title-page__acts { margin-top: var(--sc-7); }
+.title-page__foot {
+  position: relative; z-index: 2;
+  margin-top: var(--sc-8); padding-top: var(--sc-4);
+  border-top: 1px solid var(--sc-hairline);
+  display: flex; flex-wrap: wrap; gap: var(--sc-3) var(--sc-6); align-items: baseline;
+}
+.title-page__foot .rule-label { display: inline; }
+.title-page__foot p { margin: 0; color: var(--sc-ink-soft); font-size: 0.95rem; }
+.title-page__foot b { color: var(--sc-ink); font-weight: 600; }
+
+/* ============================================================ HOME: index - */
+.index-list { display: grid; gap: 0; border-top: 1px solid var(--sc-hairline); }
+.index-list a {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: baseline;
+  gap: var(--sc-4); padding-block: clamp(1rem, 2.2vw, 1.5rem);
+  border-bottom: 1px solid var(--sc-hairline);
+  text-decoration: none; color: var(--sc-ink);
+  transition: padding-inline-start 200ms var(--sc-ease-out), color 140ms var(--sc-ease-out);
+}
+.index-list a:hover { color: var(--sc-accent); }
+@media (hover: hover) and (pointer: fine) { .index-list a:hover { padding-inline-start: var(--sc-3); } }
+.index-list .idx {
+  font-family: var(--sc-font-text); font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.14em; color: var(--sc-accent); min-width: 2.2ch;
+}
+.index-list .lbl { font-family: var(--sc-font-display); font-size: clamp(1.35rem, 3.2vw, 2.1rem); font-weight: 500; letter-spacing: -0.018em; }
+.index-list .nte { font-size: 0.86rem; color: var(--sc-ink-soft); text-align: right; }
+@media (max-width: 640px) {
+  .index-list a { grid-template-columns: auto 1fr; }
+  .index-list .nte { grid-column: 2; text-align: left; }
+}
+
+/* ======================================================= THE MENDING (peak) */
+.mend {
+  /* No height here. The engine's .sc-stage owns it (100vh, sticky), and any
+     height declared on this element wins on equal specificity, kills the
+     sticky travel, and the peak silently stops pinning. */
+  display: grid; place-items: center;
+}
+.mend__glow {
+  position: absolute; left: 34%; top: 50%; translate: -50% -50%;
+  width: min(46rem, 120vw); aspect-ratio: 1; pointer-events: none;
+  background: radial-gradient(circle, color-mix(in oklab, #D9B450 20%, transparent) 0%, transparent 62%);
+  opacity: calc(var(--sc-p, 0) * 1.2 - 0.2);
+}
+.mend__grid {
+  position: relative; z-index: 2;
+  display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: center; gap: clamp(1.5rem, 5vw, 4.5rem);
+  width: 100%; max-width: var(--sc-maxw); margin-inline: auto;
+  padding-inline: var(--sc-gutter);
+}
+.mend__art { display: grid; place-items: center; }
+.mend__fig { width: min(28rem, 100%); height: auto; overflow: visible; }
+.mend__copy h2 { margin: 0; }
+.mend__copy p { margin: var(--sc-5) 0 0; max-width: 46ch; color: var(--sc-ink-soft); }
+.mend__ref {
+  font-family: var(--sc-font-display); font-style: italic;
+  font-size: var(--sc-t-base); line-height: 1.5;
+  color: color-mix(in oklab, #D9B450 82%, #F6F1E5) !important;
+  border-inline-start: 1px solid color-mix(in oklab, #D9B450 45%, transparent);
+  padding-inline-start: var(--sc-4);
+}
+
+@media (max-width: 860px) {
+  .mend__grid { grid-template-columns: 1fr; gap: var(--sc-5); align-content: center; }
+  .mend__art { order: -1; }
+  .mend__fig { width: min(13rem, 46vw); }
+  .mend__copy p { margin-top: var(--sc-4); }
+  .mend__glow { left: 50%; top: 34%; }
+}
+
+/* Every shard's travel is pure CSS calc against the --sc-p the engine writes
+   on the act. No per-frame JavaScript, so it runs on the compositor.
+   --st staggers each shard's arrival; --lp is that shard's own local progress.
+   transform-box: view-box puts the rotation origin at the fracture point in the
+   jar rather than at each shard's own bounding box, which is what makes this
+   read as one thing breaking instead of eight things spinning. */
+.mend__frag {
+  --lp: clamp(0, (var(--sc-p, 0) - var(--st, 0)) / 0.62, 1);
+  fill: url(#kamClay);
+  stroke: color-mix(in oklab, #F6F1E5 26%, transparent);
+  stroke-width: 1.1;
+  transform-box: view-box;
+  transform-origin: 178px 344px;
+  transform:
+    translate(
+      calc(var(--dx, 0) * (1 - var(--lp)) * 1px),
+      calc(var(--dy, 0) * (1 - var(--lp)) * 1px)
+    )
+    rotate(calc(var(--rot, 0) * (1 - var(--lp)) * 1deg));
+}
+
+/* The shape the pieces are travelling back to, faint at the start and gone by
+   the time they arrive. It stops the opening frame reading as random debris. */
+.mend__ghost {
+  stroke: color-mix(in oklab, #D9B450 46%, transparent);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 8;
+  opacity: calc(0.9 - var(--sc-p, 0) * 1.5);
+}
+
+/* Gold arrives along the fractures only once the pieces are home. */
+.mend__seam {
+  stroke: #D9B450;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dashoffset: calc(var(--len, 0) * (1 - clamp(0, (var(--sc-p, 0) - 0.62) / 0.3, 1)));
+  opacity: clamp(0, (var(--sc-p, 0) - 0.6) * 7, 1);
+}
+
+.mend__rim {
+  stroke: color-mix(in oklab, #D9B450 78%, transparent);
+  stroke-width: 1.6;
+  opacity: clamp(0, (var(--sc-p, 0) - 0.62) * 3, 1);
+}
+
+/* Reduced motion keeps the meaning and drops the travel: the vessel is whole,
+   the gold is in the cracks, nothing moves. */
+@media (prefers-reduced-motion: reduce) {
+  .mend__frag { transform: none; }
+  .mend__ghost { opacity: 0; }
+  .mend__seam { stroke-dashoffset: 0; opacity: 1; }
+  .mend__rim { opacity: 1; }
+  .mend__glow { opacity: 0.55; }
+}
+[data-mend-static] .mend__frag { transform: none; }
+[data-mend-static] .mend__seam { stroke-dashoffset: 0; opacity: 1; }
+[data-mend-static] .mend__rim { opacity: 1; }
+
+/* ============================================================ five areas -- */
+.rail {
+  display: flex; align-items: stretch; gap: clamp(1.25rem, 2.6vw, 2.25rem);
+  padding-inline: var(--sc-gutter); height: 100%;
+}
+.rail__lead {
+  flex: 0 0 auto; width: min(26rem, 78vw); align-self: center;
+  display: grid; gap: var(--sc-4); align-content: center;
+}
+.rail__end {
+  flex: 0 0 auto; width: min(22rem, 72vw); align-self: center;
+  display: grid; gap: var(--sc-4); align-content: center;
+}
+.plate {
+  /* Same rule as .event: a dark card on a cream section must restate its own
+     ink tokens AND `color`, or it inherits the section's near-black. */
+  --sc-ink: #F6F1E5; --sc-ink-soft: #A99C86; --sc-accent: #D9B450;
+  color: var(--sc-ink);
+  flex: 0 0 auto; width: min(21rem, 74vw); align-self: center;
+  display: flex; flex-direction: column; gap: var(--sc-4);
+  padding: var(--sc-6) var(--sc-5) var(--sc-5);
+  background-color: #12100B;
+  background-image: linear-gradient(180deg, #16130E, #0E0C09);
+  border: 1px solid color-mix(in oklab, #D9B450 24%, transparent);
+  border-radius: var(--sc-r-lg);
+  box-shadow: var(--sc-e2), inset 0 1px 0 color-mix(in oklab, #D9B450 22%, transparent);
+  min-height: 24rem; text-decoration: none;
+  transition: border-color 180ms var(--sc-ease-out), transform 180ms var(--sc-ease-out);
+}
+.plate:hover { border-color: color-mix(in oklab, #D9B450 62%, transparent); }
+.plate__no {
+  font-family: var(--sc-font-text); font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.2em; color: #D9B450;
+}
+.plate__mark { width: 3rem; height: 3rem; color: #D9B450; }
+.plate h3 { font-size: var(--sc-t-xl); line-height: 1.1; letter-spacing: -0.015em; margin: 0; }
+.plate p { margin: 0; color: #A99C86; font-size: 0.95rem; line-height: 1.6; }
+.plate__go { margin-top: auto; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #D9B450; }
+
+/* The rail's transform is the navigation, so reduced motion turns the stage
+   into a real scroll region rather than parking it on screen one. */
+@media (prefers-reduced-motion: reduce) {
+  .rail { overflow-x: auto; scroll-snap-type: x proximity; }
+  .plate, .rail__lead, .rail__end { scroll-snap-align: center; }
+}
+
+/* grid version of the same plates, used on interior pages */
+.plate-grid {
+  display: grid; gap: var(--sc-5);
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+}
+.plate-grid .plate { width: auto; min-height: 20rem; }
+
+/* ============================================================== the model - */
+.model { position: relative; display: grid; gap: 0; }
+.model__line {
+  position: absolute; left: 0.75rem; top: 0.5rem; bottom: 0.5rem; width: 2px;
+  background: var(--sc-hairline);
+  overflow: hidden;
+}
+.model__line i {
+  position: absolute; inset: 0; display: block; background: var(--sc-accent);
+  transform-origin: top; transform: scaleY(var(--draw, 0));
+  transition: transform 90ms linear;
+}
+.model__step {
+  display: grid; grid-template-columns: 1.75rem 1fr; gap: var(--sc-5);
+  align-items: start; padding-block: clamp(1.1rem, 2.6vw, 1.9rem);
+}
+.model__dot {
+  width: 1.75rem; height: 1.75rem; border-radius: 50%;
+  border: 1.5px solid var(--sc-hairline-strong);
+  background: var(--sc-canvas);
+  display: grid; place-items: center; position: relative; z-index: 2;
+  transition: background-color 220ms var(--sc-ease-out), border-color 220ms var(--sc-ease-out);
+}
+.model__dot::after {
+  content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%;
+  background: var(--sc-hairline-strong);
+  transition: background-color 220ms var(--sc-ease-out), transform 220ms var(--sc-ease-out);
+}
+.model__step.is-lit .model__dot { border-color: var(--sc-accent); }
+.model__step.is-lit .model__dot::after { background: var(--sc-accent); transform: scale(1.25); }
+.model__step h3 {
+  font-size: clamp(1.5rem, 3.6vw, 2.4rem); line-height: 1; letter-spacing: -0.02em; margin: 0;
+  color: var(--sc-ink-soft); transition: color 220ms var(--sc-ease-out);
+}
+.model__step.is-lit h3 { color: var(--sc-ink); }
+.model__step p { margin: var(--sc-2) 0 0; color: var(--sc-ink-soft); max-width: 46ch; }
+
+/* ============================================================ event plate - */
+/* A dark plate that can sit on either ground. It carries its OWN ink, because
+   on the cream ground --sc-ink resolves to near-black and this plate would
+   render dark text on a dark card. Restating the token is not enough on its
+   own: `color` is inherited as a computed value, so it has to be restated too
+   or the text keeps whatever the section already resolved. */
+.event {
+  position: relative; overflow: clip;
+  --sc-ink: #F6F1E5; --sc-ink-soft: #A99C86;
+  --sc-accent: #D9B450; --sc-accent-ink: #14100A;
+  --sc-hairline: color-mix(in oklab, #D9B450 26%, transparent);
+  --sc-hairline-strong: color-mix(in oklab, #D9B450 52%, transparent);
+  color: var(--sc-ink);
+  border: 1px solid var(--sc-hairline-strong); border-radius: var(--sc-r-lg);
+  background-color: #0F0D0A;
+  background-image: linear-gradient(160deg, #16130E 0%, #0B0A08 62%);
+  box-shadow: 0 4px 8px hsl(38 40% 3% / 0.22), 0 18px 40px -8px hsl(38 40% 3% / 0.38),
+              inset 0 1px 0 color-mix(in oklab, #D9B450 26%, transparent);
+}
+.event .btn--line { color: #F6F1E5; border-color: color-mix(in oklab, #D9B450 52%, transparent); }
+.event .btn--line:hover { color: #D9B450; border-color: #D9B450; }
+.event__grid {
+  display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  padding: clamp(1.75rem, 4.5vw, 3.5rem);
+}
+.event__date {
+  display: grid; align-content: start; gap: 0.15rem;
+  border-inline-end: 1px solid var(--sc-hairline);
+  padding-inline-end: clamp(1rem, 3vw, 2.5rem);
+}
+.event__mon { font-family: var(--sc-font-text); font-size: 0.86rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--sc-accent); }
+.event__day { font-family: var(--sc-font-display); font-size: clamp(4.5rem, 12vw, 8rem); line-height: 0.82; font-weight: 500; letter-spacing: -0.04em; color: var(--sc-ink); }
+.event__yr { font-family: var(--sc-font-text); font-size: 0.86rem; font-weight: 600; letter-spacing: 0.2em; color: var(--sc-ink-soft); margin-top: 0.5rem; }
+.event__body { display: grid; gap: var(--sc-4); align-content: start; }
+.event__meta { display: grid; gap: 0.4rem; margin: 0; font-size: 0.92rem; }
+.event__meta > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--sc-3); }
+.event__meta dt { color: var(--sc-ink-soft); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding-top: 0.25em; }
+.event__meta dd { margin: 0; color: var(--sc-ink); }
+@media (max-width: 720px) {
+  .event__grid { grid-template-columns: 1fr; }
+  .event__date { border-inline-end: 0; border-bottom: 1px solid var(--sc-hairline); padding-inline-end: 0; padding-bottom: var(--sc-4); }
+  .event__meta > div { grid-template-columns: 1fr; gap: 0.1rem; }
+}
+
+/* ============================================================= statements - */
+.statement { padding-block: clamp(5rem, 14vw, 12rem); }
+.statement__big {
+  font-family: var(--sc-font-display); font-weight: 500;
+  font-size: clamp(2.4rem, 8.5vw, 7rem); line-height: 0.96; letter-spacing: -0.035em;
+  margin: 0; max-width: 18ch; text-wrap: balance;
+}
+.statement__big em { font-style: italic; color: var(--sc-accent); }
+
+/* ---------------------------------------------------------------- doors --- */
+.doors { display: grid; gap: var(--sc-4); grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 860px) { .doors { grid-template-columns: 1fr; } }
+.door {
+  display: grid; align-content: space-between; gap: var(--sc-6);
+  min-height: 17rem; padding: var(--sc-6);
+  border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-lg);
+  text-decoration: none; color: inherit; background: var(--sc-surface);
+  transition: border-color 180ms var(--sc-ease-out), background-color 180ms var(--sc-ease-out);
+}
+.door:hover { border-color: var(--sc-accent); }
+.door h3 { font-size: var(--sc-t-2xl); line-height: 1.06; letter-spacing: -0.02em; margin: 0; }
+.door p { margin: var(--sc-3) 0 0; color: var(--sc-ink-soft); font-size: 0.95rem; }
+.door__go { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-accent); }
+
+/* --------------------------------------------------------------- pillars -- */
+/* Two-column zigzag, never three equal feature columns. */
+.zig { display: grid; gap: clamp(2rem, 5vw, 4.5rem); }
+.zig__row {
+  display: grid; gap: clamp(1.25rem, 3.5vw, 3rem);
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  align-items: start;
+  padding-block: clamp(1.5rem, 3.5vw, 2.75rem);
+  border-top: 1px solid var(--sc-hairline);
+}
+.zig__row:first-child { border-top: 0; padding-top: 0; }
+@media (max-width: 800px) { .zig__row { grid-template-columns: 1fr; } }
+.zig__h { margin: 0; font-size: var(--sc-t-xl); line-height: 1.12; letter-spacing: -0.018em; }
+
+/* ----------------------------------------------------------------- list --- */
+.ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sc-3); }
+.ticks li {
+  display: grid; grid-template-columns: 1.1rem 1fr; gap: var(--sc-3);
+  align-items: start; color: var(--sc-ink-soft); line-height: 1.55;
+}
+.ticks li::before {
+  content: ""; margin-top: 0.62em; width: 0.5rem; height: 0.5rem;
+  border: 1px solid var(--sc-accent); rotate: 45deg;
+}
+.ticks--two { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sc-3) var(--sc-6); }
+@media (max-width: 640px) { .ticks--two { grid-template-columns: 1fr; } }
+
+.beliefs { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.beliefs li {
+  font-family: var(--sc-font-display); font-size: clamp(1.15rem, 2.6vw, 1.6rem);
+  font-weight: 400; letter-spacing: -0.012em; line-height: 1.35;
+  padding-block: var(--sc-4); border-bottom: 1px solid var(--sc-hairline);
+}
+.beliefs li:first-child { border-top: 1px solid var(--sc-hairline); }
+
+/* --------------------------------------------------------------- flow ----- */
+.flow-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: fs; }
+.flow-steps li {
+  counter-increment: fs;
+  display: grid; grid-template-columns: 2.5rem 1fr; gap: var(--sc-4); align-items: baseline;
+  padding-block: var(--sc-4); border-bottom: 1px solid var(--sc-hairline);
+  font-size: var(--sc-t-lg); letter-spacing: -0.01em;
+}
+.flow-steps li::before {
+  content: counter(fs, decimal-leading-zero);
+  font-family: var(--sc-font-text); font-size: 0.74rem; font-weight: 700;
+  letter-spacing: 0.14em; color: var(--sc-accent);
+}
+.flow-steps li:last-child { border-bottom: 0; }
+.flow-steps li:last-child::before { color: var(--gold-hi); }
+
+/* ---------------------------------------------------------------- forms --- */
+.form { display: grid; gap: var(--sc-5); max-width: 40rem; }
+.field { display: grid; gap: var(--sc-2); }
+.field > label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sc-ink-soft); }
+.field > .hint { font-size: 0.86rem; color: var(--sc-ink-soft); line-height: 1.5; margin: 0; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 0.85em 1em;
+  background: color-mix(in oklab, var(--sc-surface) 92%, transparent);
+  border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-md);
+  color: var(--sc-ink); font-size: 1rem; line-height: 1.4;
+  transition: border-color 140ms var(--sc-ease-out), background-color 140ms var(--sc-ease-out);
+}
+.ground--cream .field input, .ground--cream .field select, .ground--cream .field textarea { background: #FFFFFF; }
+.field input::placeholder, .field textarea::placeholder { color: color-mix(in oklab, var(--sc-ink-soft) 76%, transparent); }
+.field input:hover, .field select:hover, .field textarea:hover { border-color: var(--sc-hairline-strong); }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--sc-accent); outline: none; box-shadow: 0 0 0 3px color-mix(in oklab, var(--sc-accent) 22%, transparent); }
+.field textarea { min-height: 9rem; resize: vertical; }
+.field--row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--sc-4); }
+@media (max-width: 620px) { .field--row { grid-template-columns: 1fr; } }
+
+.check { display: grid; grid-template-columns: 1.15rem 1fr; gap: var(--sc-3); align-items: start; cursor: pointer; }
+.check input { width: 1.15rem; height: 1.15rem; margin-top: 0.22em; accent-color: var(--sc-accent); }
+.check span { font-size: 0.94rem; color: var(--sc-ink-soft); line-height: 1.5; }
+.check-group { display: grid; gap: var(--sc-3); grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); }
+
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.form__status {
+  padding: var(--sc-4) var(--sc-5); border-radius: var(--sc-r-md);
+  border: 1px solid var(--sc-hairline-strong); background: var(--sc-surface);
+  font-size: 0.95rem; line-height: 1.55;
+}
+.form__status[hidden] { display: none; }
+.form__status--ok { border-color: var(--sc-accent); }
+.form__status--err { border-color: #C4593F; }
+
+.notice {
+  border: 1px solid var(--sc-hairline-strong); border-radius: var(--sc-r-md);
+  padding: var(--sc-5); background: var(--sc-surface);
+}
+.notice .rule-label { margin-bottom: var(--sc-2); }
+.notice p { margin: 0; color: var(--sc-ink-soft); font-size: 0.94rem; line-height: 1.6; }
+.notice p + p { margin-top: var(--sc-3); }
+
+/* --------------------------------------------------------------- crisis --- */
+.crisis { display: grid; gap: var(--sc-4); }
+.crisis__item {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sc-4);
+  align-items: center; padding: var(--sc-5);
+  border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-md);
+  background: var(--sc-surface);
+}
+.crisis__item--urgent { border-color: #C4593F; background: color-mix(in oklab, #C4593F 12%, var(--sc-surface)); }
+.crisis__item h3 { margin: 0; font-size: var(--sc-t-lg); letter-spacing: -0.012em; }
+.crisis__item p { margin: var(--sc-2) 0 0; font-size: 0.92rem; color: var(--sc-ink-soft); line-height: 1.55; }
+.crisis__num {
+  font-family: var(--sc-font-display); font-size: clamp(1.4rem, 3.4vw, 2rem);
+  font-weight: 600; letter-spacing: -0.01em; color: var(--sc-accent);
+  text-decoration: none; white-space: nowrap;
+}
+.crisis__num:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+@media (max-width: 620px) { .crisis__item { grid-template-columns: 1fr; } }
+
+.exit-bar {
+  position: fixed; right: var(--sc-4); bottom: var(--sc-4); z-index: 130;
+}
+.exit-bar button {
+  background: #A8452C; color: #FFF7F2; border: 0; cursor: pointer;
+  padding: 0.9em 1.4em; border-radius: var(--sc-r-md);
+  font-size: 0.86rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  box-shadow: var(--sc-e2);
+}
+.exit-bar button:hover { background: #C4593F; }
+
+/* ------------------------------------------------------------ page head --- */
+.phead { padding-block: clamp(3.5rem, 9vw, 7.5rem) clamp(2rem, 5vw, 4rem); }
+.phead h1 { max-width: 18ch; }
+.phead .lede { margin-top: var(--sc-5); }
+.crumbs { margin-bottom: var(--sc-5); font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sc-ink-soft); }
+.crumbs a { color: var(--sc-accent); text-decoration: none; }
+.crumbs a:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+
+/* -------------------------------------------------------------- closing --- */
+.close-band { position: relative; overflow: clip; }
+.close-band__inner { position: relative; z-index: 2; text-align: center; display: grid; justify-items: center; gap: var(--sc-6); }
+.close-band__seal { height: 5.5rem; width: auto; opacity: 0.9; }
+.close-band h2 { max-width: 20ch; }
+.close-band__glow {
+  position: absolute; left: 50%; bottom: -30%; translate: -50% 0;
+  width: min(64rem, 140vw); aspect-ratio: 1.4; pointer-events: none;
+  background: radial-gradient(ellipse at center, color-mix(in oklab, #D9B450 12%, transparent) 0%, transparent 62%);
+}
+
+/* ---------------------------------------------------------------- foot ---- */
+.foot {
+  background: #060504; color: #F6F1E5;
+  border-top: 1px solid color-mix(in oklab, #D9B450 24%, transparent);
+  padding-block: clamp(3rem, 6vw, 5rem) var(--sc-6);
+}
+.foot__grid {
+  display: grid; gap: clamp(2rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 900px) { .foot__grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .foot__grid { grid-template-columns: 1fr; } }
+.foot__brand img { height: 4rem; width: auto; }
+.foot__stmt { margin: var(--sc-4) 0 0; font-family: var(--sc-font-display); font-size: 1.05rem; line-height: 1.45; color: #F6F1E5; }
+.foot__where { margin: var(--sc-3) 0 0; font-size: 0.82rem; letter-spacing: 0.14em; text-transform: uppercase; color: #A99C86; }
+.foot__col { display: grid; gap: var(--sc-2); align-content: start; }
+.foot__col .rule-label { margin-bottom: var(--sc-2); color: #D9B450; }
+.foot__col a { color: #C8BBA2; text-decoration: none; font-size: 0.94rem; }
+.foot__col a:hover { color: #F6F1E5; }
+.foot__social { display: flex; gap: var(--sc-4); margin-top: var(--sc-2); }
+.foot__base {
+  margin-top: clamp(2.5rem, 5vw, 4rem); padding-top: var(--sc-5);
+  border-top: 1px solid color-mix(in oklab, #F6F1E5 10%, transparent);
+  display: flex; flex-wrap: wrap; gap: var(--sc-3) var(--sc-6); justify-content: space-between;
+}
+.foot__base p { margin: 0; font-size: 0.84rem; color: #A99C86; }
+.foot__note a { color: #D9B450; }
+
+/* ----------------------------------------------------------- utilities ---- */
+.split-2 {
+  display: grid; gap: clamp(1.5rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start;
+}
+@media (max-width: 860px) { .split-2 { grid-template-columns: 1fr; } }
+.split-side {
+  display: grid; gap: clamp(1.5rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); align-items: start;
+}
+@media (max-width: 860px) { .split-side { grid-template-columns: 1fr; } }
+.sticky-side { position: sticky; top: calc(var(--bar-h) + var(--sc-5)); }
+@media (max-width: 860px) { .sticky-side { position: static; } }
+
+.center { text-align: center; justify-items: center; }
+.center .lede, .center .body { margin-inline: auto; }
+
+@media (prefers-reduced-motion: reduce) {
+  .model__line i { transition: none; }
+}
+
+/* --------------------------------------------------- reduced motion floor --
+   The engine reveals [data-sc-in] blocks on intersection. Anything the reader
+   never scrolls past therefore keeps its opacity: 0 pre-paint state, and a
+   deep anchor link or a jump to the end of the page leaves whole sections
+   permanently invisible. For a reader who has asked for reduced motion the
+   entrance is not carrying meaning in the first place, so the honest answer is
+   to skip it entirely rather than gate content behind an animation.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  [data-sc-in], [data-sc-stagger] > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+lab/frames/
+lab/mobile/
+lab/shots/
+lab/mend/
+lab/pages/
+lab/ws/
+lab/gv/
+lab/mnav/
+package-lock.json
+.DS_Store

@@ -1,0 +1,17 @@
+name = "kam-forms"
+main = "index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# Lock this to the live site origin before launch. "*" is fine while testing.
+ALLOWED_ORIGIN = "*"
+
+# Where each kind of submission goes. Comma-separate for multiple recipients.
+TO_GENERAL = "REPLACE@kingdomassemblymissions.org"
+TO_PRAYER  = "REPLACE@kingdomassemblymissions.org"
+TO_HELP    = "REPLACE@kingdomassemblymissions.org"
+
+FROM_EMAIL = "KAM Website <website@kingdomassemblymissions.org>"
+
+# RESEND_API_KEY is a SECRET, never a var:
+#   npx wrangler secret put RESEND_API_KEY
