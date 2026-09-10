@@ -263,6 +263,11 @@ export const events = [
     address: "TBD",
     city: "Greenville, SC",
     cost: "Free to attend",
+    // Paid ticketing: paste a Stripe payment link (or any checkout URL) into
+    // ticketUrl and set priceLabel. Leaving ticketUrl unset keeps the free RSVP
+    // form, which is the right default for a free event.
+    ticketUrl: "TBD",
+    priceLabel: "TBD",
     status: "upcoming",
     featured: true,
     blurb: "Come share your gift. Come hear a story. Come find community.",
@@ -304,6 +309,46 @@ export const campaigns = [];
    Shape: { slug, title, date, summary, body: ["paragraph", ...] }
    ------------------------------------------------------------------------- */
 export const posts = [];
+
+/* --- Bible study.
+   Renders a /bible-study/ page and adds it to the nav ONLY when `active` is
+   true, so nothing half-built ever ships. We deliberately do NOT embed Zoom in
+   the page: the Meeting SDK needs a server-side signature and is unreliable on
+   mobile Safari, which is where most of this audience will be. A proper Join
+   button hands off to the Zoom app, which works everywhere.
+   ------------------------------------------------------------------------- */
+export const bibleStudy = {
+  active: false,
+
+  title: "KAM Bible Study",
+  blurb: "An hour in the Word together, on Zoom, wherever you are.",
+  schedule: "TBD",          // e.g. "Every Tuesday, 7:00 PM Eastern"
+  zoomUrl: "TBD",           // the recurring meeting join link
+  meetingId: "TBD",         // shown so people can dial in by phone
+  dialIn: "TBD",            // e.g. "+1 305 224 1968"
+
+  // Never publish a passcode on a public page. If the meeting needs one, send
+  // it to the people who sign up instead.
+  passcodeIsPrivate: true,
+
+  intro: [
+    "You do not need to know anything to come. You do not need a Bible in your hand, you do not need to read out loud, and you do not need to have your camera on. Turn up, listen, ask whatever you want to ask.",
+    "It is an hour. It is the same link every week. If you miss one, come to the next one.",
+  ],
+
+  // Past and upcoming sessions. Shape:
+  //   { date: "2026-10-14", title, passage, summary, recordingUrl, notesUrl }
+  sessions: [],
+};
+
+/* --- Photos and video.
+   Files go in static/img/gallery/. Every item needs a real caption and real
+   alt text: this is a ministry, and a photograph of a person who did not agree
+   to be photographed does not go on the internet.
+   Shape: { src, alt, caption, event, consent, video }
+   `consent` is the date permission was given. No consent, no publish.
+   ------------------------------------------------------------------------- */
+export const gallery = [];
 
 /* --- Volunteer roles ------------------------------------------------------ */
 export const volunteerRoles = [

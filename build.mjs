@@ -71,7 +71,9 @@ async function collect() {
     inner.prayer(),
     inner.contact(),
     inner.needHelp(),
-    // Generated only when there is something to say. An empty blog never ships.
+    // Both are generated only when there is something real behind them, so a
+    // half-built page never ships.
+    ...(cfg.bibleStudy.active ? [inner.bibleStudyPage()] : []),
     ...(cfg.posts.length ? [inner.news()] : []),
     inner.notFound(),
   ];

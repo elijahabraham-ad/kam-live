@@ -1,5 +1,5 @@
 import { esc, isTBD, orTBA, giveHref, giveAttrs } from "./layout.mjs";
-import { site, model, programs, events, crisisResources } from "./config.mjs";
+import { site, model, programs, events, crisisResources, bibleStudy } from "./config.mjs";
 
 /* The weekday is DERIVED, never typed. A hand-written "Thursday, October 9"
    shipped once and 9 October 2026 is a Friday, which is the kind of error that
@@ -101,9 +101,15 @@ export function eventCard(e, { level = 2 } = {}) {
   const { month: mon, day, year: yr, label } = eventDate(e);
   const H = `h${level}`;
 
-  const register = isTBD(e.registerUrl)
-    ? `<a class="btn btn--gold btn--lg" href="/contact/?about=Event">Save my spot</a>`
-    : `<a class="btn btn--gold btn--lg" href="${esc(e.registerUrl)}" target="_blank" rel="noopener">Register</a>`;
+  /* Three states, in order of preference:
+     a real ticket checkout, a real registration page, or the on-site RSVP form
+     that ships by default. A free event should keep the RSVP: it costs the
+     visitor nothing and it keeps the list with KAM. */
+  const register = !isTBD(e.ticketUrl)
+    ? `<a class="btn btn--gold btn--lg" href="${esc(e.ticketUrl)}" target="_blank" rel="noopener">Get tickets${isTBD(e.priceLabel) ? "" : ` &middot; ${esc(e.priceLabel)}`}</a>`
+    : !isTBD(e.registerUrl)
+    ? `<a class="btn btn--gold btn--lg" href="${esc(e.registerUrl)}" target="_blank" rel="noopener">Register</a>`
+    : `<a class="btn btn--gold btn--lg" href="/events/#rsvp">Save my spot</a>`;
 
   return `
 <article class="event">
@@ -120,7 +126,7 @@ export function eventCard(e, { level = 2 } = {}) {
       <dl class="event__meta">
         <div><dt>When</dt><dd>${esc(label)}, ${orTBA(e.time, "Time TBA")}</dd></div>
         <div><dt>Where</dt><dd>${orTBA(e.venue, "Venue TBA")}${e.city ? `, ${esc(e.city)}` : ""}</dd></div>
-        <div><dt>Cost</dt><dd>${esc(e.cost)}</dd></div>
+        <div><dt>Cost</dt><dd>${isTBD(e.priceLabel) ? esc(e.cost) : esc(e.priceLabel)}</dd></div>
       </dl>
       <div class="btn-row" style="margin-top:var(--sc-3)">
         ${register}
@@ -424,6 +430,36 @@ export function campaignList(items) {
         )
         .join("")}
     </div>
+  </div>
+</section>`;
+}
+
+/* --- Photos and video ------------------------------------------------------
+   Renders only when `gallery` has entries that carry a consent date. A
+   photograph of somebody who did not agree to be photographed does not go on a
+   ministry website, so the consent field is a gate, not a note. */
+export function galleryBlock(items, { ground = "dark", heading = "The work, as it happens" } = {}) {
+  const ok = (items || []).filter((g) => g.consent);
+  if (!ok.length) return "";
+  const cells = ok
+    .map(
+      (g) => `
+      <figure class="shot${g.video ? " shot--video" : ""}">
+        ${g.video
+          ? `<video src="${esc(g.src)}" ${g.poster ? `poster="${esc(g.poster)}"` : ""} controls preload="none" playsinline></video>`
+          : `<img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy" decoding="async">`}
+        ${g.caption ? `<figcaption>${esc(g.caption)}${g.event ? ` <span>${esc(g.event)}</span>` : ""}</figcaption>` : ""}
+      </figure>`
+    )
+    .join("");
+  return `
+<section class="sec ground--${ground}" id="gallery">
+  <div class="wrap">
+    <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Photos and video</span>
+      <h2 class="h-lg">${esc(heading)}</h2>
+    </div>
+    <div class="shots" data-sc-in data-sc-stagger="60">${cells}</div>
   </div>
 </section>`;
 }

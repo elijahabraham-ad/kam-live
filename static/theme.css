@@ -861,3 +861,48 @@ body { background: var(--sc-canvas); }
 }
 .meter i { display: block; height: 100%; background: #D9B450; transform-origin: left; transform: scaleX(var(--fill, 0)); }
 .plate__closes { font-size: 0.82rem !important; letter-spacing: 0.02em; }
+
+/* --------------------------------------------- bible study and galleries --
+   Both render only when their config has real content behind them. */
+.join__when {
+  font-family: var(--sc-font-display); font-size: var(--sc-t-xl);
+  line-height: 1.2; letter-spacing: -0.015em; color: var(--sc-ink) !important; margin: 0 !important;
+}
+.sessions { display: grid; gap: clamp(1.5rem, 4vw, 2.5rem); }
+.session { padding-top: var(--sc-5); border-top: 1px solid var(--sc-hairline); }
+.session:first-child { border-top: 0; padding-top: 0; }
+.session h3 { margin: var(--sc-2) 0 0; }
+.session__ref {
+  margin: var(--sc-2) 0 var(--sc-3); font-family: var(--sc-font-display); font-style: italic;
+  color: var(--sc-accent);
+}
+.session .btn-row { margin: 0; gap: var(--sc-5); }
+
+/* A column wall, not a grid. Selvin will drop in photos at whatever shape his
+   phone took them, and a fixed-aspect grid either crops faces or leaves holes
+   in the last row. Columns let every photo keep its own proportions. */
+.shots {
+  column-count: 3;
+  column-gap: clamp(0.75rem, 1.6vw, 1.25rem);
+}
+@media (max-width: 900px) { .shots { column-count: 2; } }
+@media (max-width: 560px) { .shots { column-count: 1; } }
+
+.shot {
+  margin: 0 0 clamp(0.75rem, 1.6vw, 1.25rem);
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+.shot :is(img, video) {
+  width: 100%; height: auto; display: block;
+  border-radius: var(--sc-r-lg); border: 1px solid var(--sc-hairline);
+  background: var(--sc-surface);
+}
+.shot figcaption {
+  margin-top: var(--sc-3); font-size: 0.88rem; line-height: 1.5; color: var(--sc-ink-soft);
+}
+.shot figcaption span {
+  display: block; margin-top: 0.15rem; font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-accent);
+}
+}

@@ -1,4 +1,4 @@
-import { site, nav, posts } from "./config.mjs";
+import { site, nav, posts, bibleStudy } from "./config.mjs";
 
 export const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -14,11 +14,17 @@ export const giveHref = () => (isTBD(site.donateUrl) ? "/give/" : site.donateUrl
 export const giveAttrs = () =>
   isTBD(site.donateUrl) ? "" : ' target="_blank" rel="noopener"';
 
+/* Bible Study joins the nav only once it is switched on in config. */
+const navFor = () =>
+  bibleStudy.active
+    ? [...nav.slice(0, 4), { label: "Bible Study", href: "/bible-study/" }, ...nav.slice(4)]
+    : nav;
+
 const FONTS =
   "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..800&family=Instrument+Sans:wght@400..700&display=swap";
 
 function header(current, safety) {
-  const links = nav
+  const links = navFor()
     .map((n) => {
       const on = current === n.href ? ' aria-current="page"' : "";
       return `<a class="bar__link" href="${n.href}"${on}>${esc(n.label)}</a>`;
@@ -50,7 +56,7 @@ function header(current, safety) {
   </div>
   <nav class="menu__nav" aria-label="All pages">
     <a href="/">Home</a>
-    ${nav.map((n) => `<a href="${n.href}">${esc(n.label)}</a>`).join("\n    ")}
+    ${navFor().map((n) => `<a href="${n.href}">${esc(n.label)}</a>`).join("\n    ")}
     <a href="/give/">Give</a>
   </nav>
   <div class="menu__foot">
@@ -96,6 +102,7 @@ function footer() {
       <span class="rule-label">Take part</span>
       <a href="/events/">Events</a>
       <a href="/discipleship/">Discipleship</a>
+      ${bibleStudy.active ? '<a href="/bible-study/">Bible study</a>' : ""}
       <a href="/volunteer/">Serve with us</a>
       <a href="/partner/">Partner with us</a>
       <a href="/give/">Give</a>

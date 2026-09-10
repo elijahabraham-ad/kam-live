@@ -2,12 +2,12 @@ import { esc, isTBD, orTBA, giveHref, giveAttrs } from "../layout.mjs";
 import {
   site, programs, events, volunteerRoles, partnerTypes, model,
   discipleshipTrack, givingDesignations, meetingFlow, scriptures, journeys,
-  testimonials, team, campaigns, posts,
+  testimonials, team, campaigns, posts, bibleStudy, gallery,
 } from "../config.mjs";
 import {
   pageHead, crumb, modelSection, programGrid, eventCard, upcoming,
   doorsSection, closingBand, crisisBlock, form, orgJsonLd, eventJsonLd, programPlate,
-  testimonialList, teamList, campaignList, eventDate,
+  testimonialList, teamList, campaignList, eventDate, galleryBlock,
 } from "../parts.mjs";
 
 /* ============================================================== ABOUT ===== */
@@ -78,6 +78,7 @@ ${pageHead({
   </div>
 </section>
 
+${galleryBlock(gallery, { ground: "dark", heading: "The work, as it happens" })}
 ${teamList(team)}
 ${modelSection({ ground: team.length ? "dark" : "cream", heading: "How we serve, in order.", lede: "Six stations. Each one earns the right to the next." })}
 ${closingBand()}`,
@@ -1119,6 +1120,141 @@ ${pageHead({
     <p class="scripture" style="margin-inline:auto;text-align:left">${esc(scriptures.brokenhearted.text)}<cite>${esc(scriptures.brokenhearted.ref)}</cite></p>
   </div>
 </section>`,
+  };
+}
+
+/* ======================================================= BIBLE STUDY ====== */
+/* Zoom is LINKED, never embedded. The Meeting SDK needs a server-side
+   signature and behaves badly in mobile Safari, which is where most of this
+   congregation will be. A Join button hands off to the app and just works. */
+export function bibleStudyPage() {
+  const b = bibleStudy;
+  const live = !isTBD(b.zoomUrl);
+
+  const join = live
+    ? `<a class="btn btn--gold btn--lg" href="${esc(b.zoomUrl)}" target="_blank" rel="noopener">Join on Zoom</a>`
+    : `<span class="btn btn--gold btn--lg" aria-disabled="true">Zoom link coming</span>`;
+
+  const past = b.sessions
+    .slice()
+    .sort((a, c) => (a.date < c.date ? 1 : -1))
+    .map((sn) => {
+      const d = new Date(sn.date + "T12:00:00");
+      return `
+      <article class="session">
+        <p class="rule-label">${d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</p>
+        <h3 class="h-sm">${esc(sn.title)}</h3>
+        ${sn.passage ? `<p class="session__ref">${esc(sn.passage)}</p>` : ""}
+        ${sn.summary ? `<p class="body">${esc(sn.summary)}</p>` : ""}
+        <p class="btn-row" style="margin-top:var(--sc-4)">
+          ${sn.recordingUrl ? `<a class="tlink" href="${esc(sn.recordingUrl)}" target="_blank" rel="noopener">Watch it back</a>` : ""}
+          ${sn.notesUrl ? `<a class="tlink" href="${esc(sn.notesUrl)}" target="_blank" rel="noopener">Notes</a>` : ""}
+        </p>
+      </article>`;
+    })
+    .join("");
+
+  return {
+    path: "/bible-study/",
+    title: "Bible Study",
+    description:
+      "KAM Bible Study on Zoom. Open to anyone, no experience needed, camera optional. Kingdom Assembly Missions, Greenville SC.",
+    jsonld: [orgJsonLd()],
+    body: `
+${pageHead({
+      crumb: crumb({ label: "Home", href: "/" }, { label: "Bible Study" }),
+      label: "Every week, on Zoom",
+      h1: esc(b.title),
+      lede: esc(b.blurb),
+    })}
+
+<section class="sec sec--tight ground--dark">
+  <div class="wrap">
+    <div class="split-2">
+      <div class="stack" data-sc-in data-sc-stagger="70">
+        <div class="notice">
+          <span class="rule-label">When we meet</span>
+          <p class="join__when">${orTBA(b.schedule, "Schedule to be announced")}</p>
+          <div class="btn-row" style="margin-top:var(--sc-5)">${join}</div>
+          ${
+            isTBD(b.meetingId) && isTBD(b.dialIn)
+              ? ""
+              : `<dl class="event__meta" style="margin-top:var(--sc-5)">
+                   ${isTBD(b.meetingId) ? "" : `<div><dt>Meeting ID</dt><dd>${esc(b.meetingId)}</dd></div>`}
+                   ${isTBD(b.dialIn) ? "" : `<div><dt>Dial in</dt><dd><a class="tlink" href="tel:${esc(b.dialIn.replace(/[^\d+]/g, ""))}">${esc(b.dialIn)}</a></dd></div>`}
+                 </dl>`
+          }
+          ${b.passcodeIsPrivate ? `<p class="hint" style="margin-top:var(--sc-4);color:var(--sc-ink-soft);font-size:0.88rem">If the meeting asks for a passcode, sign up below and we will send it to you. We do not publish it here.</p>` : ""}
+        </div>
+      </div>
+      <div class="stack" data-sc-in data-sc-stagger="70">
+        <h2 class="h-md">Come as you are</h2>
+        ${b.intro.map((t) => `<p class="body">${esc(t)}</p>`).join("")}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec ground--cream">
+  <div class="wrap">
+    <div class="split-side">
+      <div class="stack sticky-side" data-sc-in data-sc-stagger="70">
+        <span class="rule-label">Get the reminder</span>
+        <h2 class="h-lg">We will send you the link before it starts.</h2>
+        <p class="body">One message before each study with the link and what we are reading. Nothing else, and you can stop any time.</p>
+      </div>
+      ${form({
+        id: "biblestudy",
+        submit: "Send me the link",
+        success: "You are on the list. We will send the link and the passage before the next study.",
+        fields: [
+          { type: "text", name: "name", label: "Your name", required: true, autocomplete: "name" },
+          { type: "email", name: "email", label: "Email", required: true, autocomplete: "email" },
+          { type: "tel", name: "phone", label: "Phone (optional)", hint: "Only if you would rather get a text than an email.", autocomplete: "tel" },
+          {
+            type: "select",
+            name: "experience",
+            label: "Where are you at with the Bible?",
+            required: true,
+            options: [
+              "I have never really read it",
+              "I know some of it",
+              "I read it regularly",
+              "I would rather not say",
+            ],
+          },
+        ],
+        note: "We use this to send you the study link and the passage. Nothing else.",
+      })}
+    </div>
+  </div>
+</section>
+
+${past ? `
+<section class="sec ground--dark">
+  <div class="wrap wrap--mid">
+    <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Previously</span>
+      <h2 class="h-lg">What we have been through.</h2>
+    </div>
+    <div class="sessions" data-sc-in data-sc-stagger="60">${past}</div>
+  </div>
+</section>` : ""}
+
+<section class="sec sec--tight ground--dark">
+  <div class="wrap wrap--mid">
+    <div class="stack" data-sc-in data-sc-stagger="70">
+      <h2 class="h-md">This is where discipleship usually starts</h2>
+      <p class="body">Most people who end up walking through the discipleship track with us came to a Bible study first, sat quietly for a few weeks, and then asked one question. There is no next step you are supposed to take on a schedule.</p>
+      <div class="btn-row" style="margin-top:var(--sc-5)">
+        <a class="btn btn--line" href="/discipleship/">About discipleship</a>
+        <a class="btn btn--line" href="/prayer/">Request prayer</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+${closingBand({ head: "Come as you are. Bring your questions." })}`,
   };
 }
 

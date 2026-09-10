@@ -92,6 +92,8 @@ placeholder to explain away.
 | `team` | `/about/` | `{ name, role, bio, email }` |
 | `campaigns` | `/give/` | `{ title, blurb, goal, raised, closes, url }` |
 | `posts` | generates `/news/` and adds it to the footer | `{ slug, title, date, summary, body: [] }` |
+| `gallery` | `/about/` | `{ src, alt, caption, event, consent, video, poster }` |
+| `bibleStudy` | generates `/bible-study/` and adds it to the nav when `active: true` | see the object in `config.mjs` |
 
 Two rules that are not negotiable:
 
@@ -99,3 +101,27 @@ Two rules that are not negotiable:
   date the person gave written permission for their story to appear.
 - **Leave `goal` and `raised` out entirely unless the figures are real.** Never
   put an aspirational number in either one.
+- **A photo without a `consent` date does not publish either.** Same rule as a
+  testimonial. Put image files in `static/img/gallery/`.
+
+## Ticketing
+
+An event supports three states, in order of preference:
+
+1. `ticketUrl` set (a Stripe payment link or any checkout URL) plus `priceLabel`
+   gives a "Get tickets" button and shows the price.
+2. `registerUrl` set gives a "Register" button pointing at an external page.
+3. Neither set keeps the built-in RSVP form on `/events/`, which is the right
+   default for a free event: it costs the visitor nothing and the list stays
+   with KAM rather than with a ticketing company.
+
+## Bible study
+
+`bibleStudy.active = true` generates `/bible-study/` and puts it in the nav.
+
+Zoom is **linked, never embedded**. The Zoom Meeting SDK needs a server-side
+signature and behaves badly in mobile Safari, which is where most of this
+congregation will be. A Join button hands off to the Zoom app and just works.
+
+The meeting passcode is deliberately not rendered on the page. People who sign
+up get it by email.
