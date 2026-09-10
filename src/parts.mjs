@@ -315,3 +315,100 @@ export function eventJsonLd(e) {
     : { "@type": "Place", name: e.venue, address: { "@type": "PostalAddress", streetAddress: e.address, addressLocality: "Greenville", addressRegion: "SC", addressCountry: "US" } };
   return o;
 }
+
+/* --- Reusable content components ------------------------------------------
+   Each renders only when its array in config.mjs has entries, so an empty
+   section never ships. That is the whole point: a stories page with a stock
+   photo and invented copy is worse than one that says the shelf is empty.
+   ------------------------------------------------------------------------- */
+
+export function testimonialList(items, { heading = "Stories of restoration" } = {}) {
+  if (!items || !items.length) return "";
+  const cards = items
+    .filter((t) => t.consent)
+    .map(
+      (t) => `
+      <figure class="story">
+        <blockquote><p>${esc(t.quote)}</p></blockquote>
+        ${(t.body || []).map((b) => `<p class="body">${esc(b)}</p>`).join("")}
+        <figcaption>
+          <span class="story__who">${esc(t.name)}</span>
+          ${t.program ? `<span class="story__prog">${esc(t.program)}</span>` : ""}
+        </figcaption>
+      </figure>`
+    )
+    .join("");
+  if (!cards) return "";
+  return `
+<section class="sec ground--dark" id="stories">
+  <div class="wrap wrap--mid">
+    <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Broken doesn't mean finished</span>
+      <h2 class="h-lg">${esc(heading)}</h2>
+    </div>
+    <div class="stories" data-sc-in data-sc-stagger="80">${cards}</div>
+  </div>
+</section>`;
+}
+
+export function teamList(items) {
+  if (!items || !items.length) return "";
+  return `
+<section class="sec ground--cream" id="team">
+  <div class="wrap">
+    <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Who you will actually meet</span>
+      <h2 class="h-lg">The people doing this.</h2>
+    </div>
+    <div class="zig" data-sc-in data-sc-stagger="70">
+      ${items
+        .map(
+          (m) => `
+      <div class="zig__row">
+        <div>
+          <h3 class="zig__h">${esc(m.name)}</h3>
+          <p class="rule-label rule-label--soft" style="margin-top:var(--sc-2)">${esc(m.role)}</p>
+        </div>
+        <div>
+          <p class="body">${esc(m.bio)}</p>
+          ${m.email ? `<p style="margin-top:var(--sc-3)"><a class="tlink" href="mailto:${esc(m.email)}">${esc(m.email)}</a></p>` : ""}
+        </div>
+      </div>`
+        )
+        .join("")}
+    </div>
+  </div>
+</section>`;
+}
+
+export function campaignList(items) {
+  if (!items || !items.length) return "";
+  return `
+<section class="sec ground--dark" id="campaigns">
+  <div class="wrap">
+    <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Open campaigns</span>
+      <h2 class="h-lg">What we are raising for right now.</h2>
+    </div>
+    <div class="plate-grid" data-sc-in data-sc-stagger="70">
+      ${items
+        .map(
+          (c) => `
+      <a class="plate" href="${c.url && c.url !== "TBD" ? esc(c.url) : "/give/#give-form"}"${c.url && c.url !== "TBD" ? ' target="_blank" rel="noopener"' : ""}>
+        <h3>${esc(c.title)}</h3>
+        <p>${esc(c.blurb)}</p>
+        ${
+          typeof c.goal === "number" && typeof c.raised === "number"
+            ? `<p class="plate__meter"><b>$${c.raised.toLocaleString()}</b> of $${c.goal.toLocaleString()}</p>
+               <span class="meter" aria-hidden="true"><i style="--fill:${Math.min(1, c.raised / c.goal).toFixed(3)}"></i></span>`
+            : ""
+        }
+        ${c.closes ? `<p class="plate__closes">Closes ${esc(c.closes)}</p>` : ""}
+        ${c.url && c.url !== "TBD" ? `<span class="plate__go">Give to this</span>` : `<span class="plate__go">Ask us about this</span>`}
+      </a>`
+        )
+        .join("")}
+    </div>
+  </div>
+</section>`;
+}

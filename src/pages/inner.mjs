@@ -2,10 +2,12 @@ import { esc, isTBD, orTBA, giveHref, giveAttrs } from "../layout.mjs";
 import {
   site, programs, events, volunteerRoles, partnerTypes, model,
   discipleshipTrack, givingDesignations, meetingFlow, scriptures, journeys,
+  testimonials, team, campaigns, posts,
 } from "../config.mjs";
 import {
   pageHead, crumb, modelSection, programGrid, eventCard, upcoming,
   doorsSection, closingBand, crisisBlock, form, orgJsonLd, eventJsonLd, programPlate,
+  testimonialList, teamList, campaignList,
 } from "../parts.mjs";
 
 /* ============================================================== ABOUT ===== */
@@ -76,7 +78,8 @@ ${pageHead({
   </div>
 </section>
 
-${modelSection({ ground: "cream", heading: "How we serve, in order.", lede: "Six stations. Each one earns the right to the next." })}
+${teamList(team)}
+${modelSection({ ground: team.length ? "dark" : "cream", heading: "How we serve, in order.", lede: "Six stations. Each one earns the right to the next." })}
 ${closingBand()}`,
   };
 }
@@ -534,6 +537,8 @@ ${pageHead({
   </div>
 </section>
 
+${campaignList(campaigns)}
+
 <section class="sec ground--cream">
   <div class="wrap">
     <div class="doors" data-sc-in data-sc-stagger="80">
@@ -553,7 +558,7 @@ ${pageHead({
   </div>
 </section>
 
-<section class="sec ground--dark">
+<section class="sec ground--dark" id="give-form">
   <div class="wrap">
     <div class="split-2">
       <div class="stack" data-sc-in data-sc-stagger="70">
@@ -790,30 +795,32 @@ ${closingBand({ head: "Help us build a place where lives are changed and the Kin
 
 /* =========================================================== STORIES ====== */
 export function stories() {
-  return {
-    path: "/stories/",
-    title: "Stories of Restoration",
-    description:
-      "Stories of restoration from Kingdom Assembly Missions. Broken doesn't mean finished.",
-    jsonld: [orgJsonLd()],
-    body: `
+  const has = testimonials.filter((t) => t.consent).length > 0;
+
+  const body = has
+    ? `
 ${pageHead({
-      crumb: crumb({ label: "Home", href: "/" }, { label: "Stories" }),
-      label: "Stories of restoration",
-      h1: "Broken doesn't mean finished.",
-      lede: "This is where testimonies from people whose lives were changed through KAM will live.",
-    })}
+        crumb: crumb({ label: "Home", href: "/" }, { label: "Stories" }),
+        label: "Stories of restoration",
+        h1: "Broken doesn't mean finished.",
+        lede: "Testimonies from people whose lives were changed through Kingdom Assembly Missions, told in their own words and published with their permission.",
+      })}
+${testimonialList(testimonials, { heading: "In their own words." })}
+${consentNote()}
+${closingBand({ head: "Broken doesn't mean finished." })}`
+    : `
+${pageHead({
+        crumb: crumb({ label: "Home", href: "/" }, { label: "Stories" }),
+        label: "Stories of restoration",
+        h1: "Broken doesn't mean finished.",
+        lede: "This is where testimonies from people whose lives were changed through KAM will live.",
+      })}
 
 <section class="sec sec--tight ground--dark">
   <div class="wrap wrap--mid">
     <div class="stack" data-sc-in data-sc-stagger="70">
       <h2 class="h-md">Why this page is empty right now</h2>
       <p class="body">Because we are new, and because we are not willing to fill it with a stock photo and a paragraph somebody in marketing wrote. When there is a real story here, it will be because a real person decided they wanted it told.</p>
-
-      <h2 class="h-md">How we handle a story</h2>
-      <p class="body">Nothing goes on this page without explicit, informed, written permission from the person whose story it is. Nobody is asked to disclose anything they are not ready to say out loud. Names, photos and details are used only to the degree the person chooses, and anyone can ask us to take their story down at any time, for any reason, and we will do it that day.</p>
-      <p class="body">If your safety depends on your story not being findable, tell us and it never goes online at all. That is not a special exception. It is the default we start from.</p>
-
       <h2 class="h-md">Do you have a story?</h2>
       <p class="body">If God did something in your life through Kingdom Assembly Missions and you want to say so, we would be honored to hear it. There is no pressure and no deadline.</p>
       <div class="btn-row" style="margin-top:var(--sc-5)">
@@ -822,8 +829,71 @@ ${pageHead({
     </div>
   </div>
 </section>
+${consentNote()}
+${closingBand({ head: "Broken doesn't mean finished." })}`;
 
-${closingBand({ head: "Broken doesn't mean finished." })}`,
+  return {
+    path: "/stories/",
+    title: "Stories of Restoration",
+    description:
+      "Stories of restoration from Kingdom Assembly Missions. Broken doesn't mean finished.",
+    jsonld: [orgJsonLd()],
+    body,
+  };
+}
+
+function consentNote() {
+  return `
+<section class="sec sec--tight ground--cream">
+  <div class="wrap wrap--mid">
+    <div class="stack" data-sc-in data-sc-stagger="70">
+      <span class="rule-label">How we handle a story</span>
+      <h2 class="h-md">Nothing here is published without permission.</h2>
+      <p class="body">Nothing goes on this page without explicit, informed, written permission from the person whose story it is. Nobody is asked to disclose anything they are not ready to say out loud. Names, photos and details are used only to the degree the person chooses, and anyone can ask us to take their story down at any time, for any reason, and we will do it that day.</p>
+      <p class="body">If your safety depends on your story not being findable, tell us and it never goes online at all. That is not a special exception. It is the default we start from.</p>
+    </div>
+  </div>
+</section>`;
+}
+
+/* ============================================================== NEWS ====== */
+/* Generated only when there is something to say. An empty blog is worse than
+   no blog, so build.mjs skips this page entirely while `posts` is empty. */
+export function news() {
+  const items = posts
+    .slice()
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+    .map(
+      (post) => `
+      <article class="post" id="${esc(post.slug)}">
+        <p class="rule-label">${new Date(post.date + "T12:00:00").toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</p>
+        <h2 class="h-md">${esc(post.title)}</h2>
+        ${post.summary ? `<p class="lede">${esc(post.summary)}</p>` : ""}
+        ${(post.body || []).map((b) => `<p class="body">${esc(b)}</p>`).join("")}
+      </article>`
+    )
+    .join("");
+
+  return {
+    path: "/news/",
+    title: "News and Updates",
+    description: "News and updates from Kingdom Assembly Missions in Greenville, SC.",
+    jsonld: [orgJsonLd()],
+    body: `
+${pageHead({
+      crumb: crumb({ label: "Home", href: "/" }, { label: "News" }),
+      label: "News and updates",
+      h1: "What has been happening.",
+      lede: "Outreach recaps, what is coming up, and what the community has been telling us.",
+    })}
+
+<section class="sec sec--tight ground--cream">
+  <div class="wrap wrap--mid">
+    <div class="posts" data-sc-in data-sc-stagger="70">${items}</div>
+  </div>
+</section>
+
+${closingBand()}`,
   };
 }
 

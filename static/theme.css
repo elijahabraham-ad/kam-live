@@ -807,3 +807,44 @@ body { background: var(--sc-canvas); }
     transition: none !important;
   }
 }
+
+/* ----------------------------------------------- stories, posts, campaigns -
+   All three render only when their array in config.mjs has entries, so these
+   rules sit unused until KAM has something real to put in them.
+   -------------------------------------------------------------------------- */
+.stories { display: grid; gap: clamp(2rem, 5vw, 4rem); }
+.story { margin: 0; padding-top: var(--sc-6); border-top: 1px solid var(--sc-hairline); }
+.story:first-child { border-top: 0; padding-top: 0; }
+.story blockquote { margin: 0 0 var(--sc-5); }
+.story blockquote p {
+  margin: 0; font-family: var(--sc-font-display); font-weight: 400;
+  font-size: clamp(1.4rem, 3.4vw, 2.1rem); line-height: 1.25; letter-spacing: -0.02em;
+  color: var(--sc-ink); text-wrap: pretty; max-width: 26ch;
+}
+.story blockquote p::before { content: "\201C"; color: var(--sc-accent); }
+.story blockquote p::after { content: "\201D"; color: var(--sc-accent); }
+.story .body + .body { margin-top: var(--sc-4); }
+.story figcaption {
+  margin-top: var(--sc-5); display: flex; flex-wrap: wrap; gap: var(--sc-2) var(--sc-4);
+  align-items: baseline;
+}
+.story__who { font-weight: 700; letter-spacing: 0.04em; color: var(--sc-ink); }
+.story__prog {
+  font-size: 0.74rem; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--sc-accent);
+}
+
+.posts { display: grid; gap: clamp(2.5rem, 6vw, 4.5rem); }
+.post { padding-top: var(--sc-6); border-top: 1px solid var(--sc-hairline); }
+.post:first-child { border-top: 0; padding-top: 0; }
+.post h2 { margin: var(--sc-3) 0 var(--sc-4); }
+.post .body + .body { margin-top: var(--sc-4); }
+
+.plate__meter { margin-top: auto !important; font-size: 0.92rem; }
+.plate__meter b { color: var(--sc-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
+.meter {
+  display: block; height: 3px; border-radius: 2px;
+  background: color-mix(in oklab, #D9B450 22%, transparent); overflow: hidden;
+}
+.meter i { display: block; height: 100%; background: #D9B450; transform-origin: left; transform: scaleX(var(--fill, 0)); }
+.plate__closes { font-size: 0.82rem !important; letter-spacing: 0.02em; }

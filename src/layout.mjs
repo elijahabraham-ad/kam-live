@@ -1,4 +1,4 @@
-import { site, nav } from "./config.mjs";
+import { site, nav, posts } from "./config.mjs";
 
 export const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -98,6 +98,7 @@ function footer() {
       <a href="/partner/">Partner with us</a>
       <a href="/give/">Give</a>
       <a href="/stories/">Stories of restoration</a>
+      ${posts.length ? '<a href="/news/">News and updates</a>' : ""}
     </nav>
 
     <nav class="foot__col" aria-label="Reach us">

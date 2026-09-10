@@ -79,3 +79,23 @@ domain.
 **When the real domain is connected:** delete those two `env` lines from the
 workflow, add a `static/CNAME` file containing the domain, point the domain's
 DNS at GitHub Pages, and set `site.origin` in `src/config.mjs`.
+
+## Reusable content components
+
+Four arrays in `src/config.mjs` drive optional sections. **Each renders only when
+its array has entries**, so an empty section never ships and there is never a
+placeholder to explain away.
+
+| Array | Renders on | Shape |
+|---|---|---|
+| `testimonials` | `/stories/` | `{ name, program, quote, body: [], consent }` |
+| `team` | `/about/` | `{ name, role, bio, email }` |
+| `campaigns` | `/give/` | `{ title, blurb, goal, raised, closes, url }` |
+| `posts` | generates `/news/` and adds it to the footer | `{ slug, title, date, summary, body: [] }` |
+
+Two rules that are not negotiable:
+
+- **A testimonial without a `consent` date does not publish.** `consent` is the
+  date the person gave written permission for their story to appear.
+- **Leave `goal` and `raised` out entirely unless the figures are real.** Never
+  put an aspirational number in either one.

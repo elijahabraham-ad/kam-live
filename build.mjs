@@ -71,6 +71,8 @@ async function collect() {
     inner.prayer(),
     inner.contact(),
     inner.needHelp(),
+    // Generated only when there is something to say. An empty blog never ships.
+    ...(cfg.posts.length ? [inner.news()] : []),
     inner.notFound(),
   ];
 

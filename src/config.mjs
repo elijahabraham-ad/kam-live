@@ -275,6 +275,34 @@ export const events = [
   },
 ];
 
+/* --- Stories of restoration.
+   Nothing goes here without explicit written permission from the person whose
+   story it is. While this array is empty the stories page says so honestly
+   rather than showing a stock photo and invented copy.
+   Shape: { name, role, quote, body, program, consent }
+   `name` may be a first name only, or "Anonymous". `consent` is the date the
+   person gave written permission, and a story without one does not publish.
+   ------------------------------------------------------------------------- */
+export const testimonials = [];
+
+/* --- Team. Renders on the About page once there is a team to show.
+   Shape: { name, role, bio, email }
+   ------------------------------------------------------------------------- */
+export const team = [];
+
+/* --- Named giving campaigns. Renders on the Give page when non-empty.
+   Shape: { title, blurb, goal, raised, closes, url }
+   Leave `goal` and `raised` out entirely unless the figures are real. Never
+   put an aspirational number in either one.
+   ------------------------------------------------------------------------- */
+export const campaigns = [];
+
+/* --- News and updates. A /news/ page is generated ONLY when this has posts,
+   so an empty blog never ships.
+   Shape: { slug, title, date, summary, body: ["paragraph", ...] }
+   ------------------------------------------------------------------------- */
+export const posts = [];
+
 /* --- Volunteer roles ------------------------------------------------------ */
 export const volunteerRoles = [
   "Outreach",
