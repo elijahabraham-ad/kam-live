@@ -144,10 +144,26 @@
 
       function say(msg, kind) {
         if (!status) return;
+        // The role and aria-live are already in the markup. A live region
+        // created in the same tick as its content is generally not announced,
+        // so only the text and the styling change here.
         status.hidden = false;
         status.className = "form__status form__status--" + kind;
         status.textContent = msg;
-        status.setAttribute("role", kind === "err" ? "alert" : "status");
+      }
+
+      function labelFor(field) {
+        var lab = form.querySelector('label[for="' + field.id + '"]');
+        var txt = lab ? lab.textContent : field.name;
+        return txt.replace(/\*/g, "").replace(/\(optional\)/i, "").trim();
+      }
+
+      function firstInvalid() {
+        var fields = form.querySelectorAll("input[required], select[required], textarea[required]");
+        for (var i = 0; i < fields.length; i++) {
+          if (!fields[i].checkValidity()) return fields[i];
+        }
+        return null;
       }
 
       form.addEventListener("submit", function (e) {
@@ -156,6 +172,14 @@
         // Honeypot: a real person never fills this.
         var hp = form.querySelector('input[name="_hp"]');
         if (hp && hp.value) { say("Thank you. Your message has been received.", "ok"); return; }
+
+        var invalid = firstInvalid();
+        if (invalid) {
+          say("Please fill in " + labelFor(invalid) + " before sending.", "err");
+          invalid.focus();
+          if (status) status.focus();
+          return;
+        }
 
         if (!live) {
           say(
@@ -199,7 +223,9 @@
     var btn = document.querySelector("[data-exit]");
     if (!btn) return;
     function go() {
-      try { window.open("https://www.google.com/search?q=weather", "_blank"); } catch (e) {}
+      // ONE destination. An earlier version also opened a second tab, which is
+      // the opposite of what a quick exit is for: it left two tabs open and the
+      // foreground one on a Google CAPTCHA interstitial.
       location.replace("https://www.weather.com/");
     }
     btn.addEventListener("click", go);

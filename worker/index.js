@@ -26,7 +26,10 @@ const FORMS = {
   help: { subject: "*** SOMEONE NEEDS HELP ***", to: "help", confidential: true, priority: true },
 };
 
-/* Fields whose contents are never echoed into a subject line or a log. */
+/* Free-text fields that may carry something private. They are never echoed into
+   a subject line, and they are moved to the END of the email body, under a
+   divider, so a notification preview on a lock screen shows who wrote in rather
+   than what they wrote. */
 const SENSITIVE = new Set(["request", "note", "message", "reach", "skills"]);
 
 const MAX_FIELD = 4000;
@@ -75,7 +78,6 @@ export default {
     if (request.method !== "POST") return json({ error: "method" }, 405, headers);
 
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-    if (tooFast(ip)) return json({ error: "slow down" }, 429, headers);
 
     let form;
     try {
@@ -90,6 +92,12 @@ export default {
     const kind = (form.get("_form") || "contact").toString();
     const spec = FORMS[kind];
     if (!spec) return json({ error: "unknown form" }, 400, headers);
+
+    /* The burst limiter is deliberately skipped for the confidential forms.
+       A shelter, a library or a church wifi puts many people behind one IP, and
+       turning away the second person who reached out for help that minute is a
+       far worse failure than accepting a duplicate. */
+    if (!spec.confidential && tooFast(ip)) return json({ error: "slow down" }, 429, headers);
 
     const fields = [];
     let count = 0;
@@ -107,21 +115,28 @@ export default {
 
     const label = (k) => k.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     const name = fields.find((f) => f.key === "name")?.value;
+
+    // Ordinary fields first, anything sensitive last.
+    const plain = fields.filter((f) => !SENSITIVE.has(f.key));
+    const priv = fields.filter((f) => SENSITIVE.has(f.key));
     const subject =
       (spec.priority ? "[URGENT] " : "") +
       spec.subject +
       (name && !spec.confidential ? ` from ${name}` : "");
 
-    const rows = fields
-      .map(
-        (f) =>
-          `<tr><td style="padding:8px 16px 8px 0;vertical-align:top;color:#7a7267;font:600 12px/1.4 system-ui;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap">${esc(
-            label(f.key)
-          )}</td><td style="padding:8px 0;vertical-align:top;color:#14110c;font:400 15px/1.55 system-ui;white-space:pre-wrap">${esc(
-            f.value
-          )}</td></tr>`
-      )
-      .join("");
+    const row = (f) => 
+      `<tr><td style="padding:8px 16px 8px 0;vertical-align:top;color:#7a7267;font:600 12px/1.4 system-ui;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap">${esc(
+        label(f.key)
+      )}</td><td style="padding:8px 0;vertical-align:top;color:#14110c;font:400 15px/1.55 system-ui;white-space:pre-wrap">${esc(
+        f.value
+      )}</td></tr>`;
+
+    const rows =
+      plain.map(row).join("") +
+      (priv.length
+        ? `<tr><td colspan="2" style="padding:18px 0 6px;border-top:1px solid #e7e0d2"></td></tr>` +
+          priv.map(row).join("")
+        : "");
 
     const notice = spec.confidential
       ? `<p style="margin:0 0 20px;padding:12px 16px;background:#fdf3e6;border-left:3px solid #8a6a14;color:#3b3327;font:400 14px/1.6 system-ui">This message is confidential. Do not forward it, quote it in a group chat, or read it aloud without the sender's permission.</p>`
@@ -137,7 +152,7 @@ ${notice}
     )} at ${new Date().toISOString()}</p>
 </div>`;
 
-    const text = fields.map((f) => `${label(f.key)}:\n${f.value}`).join("\n\n");
+    const text = plain.concat(priv).map((f) => `${label(f.key)}:\n${f.value}`).join("\n\n");
 
     const to = env[`TO_${spec.to.toUpperCase()}`] || env.TO_GENERAL;
     if (!env.RESEND_API_KEY || !to) {

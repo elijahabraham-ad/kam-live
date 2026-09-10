@@ -7,7 +7,7 @@ import {
 import {
   pageHead, crumb, modelSection, programGrid, eventCard, upcoming,
   doorsSection, closingBand, crisisBlock, form, orgJsonLd, eventJsonLd, programPlate,
-  testimonialList, teamList, campaignList,
+  testimonialList, teamList, campaignList, eventDate,
 } from "../parts.mjs";
 
 /* ============================================================== ABOUT ===== */
@@ -379,16 +379,16 @@ export function eventsPage() {
 
   const detail = up
     .map(
-      (e) => `
+      (e) => `${(() => { const L = eventDate(e).label; return `
 <section class="sec ground--cream">
   <div class="wrap">
     <div class="split-side">
       <div class="stack sticky-side" data-sc-in data-sc-stagger="70">
-        <span class="rule-label">${esc(e.dateLabel)}</span>
+        <span class="rule-label">${esc(L)}</span>
         <h2 class="h-lg">${esc(e.title)}</h2>
         <p class="body">${esc(e.body)}</p>
         <dl class="event__meta" style="margin-top:var(--sc-5)">
-          <div><dt>When</dt><dd>${esc(e.dateLabel)}, ${orTBA(e.time, "Time TBA")}</dd></div>
+          <div><dt>When</dt><dd>${esc(L)}, ${orTBA(e.time, "Time TBA")}</dd></div>
           <div><dt>Where</dt><dd>${orTBA(e.venue, "Venue TBA")}</dd></div>
           <div><dt>Address</dt><dd>${orTBA(e.address, "Address TBA")}</dd></div>
           <div><dt>Cost</dt><dd>${esc(e.cost)}</dd></div>
@@ -427,7 +427,7 @@ export function eventsPage() {
       </div>
     </div>
   </div>
-</section>`
+</section>`; })()}`
     )
     .join("");
 
@@ -974,7 +974,7 @@ ${pageHead({
       <div class="stack sticky-side" data-sc-in data-sc-stagger="70">
         ${contactLines.length
           ? `<dl class="event__meta">${contactLines.join("")}</dl>`
-          : `<div class="notice"><span class="rule-label">Direct contact details</span><p>Our public email and phone line are being set up. Until then this form is the fastest way to reach us, and it goes straight to a person.</p></div>`}
+          : `<div class="notice"><span class="rule-label">We are not reachable yet, and we would rather say so</span><p>Kingdom Assembly Missions is standing up its public email and phone line right now, and the form below is not connected either. Nothing you send today will arrive.</p><p><strong style="color:var(--sc-ink)">If you need help now, use the crisis numbers on the help page.</strong> They are answered 24 hours a day by people who are not us. For anything else, please check back shortly.</p></div>`}
 
         <div class="notice" style="margin-top:var(--sc-5)">
           <span class="rule-label">If you need help right now</span>
@@ -1031,13 +1031,12 @@ export function needHelp() {
 
   return {
     path: "/need-help/",
+    safety: true,
     title: "I Need Help",
     description:
       "Immediate help and 24-hour crisis numbers: domestic violence, suicide and crisis, substance use. Plus how to reach Kingdom Assembly Missions confidentially.",
     jsonld: [orgJsonLd()],
     body: `
-<div class="exit-bar"><button type="button" data-exit>Leave this site</button></div>
-
 ${pageHead({
       label: "Confidential",
       h1: "You do not have to explain anything to get help.",
@@ -1052,7 +1051,8 @@ ${pageHead({
     </div>
     <div class="notice" style="margin-top:var(--sc-7)">
       <span class="rule-label">About the button in the corner</span>
-      <p>The red button leaves this site immediately and opens a weather page instead. Pressing Escape three times quickly does the same thing.</p>
+      <p>The red button at the top of this page leaves the site immediately and loads a weather page instead. Pressing Escape three times quickly does the same thing.</p>
+      <p><strong style="color:var(--sc-ink)">Pressing Back can bring this site back.</strong> Closing the tab entirely is safer than leaving it open on the weather page.</p>
       <p>It cannot erase your browser history on its own. If someone checks the device you are using, open your browser settings and clear your history, or use a device that is not monitored, such as a library computer or a friend's phone.</p>
     </div>
   </div>

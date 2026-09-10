@@ -15,12 +15,12 @@ export function home() {
 <section class="title-page ground--dark">
   <span class="title-page__glow" aria-hidden="true"></span>
   <div class="title-page__plate" aria-hidden="true" data-sc-parallax="0.5">
-    <img src="/img/kam-emblem.png" width="779" height="900" alt="" decoding="async" fetchpriority="high">
+    <img src="/img/kam-emblem.webp" width="800" height="924" alt="" decoding="async" fetchpriority="high">
   </div>
 
   <div class="wrap title-page__inner">
     <div class="title-page__seal">
-      <img src="/img/kam-emblem.png" width="779" height="900" alt="Kingdom Assembly Missions" decoding="async">
+      <img src="/img/kam-emblem-sm.webp" width="208" height="240" alt="Kingdom Assembly Missions" decoding="async">
       <span>Kingdom Assembly Missions<br>Greenville, South Carolina<br>Love. Serve. Impact.</span>
     </div>
 

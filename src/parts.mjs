@@ -1,6 +1,20 @@
 import { esc, isTBD, orTBA, giveHref, giveAttrs } from "./layout.mjs";
 import { site, model, programs, events, crisisResources } from "./config.mjs";
 
+/* The weekday is DERIVED, never typed. A hand-written "Thursday, October 9"
+   shipped once and 9 October 2026 is a Friday, which is the kind of error that
+   only shows up when somebody turns up on the wrong day. */
+export function eventDate(e) {
+  const d = new Date(e.date + "T12:00:00");
+  return {
+    d,
+    month: d.toLocaleString("en-US", { month: "long" }),
+    day: d.getDate(),
+    year: d.getFullYear(),
+    label: d.toLocaleString("en-US", { weekday: "long", month: "long", day: "numeric" }),
+  };
+}
+
 /* --------------------------------------------------------------- headers -- */
 export function pageHead({ crumb, label, h1, lede, ground = "dark", actions = "" }) {
   return `
@@ -84,10 +98,7 @@ export function programGrid({ ground = "dark" } = {}) {
 
 /* -------------------------------------------------------------- an event -- */
 export function eventCard(e, { level = 2 } = {}) {
-  const d = new Date(e.date + "T12:00:00");
-  const mon = d.toLocaleString("en-US", { month: "long" });
-  const day = d.getDate();
-  const yr = d.getFullYear();
+  const { month: mon, day, year: yr, label } = eventDate(e);
   const H = `h${level}`;
 
   const register = isTBD(e.registerUrl)
@@ -107,7 +118,7 @@ export function eventCard(e, { level = 2 } = {}) {
       <${H} class="h-md">${esc(e.title)}</${H}>
       <p class="lede">${esc(e.blurb)}</p>
       <dl class="event__meta">
-        <div><dt>When</dt><dd>${esc(e.dateLabel)}, ${orTBA(e.time, "Time TBA")}</dd></div>
+        <div><dt>When</dt><dd>${esc(label)}, ${orTBA(e.time, "Time TBA")}</dd></div>
         <div><dt>Where</dt><dd>${orTBA(e.venue, "Venue TBA")}${e.city ? `, ${esc(e.city)}` : ""}</dd></div>
         <div><dt>Cost</dt><dd>${esc(e.cost)}</dd></div>
       </dl>
@@ -159,7 +170,7 @@ export function closingBand({
 <section class="sec statement close-band ground--${ground}">
   <span class="close-band__glow" aria-hidden="true"></span>
   <div class="wrap wrap--mid close-band__inner" data-sc-in data-sc-stagger="80">
-    <img class="close-band__seal" src="/img/kam-emblem-sm.png" width="104" height="120" alt="" decoding="async">
+    <img class="close-band__seal" src="/img/kam-emblem-sm.webp" width="208" height="240" alt="" loading="lazy" decoding="async">
     <h2 class="h-lg">${esc(head)}</h2>
     <div class="btn-row" style="justify-content:center">
       <a class="btn btn--gold btn--lg" href="${giveHref()}"${giveAttrs()}>Give today</a>
@@ -198,12 +209,16 @@ ${intro ? `<p class="lede" style="margin-bottom:var(--sc-6)">If you are in immed
  *    name, label, hint, required, options:[], placeholder, row:true }
  */
 export function form({ id, submit = "Send", success, fields, note = "" }) {
+  /* Every id is scoped to its form. Two forms on one page (events has an RSVP
+     and a newsletter signup) otherwise share #name and #email, and a <label>
+     then focuses the wrong form entirely. */
+  const uid = (n) => `${id}-${n}`;
   const body = fields
     .map((f) => {
       const req = f.required ? " required" : "";
       const rq = f.required ? ' <span aria-hidden="true" style="color:var(--sc-accent)">*</span>' : "";
-      const hint = f.hint ? `<p class="hint" id="${f.name}-hint">${f.hint}</p>` : "";
-      const desc = f.hint ? ` aria-describedby="${f.name}-hint"` : "";
+      const hint = f.hint ? `<p class="hint" id="${uid(f.name)}-hint">${f.hint}</p>` : "";
+      const desc = f.hint ? ` aria-describedby="${uid(f.name)}-hint"` : "";
 
       if (f.type === "checkbox") {
         return `
@@ -235,9 +250,9 @@ export function form({ id, submit = "Send", success, fields, note = "" }) {
         const opts = f.options.map((o) => `<option value="${esc(o)}">${esc(o)}</option>`).join("");
         return `
       <div class="field">
-        <label for="${f.name}">${esc(f.label)}${rq}</label>
+        <label for="${uid(f.name)}">${esc(f.label)}${rq}</label>
         ${hint}
-        <select id="${f.name}" name="${f.name}"${req}${desc}>
+        <select id="${uid(f.name)}" name="${f.name}"${req}${desc}>
           <option value="">Choose one</option>
           ${opts}
         </select>
@@ -247,17 +262,17 @@ export function form({ id, submit = "Send", success, fields, note = "" }) {
       if (f.type === "textarea") {
         return `
       <div class="field">
-        <label for="${f.name}">${esc(f.label)}${rq}</label>
+        <label for="${uid(f.name)}">${esc(f.label)}${rq}</label>
         ${hint}
-        <textarea id="${f.name}" name="${f.name}" placeholder="${esc(f.placeholder || "")}"${req}${desc}></textarea>
+        <textarea id="${uid(f.name)}" name="${f.name}" placeholder="${esc(f.placeholder || "")}"${req}${desc}></textarea>
       </div>`;
       }
 
       return `
       <div class="field">
-        <label for="${f.name}">${esc(f.label)}${rq}</label>
+        <label for="${uid(f.name)}">${esc(f.label)}${rq}</label>
         ${hint}
-        <input type="${f.type}" id="${f.name}" name="${f.name}" placeholder="${esc(f.placeholder || "")}"${req}${desc}${f.autocomplete ? ` autocomplete="${f.autocomplete}"` : ""}>
+        <input type="${f.type}" id="${uid(f.name)}" name="${f.name}" placeholder="${esc(f.placeholder || "")}"${req}${desc}${f.autocomplete ? ` autocomplete="${f.autocomplete}"` : ""}>
       </div>`;
     })
     .join("");
@@ -267,12 +282,12 @@ export function form({ id, submit = "Send", success, fields, note = "" }) {
   return `
 <form class="form" data-kam-form="${id}"${success ? ` data-success="${esc(success)}"` : ""} novalidate>
   ${body}
-  <label class="hp" aria-hidden="true">Leave this field empty<input type="text" name="_hp" tabindex="-1" autocomplete="off"></label>
+  <div class="hp"><label for="${id}-hp">Leave this field empty</label><input type="text" id="${id}-hp" name="_hp" tabindex="-1" autocomplete="off"></div>
   ${note ? `<p class="hint" style="color:var(--sc-ink-soft);font-size:0.88rem;line-height:1.55">${note}</p>` : ""}
   <div class="btn-row">
     <button class="btn btn--gold btn--lg" type="submit">${esc(submit)}</button>
   </div>
-  <p class="form__status" hidden></p>
+  <p class="form__status" role="status" aria-live="polite" tabindex="-1" hidden></p>
 </form>`;
 }
 

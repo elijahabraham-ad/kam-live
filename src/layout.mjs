@@ -17,7 +17,7 @@ export const giveAttrs = () =>
 const FONTS =
   "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..800&family=Instrument+Sans:wght@400..700&display=swap";
 
-function header(current) {
+function header(current, safety) {
   const links = nav
     .map((n) => {
       const on = current === n.href ? ' aria-current="page"' : "";
@@ -28,12 +28,14 @@ function header(current) {
 <a class="skip" href="#main">Skip to content</a>
 <header class="bar" data-bar>
   <a class="bar__mark" href="/" aria-label="${esc(site.name)} home">
-    <img src="/img/kam-emblem-sm.png" width="104" height="120" alt="" decoding="async">
+    <img src="/img/kam-emblem-sm.webp" width="208" height="240" alt="" decoding="async">
     <span class="bar__mark-txt"><b>Kingdom Assembly</b><i>Missions</i></span>
   </a>
   <nav class="bar__nav" aria-label="Main">${links}</nav>
   <div class="bar__end">
-    <a class="btn btn--gold bar__give" href="${giveHref()}"${giveAttrs()}>Give</a>
+    ${safety
+      ? `<button class="bar__exit" type="button" data-exit>Leave this site</button>`
+      : `<a class="btn btn--gold bar__give" href="${giveHref()}"${giveAttrs()}>Give</a>`}
     <button class="bar__burger" type="button" data-menu-open aria-expanded="false" aria-controls="sitemenu">
       <span class="bar__burger-ico" aria-hidden="true"><i></i><i></i><i></i></span>
       <em>Menu</em>
@@ -75,7 +77,7 @@ function footer() {
 <footer class="foot">
   <div class="foot__grid wrap">
     <div class="foot__brand">
-      <img src="/img/kam-emblem-sm.png" width="104" height="120" alt="" decoding="async">
+      <img src="/img/kam-emblem-sm.webp" width="208" height="240" alt="" loading="lazy" decoding="async">
       <p class="foot__stmt">Reaching the broken.<br>Restoring the community.<br>Advancing the Kingdom.</p>
       <p class="foot__where">${esc(site.city)}, ${esc(site.regionCode)}</p>
     </div>
@@ -115,6 +117,7 @@ function footer() {
   <div class="foot__base wrap">
     <p>&copy; ${new Date().getFullYear()} Kingdom Assembly Missions. Love. Serve. Impact.</p>
     <p class="foot__note">In immediate danger? Call <a href="tel:911">911</a>. Domestic violence: <a href="tel:18007997233">1-800-799-7233</a>. Crisis or suicide: <a href="tel:988">988</a>.</p>
+    <p class="foot__credit">Scripture quotations are from the ESV&reg; Bible (The Holy Bible, English Standard Version&reg;), copyright &copy; 2001 by Crossway, a publishing ministry of Good News Publishers. Used by permission. All rights reserved.</p>
   </div>
 </footer>`;
 }
@@ -124,7 +127,9 @@ function footer() {
  */
 export function render(page) {
   const canonical = site.origin.replace(/\/$/, "") + page.path;
-  const title = page.title.includes(site.abbr) || page.title.includes("Kingdom Assembly")
+  // Match the full name only. Matching the "KAM" abbreviation too meant
+  // "Contact KAM" kept an 11-character tab title with the ministry unnamed.
+  const title = page.title.includes("Kingdom Assembly")
     ? page.title
     : `${page.title} · Kingdom Assembly Missions`;
 
@@ -146,7 +151,10 @@ ${page.noindex ? '<meta name="robots" content="noindex, follow">' : ""}
 <meta property="og:title" content="${esc(page.ogTitle || title)}">
 <meta property="og:description" content="${esc(page.description)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="${site.origin}/img/kam-emblem.png">
+<meta property="og:image" content="${site.origin}/img/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Kingdom Assembly Missions. Reaching the broken. Restoring the community. Advancing the Kingdom.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0B0A08">
 <link rel="icon" href="/img/kam-emblem-sm.png" type="image/png">
@@ -161,7 +169,7 @@ ${jsonld}
 <body class="${page.bodyClass || ""}">
 <span data-sc-progress></span>
 <div class="sc-grain" aria-hidden="true"></div>
-${header(page.path)}
+${header(page.path, page.safety)}
 <main id="main">
 ${page.body}
 </main>

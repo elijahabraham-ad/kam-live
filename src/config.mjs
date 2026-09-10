@@ -189,7 +189,7 @@ export const programs = [
     body: [
       {
         h: "Self-defense classes",
-        p: "Regular classes designed to build confidence, situational awareness and practical safety skills. Taught in a setting where a woman is not asked to explain why she came.",
+        p: "We are building a program of regular classes to develop confidence, situational awareness and practical safety skills, taught in a setting where a woman is not asked to explain why she came. Dates go on the events page as soon as the first one is scheduled.",
       },
       {
         h: "Transitional housing support",
@@ -212,7 +212,7 @@ export const programs = [
     name: "Addiction & Recovery",
     short: "Addiction & Recovery",
     kicker: "Your story doesn't have to end where your struggle began.",
-    card: "Monthly recovery meetings with testimony, teaching, accountability, prayer and a real path forward.",
+    card: "Monthly recovery meetings, in development, built on testimony, teaching, accountability, prayer and a real path forward.",
     mission:
       "Create a community where people struggling with addiction can find support, accountability, prayer, testimony, professional resources and hope.",
     beliefs: [
@@ -222,15 +222,15 @@ export const programs = [
     ],
     body: [
       {
-        h: "Monthly recovery meetings",
-        p: "A community and support structure in the spirit of the meetings many people already know, built on a Christian foundation. Testimonies. Group discussion. Prayer. Worship. Gospel-centered encouragement. Accountability. Recovery resources. Qualified counselors and professionals present. And an open door into discipleship for anyone who wants it.",
+        h: "Monthly recovery meetings, in development",
+        p: "This is what we are building, and it is not running yet. A community and support structure in the spirit of the meetings many people already know, built on a Christian foundation. Testimonies. Group discussion. Prayer. Worship. Gospel-centered encouragement. Accountability. Recovery resources. Qualified counselors and professionals present. And an open door into discipleship for anyone who wants it.",
       },
       {
         h: "This is not treatment, and we will not pretend it is",
         p: "KAM meetings are not a replacement for medical care or professional addiction treatment. Detox is a medical event. Withdrawal from some substances can kill you. We will help you find real treatment and we will stand with you through it, but we will never tell you that a meeting is a substitute for a doctor.",
       },
     ],
-    cta: { head: "Come as you are. Come back next month.", label: "Get connected" },
+    cta: { head: "Come as you are. We will tell you the moment the first one is set.", label: "Get connected" },
     actions: ["connect", "volunteer", "give", "partner"],
   },
 ];
@@ -255,7 +255,9 @@ export const events = [
     slug: "christian-open-mic",
     title: "KAM Christian Open Mic",
     date: "2026-10-09",
-    dateLabel: "Thursday, October 9",
+    // dateLabel is DERIVED from `date` further down this file. Do not hand-write
+    // a weekday here: the first version of this file said "Thursday, October 9"
+    // and 9 October 2026 is a Friday.
     time: "TBD",
     venue: "TBD",
     address: "TBD",
@@ -408,7 +410,7 @@ export const crisisResources = [
     name: "SAMHSA National Helpline",
     contact: "1-800-662-4357",
     href: "tel:18006624357",
-    note: "24/7 free and confidential treatment referral for mental health and substance use. They do not ask for personal information.",
+    note: "24/7 free and confidential treatment referral for mental health and substance use. They do not ask for your name, though they may ask for your ZIP code to find help near you.",
     link: "https://www.samhsa.gov/find-help/helplines/national-helpline",
   },
 ];

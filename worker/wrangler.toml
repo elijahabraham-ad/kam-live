@@ -3,8 +3,10 @@ main = "index.js"
 compatibility_date = "2026-09-01"
 
 [vars]
-# Lock this to the live site origin before launch. "*" is fine while testing.
-ALLOWED_ORIGIN = "*"
+# The live site origin. Set this to your preview origin while testing rather
+# than loosening it to "*": a wide-open endpoint lets anyone POST mail into the
+# TO_HELP inbox, and that inbox has to stay readable.
+ALLOWED_ORIGIN = "https://kingdomassemblymissions.org"
 
 # Where each kind of submission goes. Comma-separate for multiple recipients.
 TO_GENERAL = "REPLACE@kingdomassemblymissions.org"

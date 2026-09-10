@@ -246,8 +246,12 @@ body { background: var(--sc-canvas); }
 }
 @media (max-width: 560px) {
   /* GIVE is the primary action on the site and it stays reachable at every
-     width. The wordmark's kicker line goes first instead. */
-  .bar__mark-txt b { display: none; }
+     width. The kicker shortens to the abbreviation rather than disappearing:
+     hiding it entirely left the ministry's own header reading "Missions". */
+  .bar__mark-txt b { font-size: 0.58rem; }
+  .bar__mark-txt b::before { content: "KAM"; }
+  .bar__mark-txt b { color: transparent; width: 0; overflow: visible; white-space: nowrap; }
+  .bar__mark-txt b::before { color: #C8BBA2; }
   .bar__give { padding: 0.5em 0.95em; font-size: 0.74rem; letter-spacing: 0.08em; min-height: 44px; }
   .bar__burger em { display: none; }
   .bar { gap: var(--sc-3); padding-inline: var(--sc-4); }
@@ -713,16 +717,21 @@ body { background: var(--sc-canvas); }
 .crisis__num:hover { text-decoration: underline; text-underline-offset: 0.2em; }
 @media (max-width: 620px) { .crisis__item { grid-template-columns: 1fr; } }
 
-.exit-bar {
-  position: fixed; right: var(--sc-4); bottom: var(--sc-4); z-index: 130;
-}
-.exit-bar button {
+/* The quick exit lives IN the sticky header, not floating over the page.
+   A fixed button in the bottom corner covers whatever happens to be in the
+   bottom strip of the viewport at that scroll position, and on this page that
+   was the footer's own crisis numbers and the DV hotline card heading. The
+   header already reserves its own space, and top-right is where a person
+   looking for a way out looks first. */
+.bar__exit {
   background: #A8452C; color: #FFF7F2; border: 0; cursor: pointer;
-  padding: 0.9em 1.4em; border-radius: var(--sc-r-md);
-  font-size: 0.86rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
-  box-shadow: var(--sc-e2);
+  padding: 0.62em 1.1em; border-radius: var(--sc-r-md); min-height: 44px;
+  font-family: var(--sc-font-text); font-size: 0.8rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
+  transition: background-color 140ms var(--sc-ease-out);
 }
-.exit-bar button:hover { background: #C4593F; }
+.bar__exit:hover { background: #C4593F; }
+@media (max-width: 560px) { .bar__exit { padding: 0.5em 0.8em; font-size: 0.72rem; letter-spacing: 0.06em; } }
 
 /* ------------------------------------------------------------ page head --- */
 .phead { padding-block: clamp(3.5rem, 9vw, 7.5rem) clamp(2rem, 5vw, 4rem); }
@@ -770,6 +779,10 @@ body { background: var(--sc-canvas); }
 }
 .foot__base p { margin: 0; font-size: 0.84rem; color: #A99C86; }
 .foot__note a { color: #D9B450; }
+.foot__credit {
+  flex-basis: 100%; margin: var(--sc-3) 0 0 !important;
+  font-size: 0.74rem !important; line-height: 1.5; color: #8B8377 !important; max-width: 78ch;
+}
 
 /* ----------------------------------------------------------- utilities ---- */
 .split-2 {
