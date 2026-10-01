@@ -30,6 +30,16 @@ export const site = {
   // silently failing.
   formEndpoint: "TBD",
 
+  // HubSpot (Selvin's portal). When portalId and formGuid are filled in, every
+  // form on the site submits straight into HubSpot as a contact (no server, no
+  // key: HubSpot's public Forms API), and the HubSpot tracking code loads.
+  // The HubSpot form needs five fields: First name, Last name, Email, Phone, Message.
+  // Everything else a visitor types is folded into Message, labelled.
+  // portalId = the Hub ID (account menu, top right in HubSpot).
+  // formGuid = Marketing > Forms > the form > the ID in its URL.
+  // region   = "na1" for US accounts, "eu1" if the portal URL has app-eu1.
+  hubspot: { portalId: "TBD", formGuid: "TBD", region: "na1" },
+
   social: {
     instagram: "TBD",
     facebook: "TBD",

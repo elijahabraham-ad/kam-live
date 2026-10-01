@@ -145,7 +145,7 @@ export function render(page) {
     .join("\n");
 
   return `<!doctype html>
-<html lang="en" data-endpoint="${esc(site.formEndpoint)}">
+<html lang="en" data-endpoint="${esc(site.formEndpoint)}" data-hs-portal="${esc(site.hubspot?.portalId || "TBD")}" data-hs-form="${esc(site.hubspot?.formGuid || "TBD")}" data-hs-region="${esc(site.hubspot?.region || "na1")}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -172,6 +172,7 @@ ${page.noindex ? '<meta name="robots" content="noindex, follow">' : ""}
 <link rel="stylesheet" href="/scrollcraft.css">
 <link rel="stylesheet" href="/theme.css">
 ${jsonld}
+${site.hubspot && site.hubspot.portalId && site.hubspot.portalId !== "TBD" ? `<script id="hs-script-loader" async defer src="https://js${site.hubspot.region === "eu1" ? "-eu1" : ""}.hs-scripts.com/${esc(site.hubspot.portalId)}.js"></script>` : ""}
 </head>
 <body class="${page.bodyClass || ""}">
 <span data-sc-progress></span>

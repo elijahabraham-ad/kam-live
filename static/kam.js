@@ -136,7 +136,39 @@
     if (!all.length) return;
 
     var endpoint = document.documentElement.getAttribute("data-endpoint") || "";
-    var live = endpoint && endpoint !== "TBD";
+    var root = document.documentElement;
+    var hsPortal = root.getAttribute("data-hs-portal") || "";
+    var hsForm = root.getAttribute("data-hs-form") || "";
+    var hsRegion = root.getAttribute("data-hs-region") || "na1";
+    var hubspot = hsPortal && hsPortal !== "TBD" && hsForm && hsForm !== "TBD";
+    var live = hubspot || (endpoint && endpoint !== "TBD");
+
+    // HubSpot path: map the four core fields, fold everything else into the
+    // message so nothing a visitor typed is lost, tag which form it came from.
+    function toHubSpot(form, labelFor) {
+      var fd = new FormData(form), core = {}, extra = [];
+      fd.forEach(function (v, k) {
+        if (k === "_hp" || v === "" || v == null) return;
+        if (k === "name") { var parts = String(v).trim().split(/\s+/); core.firstname = parts.shift(); if (parts.length) core.lastname = parts.join(" "); return; }
+        if (k === "email" || k === "phone") { core[k] = v; return; }
+        if (k === "message") { extra.unshift(String(v)); return; }
+        var lab = form.querySelector('[name="' + k + '"]');
+        var label = lab ? labelFor(lab) : k;
+        extra.push(label + ": " + v);
+      });
+      var kind = form.getAttribute("data-kam-form");
+      core.message = "[" + kind + " form, " + location.pathname + "]\n" + extra.join("\n");
+      var hutk = (document.cookie.match(/(?:^|; )hubspotutk=([^;]+)/) || [])[1];
+      var body = {
+        fields: Object.keys(core).map(function (k) { return { objectTypeId: "0-1", name: k, value: String(core[k]) }; }),
+        context: { pageUri: location.href, pageName: document.title }
+      };
+      if (hutk) body.context.hutk = hutk;
+      var host = hsRegion === "eu1" ? "https://api-eu1.hsforms.com" : "https://api.hsforms.com";
+      return fetch(host + "/submissions/v3/integration/submit/" + hsPortal + "/" + hsForm, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
+      });
+    }
 
     Array.prototype.forEach.call(all, function (form) {
       var status = form.querySelector(".form__status");
@@ -197,7 +229,7 @@
         if (submit) { submit.disabled = true; submit.dataset.label = submit.textContent; submit.textContent = "Sending"; }
         say("Sending.", "ok");
 
-        fetch(endpoint, { method: "POST", body: data })
+        (hubspot ? toHubSpot(form, labelFor) : fetch(endpoint, { method: "POST", body: data }))
           .then(function (r) {
             if (!r.ok) throw new Error("bad status " + r.status);
             return r.json().catch(function () { return {}; });
