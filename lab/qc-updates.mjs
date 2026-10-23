@@ -21,7 +21,7 @@ const PATHS = [
   "/give/", "/get-involved/", "/volunteer/", "/partner/", "/stories/", "/prayer/", "/contact/",
   "/need-help/", "/404.html",
 ];
-const HOTLINE_TEL = "tel:+18883377294";
+const HOTLINE_TEL = `tel:${site.hotline.digits}`;
 const CRISIS_TEL = ["tel:911", "tel:18007997233", "tel:988", "tel:18006624357"];
 const ALLOWED_TEL = new Set([...(LIVE ? [HOTLINE_TEL] : []), ...CRISIS_TEL]);
 const RETIRED = [
@@ -99,7 +99,7 @@ console.log("\nhotline placement Selvin asked for");
     const txt = el ? await el.innerText() : "";
     if (!/1-888-33-PRAY-4YOU/.test(txt)) { bad(`${what}: number missing in ${sel}`); continue; }
     if (LIVE) {
-      const tel = await p.$eval(sel, (e) => (e.matches("a") ? e : e.querySelector('a[href^="tel:+1888"]'))?.getAttribute("href")).catch(() => null);
+      const tel = await p.$eval(sel, (e) => (e.matches("a") ? e : e.querySelector('a[href^="tel:+1"]'))?.getAttribute("href")).catch(() => null);
       if (tel === HOTLINE_TEL) ok(`${what} dials ${HOTLINE_TEL}`); else bad(`${what} href=${tel}`);
     } else {
       const near = await p.$eval(sel, (e) => (e.closest(".pray-band__call, .foot__pray, .title-page__foot, dd") || e).innerText);
@@ -186,7 +186,7 @@ console.log("\nforms: honest before and after submit");
     if (/Message: I want to help at the next feeding\./.test(body) && /What is this about\?: Volunteer/.test(body)) ok("contact form builds a labelled email to KAM");
     else bad("contact mailto body: " + body.slice(0, 120));
   } else bad("contact form gave no mailto: " + (await st.textContent()));
-  const callBtn = await st.locator('a[href="tel:+18883377294"]').count();
+  const callBtn = await st.locator(`a[href="${HOTLINE_TEL}"]`).count();
   if (LIVE ? callBtn : !callBtn) ok(`contact fallback ${LIVE ? "offers" : "does not offer"} the prayer line`); else bad("contact fallback call button does not match hotline mode");
   const box = await st.locator("a.btn").first().boundingBox();
   if (box && box.height >= 44) ok("fallback button is a 44px tap target"); else bad("fallback button height " + (box && box.height));

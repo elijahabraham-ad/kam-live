@@ -49,11 +49,14 @@ export const site = {
   hubspot: { portalId: "TBD", formGuid: "TBD", region: "na1" },
 
   /* The Nationwide Prayer Hotline. `display` is the vanity spelling people
-     remember. `digits` is what actually dials: 33-PRAY-4YOU spells thirteen
-     digits, and a US number is ten, so the phone network uses the first ten
-     (888-337-7294) and drops the "YOU". Every tel: link uses `digits`, never
-     the vanity, so a tap on a phone always rings the right line.
-     `live` is FALSE until someone has called 888-337-7294 and confirmed it
+     remember. `digits` is what every tel: link dials, and it is ALL THIRTEEN
+     digits of 33-PRAY-4YOU, exactly what KAM dials by hand. Corrected
+     2026-10-22: the links first dialled only the first ten (888-337-7294) on
+     the theory that the network drops the extra three, and Selvin reported
+     the tap reached the wrong place while the full number dialled by hand
+     works. A tel: link with all thirteen reproduces the hand-dialled call;
+     +1 plus thirteen is 14 digits, inside the 15-digit international limit.
+     `live` was FALSE until someone had called the line and confirmed it
      reaches KAM's prayer line (Selvin's own 2026-10-22 brief: do not promote
      the hotline as answered until routing is verified). While false, the
      number still shows everywhere, marked "launching soon", with no call
@@ -64,10 +67,8 @@ export const site = {
   hotline: {
     label: "Nationwide Prayer Hotline",
     display: "1-888-33-PRAY-4YOU",
-    digits: "+18883377294",
-    // Shown under the vanity spelling. This is how KAM writes it (Eli
-    // 2026-10-22): the vanity letters as digits, all thirteen. It is the
-    // same line as `digits`; a phone dials the first ten and ignores the rest.
+    digits: "+1-888-33-7729-4968",
+    // Shown under the vanity spelling, the way KAM writes it (Eli 2026-10-22).
     digitsLabel: "1-888-33-7729-4968",
     // LIVE since 2026-10-22: Eli confirmed the line is answered.
     live: process.env.KAM_HOTLINE_LIVE ? process.env.KAM_HOTLINE_LIVE === "1" : true,
