@@ -109,12 +109,12 @@ export function home() {
      A clay jar in eight pieces, drawn back together by the reader's own
      scroll, then gold poured into every fracture. -------------------------- */
   const mending = `
-<section class="ground--ink" data-sc-act="pin" data-sc-span="3.6" id="mending">
+<section class="ground--ink" data-sc-act="pin" data-sc-span="2.4" id="mending">
   <div data-sc-stage class="mend">
     <span class="mend__glow" aria-hidden="true"></span>
     <div class="mend__grid">
       <div class="mend__art">${mendingSvg()}</div>
-      <div class="mend__copy" data-sc-cue="0.40 1 0.16 0.06">
+      <div class="mend__copy" data-sc-cue="0.30 1 0.16 0.06">
         <h2 class="h-lg">God does not throw the pieces away.</h2>
         <p>He gathers them, sets them back where they belong, and runs something precious through every crack. The repair is visible on purpose. It is the part of the story worth telling.</p>
         <p class="mend__ref">&ldquo;${esc(scriptures.jars.text)}&rdquo;<br>${esc(scriptures.jars.ref)}</p>

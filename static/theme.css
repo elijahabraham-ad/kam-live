@@ -383,7 +383,7 @@ body { background: var(--sc-canvas); }
   position: absolute; left: 34%; top: 50%; translate: -50% -50%;
   width: min(46rem, 120vw); aspect-ratio: 1; pointer-events: none;
   background: radial-gradient(circle, color-mix(in oklab, #D9B450 20%, transparent) 0%, transparent 62%);
-  opacity: calc(var(--sc-p, 0) * 1.2 - 0.2);
+  opacity: calc(var(--sc-p, 0) * 1.6 - 0.15);
 }
 .mend__grid {
   position: relative; z-index: 2;
@@ -418,19 +418,27 @@ body { background: var(--sc-canvas); }
    transform-box: view-box puts the rotation origin at the fracture point in the
    jar rather than at each shard's own bounding box, which is what makes this
    read as one thing breaking instead of eight things spinning. */
+/* 2026-10-22 timing: each shard travels for 0.34 of the act (was 0.62) and
+   the last starts by 0.18, so the jar is whole by about p 0.52 and the act is
+   2.4 screens long (was 3.6). --rest is (1 - lp) cubed: a cubic ease-out, so
+   every piece decelerates and settles instead of sliding in at one speed. */
 .mend__frag {
-  --lp: clamp(0, (var(--sc-p, 0) - var(--st, 0)) / 0.62, 1);
+  --lp: clamp(0, (var(--sc-p, 0) - var(--st, 0)) / 0.34, 1);
+  --rest: calc((1 - var(--lp)) * (1 - var(--lp)) * (1 - var(--lp)));
   fill: url(#kamClay);
-  stroke: color-mix(in oklab, #F6F1E5 26%, transparent);
-  stroke-width: 1.1;
+  /* The broken face of fired clay is darker than its glaze, not lighter. A
+     cream outline made every shard read as a drawn cell. */
+  stroke: #0E0906;
+  stroke-width: 1.2;
+  stroke-linejoin: round;
   transform-box: view-box;
   transform-origin: 178px 344px;
   transform:
     translate(
-      calc(var(--dx, 0) * (1 - var(--lp)) * 1px),
-      calc(var(--dy, 0) * (1 - var(--lp)) * 1px)
+      calc(var(--dx, 0) * var(--rest) * 1px),
+      calc(var(--dy, 0) * var(--rest) * 1px)
     )
-    rotate(calc(var(--rot, 0) * (1 - var(--lp)) * 1deg));
+    rotate(calc(var(--rot, 0) * var(--rest) * 1deg));
 }
 
 /* The shape the pieces are travelling back to, faint at the start and gone by
@@ -439,22 +447,31 @@ body { background: var(--sc-canvas); }
   stroke: color-mix(in oklab, #D9B450 46%, transparent);
   stroke-width: 1.2;
   stroke-dasharray: 4 8;
-  opacity: calc(0.9 - var(--sc-p, 0) * 1.5);
+  opacity: calc(0.9 - var(--sc-p, 0) * 3);
 }
 
-/* Gold arrives along the fractures only once the pieces are home. */
+/* Gold arrives along the fractures only once the pieces are home: drawn from
+   p 0.5 to 0.7, then the whole mended jar holds for the rest of the act. */
 .mend__seam {
-  stroke: #D9B450;
-  stroke-width: 3;
+  stroke: url(#kamGold);
+  stroke-width: 2.6;
   stroke-linecap: round;
-  stroke-dashoffset: calc(var(--len, 0) * (1 - clamp(0, (var(--sc-p, 0) - 0.62) / 0.3, 1)));
-  opacity: clamp(0, (var(--sc-p, 0) - 0.6) * 7, 1);
+  stroke-linejoin: round;
+  stroke-dashoffset: calc(var(--len, 0) * (1 - clamp(0, (var(--sc-p, 0) - 0.5) / 0.2, 1)));
+  opacity: clamp(0, (var(--sc-p, 0) - 0.48) * 10, 1);
 }
+/* A soft bloom under the metal, so the seams glow against the dark clay. */
+.mend__seams--glow .mend__seam { stroke-width: 6; }
+.mend__seams--glow { opacity: 0.55; }
+
+/* Glaze and a grounding shadow, only once the jar is whole. */
+.mend__finish { opacity: clamp(0, (var(--sc-p, 0) - 0.5) * 5, 1); pointer-events: none; }
+.mend__floor { opacity: clamp(0, (var(--sc-p, 0) - 0.3) * 2.5, 0.9); }
 
 .mend__rim {
-  stroke: color-mix(in oklab, #D9B450 78%, transparent);
-  stroke-width: 1.6;
-  opacity: clamp(0, (var(--sc-p, 0) - 0.62) * 3, 1);
+  stroke: color-mix(in oklab, #D9B450 34%, transparent);
+  stroke-width: 1.2;
+  opacity: clamp(0, (var(--sc-p, 0) - 0.5) * 4, 1);
 }
 
 /* Reduced motion keeps the meaning and drops the travel: the vessel is whole,
@@ -465,10 +482,14 @@ body { background: var(--sc-canvas); }
   .mend__seam { stroke-dashoffset: 0; opacity: 1; }
   .mend__rim { opacity: 1; }
   .mend__glow { opacity: 0.55; }
+  .mend__finish { opacity: 1; }
+  .mend__floor { opacity: 0.9; }
 }
 [data-mend-static] .mend__frag { transform: none; }
 [data-mend-static] .mend__seam { stroke-dashoffset: 0; opacity: 1; }
 [data-mend-static] .mend__rim { opacity: 1; }
+[data-mend-static] .mend__finish { opacity: 1; }
+[data-mend-static] .mend__floor { opacity: 0.9; }
 
 /* ============================================================ five areas -- */
 .rail {

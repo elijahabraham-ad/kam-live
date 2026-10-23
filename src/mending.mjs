@@ -101,11 +101,13 @@ function geometry() {
       dx: +((mx / len) * d + (rand() - 0.5) * 96).toFixed(1),
       dy: +((my / len) * d + rand() * 118 - 26).toFixed(1),
       rot: +((rand() - 0.5) * 52).toFixed(1),
-      start: +(rand() * 0.34).toFixed(3),
+      // 2026-10-22: compressed from 0.34 so the whole jar is home by about
+      // p 0.5 (Eli: "can this be pieced together faster").
+      start: +(rand() * 0.18).toFixed(3),
     });
   }
 
-  return { rays, throws, coreThrow: { dx: -14, dy: 26, rot: 7, start: 0.34 } };
+  return { rays, throws, coreThrow: { dx: -14, dy: 26, rot: 7, start: 0.16 } };
 }
 
 export function mendingSvg() {
@@ -145,15 +147,56 @@ export function mendingSvg() {
      xmlns="http://www.w3.org/2000/svg">
   <defs>
     <clipPath id="kamVessel"><path d="${VESSEL}"/></clipPath>
-    <linearGradient id="kamClay" x1="0.15" y1="0" x2="0.75" y2="1">
-      <stop offset="0" stop-color="#54402A"/>
-      <stop offset="0.46" stop-color="#33271A"/>
-      <stop offset="1" stop-color="#1A120C"/>
+    <!-- ONE light for the whole jar. userSpaceOnUse puts every shard's shading
+         in the jar's own coordinates, and it travels with the shard, so when
+         the pieces land the light lines up into one round, lit body. The old
+         per-shard (bounding box) gradient shaded each piece on its own and the
+         whole jar read as a patchwork. Light from upper left. -->
+    <radialGradient id="kamClay" gradientUnits="userSpaceOnUse" cx="148" cy="236" r="330" fx="132" fy="214">
+      <stop offset="0" stop-color="#8A6A47"/>
+      <stop offset="0.28" stop-color="#5E4630"/>
+      <stop offset="0.62" stop-color="#36281B"/>
+      <stop offset="1" stop-color="#150E09"/>
+    </radialGradient>
+    <!-- Metallic gold: bands of light and shadow along the diagonal read as
+         poured metal rather than a flat yellow line. -->
+    <linearGradient id="kamGold" gradientUnits="userSpaceOnUse" x1="60" y1="40" x2="360" y2="560">
+      <stop offset="0" stop-color="#F4DC92"/>
+      <stop offset="0.22" stop-color="#C99B3C"/>
+      <stop offset="0.42" stop-color="#FFF0BE"/>
+      <stop offset="0.6" stop-color="#B8892E"/>
+      <stop offset="0.8" stop-color="#EBCB76"/>
+      <stop offset="1" stop-color="#9C7424"/>
     </linearGradient>
+    <!-- Glaze: a soft specular on the shoulder and a falloff on the far side,
+         laid over the jar only once it is whole. -->
+    <radialGradient id="kamSheen" gradientUnits="userSpaceOnUse" cx="138" cy="250" r="120">
+      <stop offset="0" stop-color="#FFF6E2" stop-opacity="0.26"/>
+      <stop offset="0.5" stop-color="#FFF6E2" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#FFF6E2" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="kamShade" gradientUnits="userSpaceOnUse" x1="50" y1="0" x2="350" y2="0">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/>
+      <stop offset="0.62" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.42"/>
+    </linearGradient>
+    <radialGradient id="kamFloor" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#000" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="kamGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur stdDeviation="3.2"/>
+    </filter>
   </defs>
 
+  <ellipse class="mend__floor" cx="200" cy="548" rx="132" ry="13" fill="url(#kamFloor)"/>
   <path class="mend__ghost" d="${VESSEL}" fill="none"/>
   <g class="mend__shards">${frags.join("")}</g>
+  <g class="mend__finish" clip-path="url(#kamVessel)" aria-hidden="true">
+    <path d="${VESSEL}" fill="url(#kamShade)"/>
+    <path d="${VESSEL}" fill="url(#kamSheen)"/>
+  </g>
+  <g class="mend__seams mend__seams--glow" fill="none" clip-path="url(#kamVessel)" filter="url(#kamGlow)" aria-hidden="true">${seams.join("")}</g>
   <g class="mend__seams" fill="none" clip-path="url(#kamVessel)">${seams.join("")}</g>
   <path class="mend__rim" d="${VESSEL}" fill="none"/>
 </svg>`;
