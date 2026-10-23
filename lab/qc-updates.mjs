@@ -127,6 +127,12 @@ console.log("\nhotline placement Selvin asked for");
   const opt = await p.$$eval("form[data-kam-form=give] select[name=gift_type] option", (n) => n.map((x) => x.textContent));
   if (opt.some((o) => /Prayer line partner \(\$15\/month\)/.test(o))) ok("give form offers the $15/month prayer line partner");
   else bad("give form options: " + opt.join(" | "));
+  if (site.donateUrl && site.donateUrl !== "TBD") {
+    const gives = await p.$$eval('a.btn, a.door, a.door__go', (n) => n.filter((a) => /^(Give|Give now|Give today|Support our mission)$/.test(a.textContent.trim()))
+      .map((a) => [a.textContent.trim(), a.getAttribute("href"), a.getAttribute("target"), a.getAttribute("rel")]));
+    const off = gives.filter(([, h, t, r]) => h !== site.donateUrl || t !== "_blank" || !/noopener/.test(r || ""));
+    if (gives.length && !off.length) ok(`${gives.length} give buttons open the Square checkout in a new tab`); else bad("give buttons: " + JSON.stringify(off));
+  }
   const partnerBtn = (await p.innerText("#prayer-line-partner .btn")).trim();
   if (partnerBtn === "Ask about partnering") ok("no 'Give $15/month' button while there is no payment link"); else bad("partner button: " + partnerBtn);
   await p.goto(BASE + "/contact/", { waitUntil: "networkidle" });

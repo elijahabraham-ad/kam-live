@@ -28,7 +28,9 @@ export const site = {
   // Paste the live donation link here (Givelify, Tithe.ly, Stripe, PayPal).
   // Until then every GIVE button routes to the on-site give page, which
   // explains how to give and asks people to check back.
-  donateUrl: "TBD",
+  // Live 2026-10-22: KAM's Square checkout (donor enters any amount).
+  // The $15/month recurring link goes in hotline.partnerUrl when it exists.
+  donateUrl: "https://square.link/u/rgd06jKR",
 
   // The forms endpoint: worker/ deployed as kam-forms on Eli's Cloudflare
   // (2026-10-22). Every form, prayer requests and the safety form included,
@@ -63,7 +65,10 @@ export const site = {
     label: "Nationwide Prayer Hotline",
     display: "1-888-33-PRAY-4YOU",
     digits: "+18883377294",
-    digitsLabel: "1-888-337-7294",
+    // Shown under the vanity spelling. This is how KAM writes it (Eli
+    // 2026-10-22): the vanity letters as digits, all thirteen. It is the
+    // same line as `digits`; a phone dials the first ten and ignores the rest.
+    digitsLabel: "1-888-33-7729-4968",
     // LIVE since 2026-10-22: Eli confirmed the line is answered.
     live: process.env.KAM_HOTLINE_LIVE ? process.env.KAM_HOTLINE_LIVE === "1" : true,
     hours: "TBD",

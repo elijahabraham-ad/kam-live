@@ -102,7 +102,7 @@ function footer(safety) {
       <p class="foot__stmt">Call. Connect. Restore.</p>
       <p class="foot__tag">${esc(site.tagline)}</p>
       <p class="foot__where">${esc(site.city)}, ${esc(site.regionCode)}</p>
-      ${safety ? "" : `<p class="foot__pray"><span class="rule-label">${esc(site.hotline.label)}</span>${hotlineLink("foot__pray-num")}</p>`}
+      ${safety ? "" : `<p class="foot__pray"><span class="rule-label">${esc(site.hotline.label)}</span>${hotlineLink("foot__pray-num")}<span class="foot__pray-digits">${esc(site.hotline.digitsLabel)}</span></p>`}
     </div>
 
     <nav class="foot__col" aria-label="Mission">

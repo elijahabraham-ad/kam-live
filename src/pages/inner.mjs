@@ -507,7 +507,7 @@ export function give() {
     ? `
     <div class="notice">
       <span class="rule-label">Give securely</span>
-      <p>Every gift goes directly into community outreach.</p>
+      <p>Secure checkout through Square. Choose any amount; it takes about a minute.</p>
       <div class="btn-row" style="margin-top:var(--sc-5)">
         <a class="btn btn--gold btn--lg" href="${esc(site.donateUrl)}" target="_blank" rel="noopener">Give now</a>
       </div>
@@ -559,7 +559,7 @@ ${pageHead({
       </div>
       <div class="pray-band__call">
         ${hotlineLink("pray-band__num")}
-        <p class="pray-band__digits">The line this supports</p>
+        <p class="pray-band__digits">Dial ${esc(site.hotline.digitsLabel)}</p>
         <div class="btn-row" style="margin-top:var(--sc-4)">
           ${isTBD(site.hotline.partnerUrl)
             ? `<a class="btn btn--line" href="#give-form">Ask about partnering</a>`
@@ -578,7 +578,9 @@ ${campaignList(campaigns)}
     <div class="doors" data-sc-in data-sc-stagger="80">
       <div class="door">
         <div><h3>One-time gift</h3><p>A single gift, designated wherever you want it to go. Every amount is used, and small consistent gifts fund more of this than large rare ones.</p></div>
-        <span class="door__go">Use the form below</span>
+        ${isTBD(site.donateUrl)
+          ? `<span class="door__go">Use the form below</span>`
+          : `<a class="door__go" href="${esc(site.donateUrl)}" target="_blank" rel="noopener">Give now</a>`}
       </div>
       <div class="door">
         <div><h3>Monthly partner</h3><p>The most useful thing anyone does for us. A predictable monthly amount is what lets us commit to an event before the money is in hand.</p></div>
@@ -996,7 +998,7 @@ export function contact() {
   const contactLines = [
     isTBD(site.email) ? null : `<div><dt>Email</dt><dd><a class="tlink" href="mailto:${esc(site.email)}">${esc(site.email)}</a></dd></div>`,
     isTBD(site.phone) ? null : `<div><dt>Phone</dt><dd><a class="tlink" href="tel:${esc(site.phone.replace(/[^\d+]/g, ""))}">${esc(site.phone)}</a></dd></div>`,
-    `<div><dt>Prayer line</dt><dd>${hotlineLink()}</dd></div>`,
+    `<div><dt>Prayer line</dt><dd>${hotlineLink()}<span class="dd-sub">${esc(site.hotline.digitsLabel)}</span></dd></div>`,
     isTBD(site.mailingAddress) ? null : `<div><dt>Mail</dt><dd>${esc(site.mailingAddress)}</dd></div>`,
   ].filter(Boolean);
 

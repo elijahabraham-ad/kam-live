@@ -819,6 +819,8 @@ body { background: var(--sc-canvas); }
 .foot__pray .rule-label { color: #D9B450; }
 .foot__pray-num { font-family: var(--sc-font-display); font-size: 1.25rem; white-space: nowrap; color: #F6F1E5; text-decoration: none; letter-spacing: 0.01em; }
 .foot__pray-num:hover { color: #D9B450; }
+.foot__pray-digits { font-size: 0.86rem; letter-spacing: 0.04em; color: #A99C86; }
+.dd-sub { display: block; font-size: 0.86rem; letter-spacing: 0.04em; color: var(--sc-ink-soft); }
 .foot__col { display: grid; gap: var(--sc-2); align-content: start; }
 .foot__col .rule-label { margin-bottom: var(--sc-2); color: #D9B450; }
 .foot__col a { color: #C8BBA2; text-decoration: none; font-size: 0.94rem; }
