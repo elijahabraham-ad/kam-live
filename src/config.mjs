@@ -73,9 +73,9 @@ export const site = {
     live: process.env.KAM_HOTLINE_LIVE ? process.env.KAM_HOTLINE_LIVE === "1" : true,
     hours: "TBD",
     monthly: "$15/month",
-    // Payment link for the $15/month prayer line partner gift. Until it is
-    // set, the Give button scrolls to the give form instead.
-    partnerUrl: "TBD",
+    // Payment link for the $15/month prayer line partner gift: KAM's Square
+    // "Nationwide Prayer Hotline" checkout, monthly subscription (2026-10-22).
+    partnerUrl: "https://square.link/u/ZRt2jTp3",
   },
 
   social: {

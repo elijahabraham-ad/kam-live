@@ -134,7 +134,12 @@ console.log("\nhotline placement Selvin asked for");
     if (gives.length && !off.length) ok(`${gives.length} give buttons open the Square checkout in a new tab`); else bad("give buttons: " + JSON.stringify(off));
   }
   const partnerBtn = (await p.innerText("#prayer-line-partner .btn")).trim();
-  if (partnerBtn === "Ask about partnering") ok("no 'Give $15/month' button while there is no payment link"); else bad("partner button: " + partnerBtn);
+  const partnerHref = await p.getAttribute("#prayer-line-partner .btn", "href");
+  if (site.hotline.partnerUrl && site.hotline.partnerUrl !== "TBD") {
+    if (partnerBtn === `Give ${site.hotline.monthly}` && partnerHref === site.hotline.partnerUrl) ok(`partner button "${partnerBtn}" opens the monthly checkout`);
+    else bad(`partner button: "${partnerBtn}" -> ${partnerHref}`);
+  } else if (partnerBtn === "Ask about partnering") ok("no 'Give $15/month' button while there is no payment link");
+  else bad("partner button: " + partnerBtn);
   await p.goto(BASE + "/contact/", { waitUntil: "networkidle" });
   const mail = await p.getAttribute('.event__meta a[href^="mailto:"]', "href").catch(() => null);
   if (mail === "mailto:kingdomassemblymissions@gmail.com") ok("contact page publishes the ministry inbox"); else bad("contact email: " + mail);
