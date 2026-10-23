@@ -63,7 +63,8 @@ export const site = {
     display: "1-888-33-PRAY-4YOU",
     digits: "+18883377294",
     digitsLabel: "1-888-337-7294",
-    live: process.env.KAM_HOTLINE_LIVE ? process.env.KAM_HOTLINE_LIVE === "1" : false,
+    // LIVE since 2026-10-22: Eli confirmed the line is answered.
+    live: process.env.KAM_HOTLINE_LIVE ? process.env.KAM_HOTLINE_LIVE === "1" : true,
     hours: "TBD",
     monthly: "$15/month",
     // Payment link for the $15/month prayer line partner gift. Until it is
