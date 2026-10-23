@@ -8,12 +8,16 @@ compatibility_date = "2026-09-01"
 # TO_HELP inbox, and that inbox has to stay readable.
 ALLOWED_ORIGIN = "https://kingdomassemblymissions.org"
 
-# Where each kind of submission goes. Comma-separate for multiple recipients.
-TO_GENERAL = "REPLACE@kingdomassemblymissions.org"
-TO_PRAYER  = "REPLACE@kingdomassemblymissions.org"
-TO_HELP    = "REPLACE@kingdomassemblymissions.org"
+# Where each kind of submission goes: all to the ministry's own inbox
+# (Eli 2026-10-22: every form, prayer requests included). Each address must be
+# a VERIFIED destination in Cloudflare Email Routing for this zone.
+TO_GENERAL = "kingdomassemblymissions@gmail.com"
+TO_PRAYER  = "kingdomassemblymissions@gmail.com"
+TO_HELP    = "kingdomassemblymissions@gmail.com"
 
 FROM_EMAIL = "KAM Website <website@kingdomassemblymissions.org>"
 
-# RESEND_API_KEY is a SECRET, never a var:
-#   npx wrangler secret put RESEND_API_KEY
+# Cloudflare Email Routing outbound. Can only deliver to verified destinations.
+[[send_email]]
+name = "MAIL"
+destination_address = "kingdomassemblymissions@gmail.com"

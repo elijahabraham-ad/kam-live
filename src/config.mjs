@@ -30,10 +30,11 @@ export const site = {
   // explains how to give and asks people to check back.
   donateUrl: "TBD",
 
-  // The forms endpoint. Deploy worker/index.js to Cloudflare Workers and paste
-  // the resulting URL here. Until then forms show a clear notice instead of
-  // silently failing.
-  formEndpoint: "TBD",
+  // The forms endpoint: worker/ deployed as kam-forms on Eli's Cloudflare
+  // (2026-10-22). Every form, prayer requests and the safety form included,
+  // is emailed to kingdomassemblymissions@gmail.com through Cloudflare Email
+  // Routing. Set back to "TBD" and the forms fall back to an email draft.
+  formEndpoint: "https://kam-forms.adova.workers.dev",
 
   // HubSpot (Selvin's portal). When portalId and formGuid are filled in, every
   // form on the site submits straight into HubSpot as a contact (no server, no

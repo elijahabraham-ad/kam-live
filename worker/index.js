@@ -4,15 +4,19 @@
    One Cloudflare Worker behind every form on the site. It validates, rate
    limits, and emails KAM. It stores nothing.
 
-   Deploy:
-     cd worker
-     npx wrangler secret put RESEND_API_KEY
-     npx wrangler deploy
+   Sending (2026-10-22): Cloudflare Email Routing's send_email binding, not a
+   third-party mail API. Email Routing is on for kingdomassemblymissions.org
+   (Cloudflare added the MX, SPF and DKIM records), the ministry inbox is a
+   verified destination, and mail goes out as website@kingdomassemblymissions.org
+   with Reply-To set to the visitor, so KAM answers them with one tap. No
+   account, no key, no cost. The binding can ONLY deliver to verified
+   destinations, which also means a compromised form cannot mail anyone else.
 
-   Then paste the deployed URL into src/config.mjs as site.formEndpoint and
-   rebuild. Until that value is set, the site's forms tell the visitor plainly
-   that submissions are not connected yet rather than pretending to send.
+   Deploy:  cd worker && npx wrangler deploy
+   Then put the workers.dev URL in src/config.mjs as site.formEndpoint.
    ------------------------------------------------------------------------- */
+
+import { EmailMessage } from "cloudflare:email";
 
 const FORMS = {
   contact: { subject: "Contact form", to: "general" },
@@ -48,6 +52,42 @@ function cors(origin, allowed) {
 
 const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+/* A plain RFC 5322 message: text and HTML alternatives, UTF-8, base64 bodies
+   wrapped at 76, an encoded subject so names and emoji survive. */
+const b64 = (s) => {
+  const bytes = new TextEncoder().encode(s);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+  return btoa(bin).replace(/.{76}/g, "$&\r\n");
+};
+const addr = (s) => (String(s || "").match(/<([^>]+)>/) || [, String(s || "").trim()])[1];
+function mime({ from, to, replyTo, subject, text, html }) {
+  const boundary = "kam-" + crypto.randomUUID();
+  return [
+    `From: ${from}`,
+    `To: ${to}`,
+    ...(replyTo ? [`Reply-To: ${replyTo}`] : []),
+    `Subject: =?UTF-8?B?${btoa(String.fromCharCode(...new TextEncoder().encode(subject)))}?=`,
+    `Date: ${new Date().toUTCString().replace("GMT", "+0000")}`,
+    `Message-ID: <${crypto.randomUUID()}@kingdomassemblymissions.org>`,
+    "MIME-Version: 1.0",
+    `Content-Type: multipart/alternative; boundary="${boundary}"`,
+    "",
+    `--${boundary}`,
+    "Content-Type: text/plain; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    b64(text),
+    `--${boundary}`,
+    "Content-Type: text/html; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    b64(html),
+    `--${boundary}--`,
+    "",
+  ].join("\r\n");
+}
 
 function json(body, status, headers) {
   return new Response(JSON.stringify(body), {
@@ -154,32 +194,24 @@ ${notice}
 
     const text = plain.concat(priv).map((f) => `${label(f.key)}:\n${f.value}`).join("\n\n");
 
-    const to = env[`TO_${spec.to.toUpperCase()}`] || env.TO_GENERAL;
-    if (!env.RESEND_API_KEY || !to) {
-      return json({ error: "not configured" }, 500, headers);
-    }
+    const to = (env[`TO_${spec.to.toUpperCase()}`] || env.TO_GENERAL || "").trim();
+    if (!env.MAIL || !to) return json({ error: "not configured" }, 500, headers);
 
     const replyTo = fields.find((f) => f.key === "email")?.value;
-
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.RESEND_API_KEY}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        from: env.FROM_EMAIL || "KAM Website <website@kingdomassemblymissions.org>",
-        to: to.split(",").map((s) => s.trim()),
-        subject,
-        html,
-        text,
-        ...(replyTo && /.+@.+\..+/.test(replyTo) ? { reply_to: replyTo } : {}),
-      }),
+    const raw = mime({
+      from: env.FROM_EMAIL || "KAM Website <website@kingdomassemblymissions.org>",
+      to,
+      replyTo: replyTo && /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(replyTo) ? replyTo : null,
+      subject,
+      text,
+      html,
     });
 
-    if (!res.ok) {
-      // Never leak the provider's response to the browser.
-      console.log("send failed", res.status, await res.text());
+    try {
+      await env.MAIL.send(new EmailMessage(addr(env.FROM_EMAIL) || "website@kingdomassemblymissions.org", to, raw));
+    } catch (err) {
+      // Never leak the provider's error to the browser.
+      console.log("send failed", String(err && err.message || err));
       return json({ error: "send failed" }, 502, headers);
     }
 

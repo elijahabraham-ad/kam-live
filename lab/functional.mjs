@@ -75,17 +75,33 @@ console.log("\nforms");
 {
   const p = await page();
   await p.goto(BASE + "/prayer/", { waitUntil: "networkidle" });
+  /* With an endpoint set, the test must never send a real email to KAM: the
+     endpoint is stubbed and only the request the page makes is checked. */
+  const endpoint = await p.getAttribute("html", "data-endpoint");
+  const connected = endpoint && endpoint !== "TBD";
+  const posted = [];
+  if (connected) {
+    await p.route(endpoint, (route) => {
+      posted.push(route.request().postData() || "");
+      route.fulfill({ status: 200, contentType: "application/json", body: '{"ok":true}', headers: { "access-control-allow-origin": "*" } });
+    });
+  } else {
+    p.on("request", (r) => { if (r.method() === "POST") posted.push(r.url()); });
+  }
   await p.fill("#prayer-request", "Please pray for my family.");
   await p.click("form[data-kam-form] button[type=submit]");
-  await p.waitForTimeout(300);
+  await p.waitForTimeout(500);
   const status = (await p.textContent(".form__status")) || "";
-  if (/not connected yet/i.test(status)) ok("unconfigured endpoint says so plainly");
-  else bad("unconfigured form did not explain itself: " + status.slice(0, 60));
-
-  const posted = [];
-  p.on("request", (r) => { if (r.method() === "POST") posted.push(r.url()); });
-  await p.waitForTimeout(200);
-  if (!posted.length) ok("nothing was silently posted"); else bad("posted to " + posted);
+  if (connected) {
+    if (/received/i.test(status)) ok("connected form confirms receipt"); else bad("connected form status: " + status.slice(0, 60));
+    if (posted.length === 1 && /prayer/.test(posted[0]) && /Please pray for my family/.test(posted[0])) ok("one POST to the endpoint carrying the request");
+    else bad("endpoint saw " + posted.length + " posts");
+  } else {
+    if (/not connected yet/i.test(status)) ok("unconfigured endpoint says so plainly");
+    else bad("unconfigured form did not explain itself: " + status.slice(0, 60));
+    await p.waitForTimeout(200);
+    if (!posted.length) ok("nothing was silently posted"); else bad("posted to " + posted);
+  }
 
   // Honeypot short-circuits without an error.
   await p.evaluate(() => { document.querySelector('input[name="_hp"]').value = "bot"; });

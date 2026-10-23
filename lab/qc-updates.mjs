@@ -146,6 +146,8 @@ if (LIVE) {
   await p.close();
 }
 
+const CONNECTED = site.formEndpoint && site.formEndpoint !== "TBD";
+if (!CONNECTED) {
 console.log("\nforms: honest before and after submit");
 {
   const p = await page(390, 844);
@@ -213,6 +215,62 @@ console.log("\nforms: honest before and after submit");
   if (/not connected yet/.test(await st.textContent())) ok("safety form says plainly nothing was sent"); else bad("safety form status: " + (await st.textContent()));
 
   if (!posted.length) ok("nothing was posted anywhere"); else bad("POSTed to " + posted.join(", "));
+  await p.close();
+}
+
+} else {
+  /* Connected: every form posts to the worker. The endpoint is STUBBED here,
+     so running QC never emails the ministry. What is checked is the request
+     the page makes: one POST, the right _form name, every typed value. */
+  console.log("\nforms: connected to " + site.formEndpoint + " (stubbed in this test)");
+  const p = await page(390, 844);
+  const seen = [];
+  await p.route(site.formEndpoint, (route) => {
+    seen.push(route.request().postData() || "");
+    route.fulfill({ status: 200, contentType: "application/json", body: '{"ok":true}', headers: { "access-control-allow-origin": "*" } });
+  });
+  const others = [];
+  p.on("request", (r) => { if (r.method() === "POST" && !r.url().startsWith(site.formEndpoint)) others.push(r.url()); });
+
+  const CASES = [
+    ["/contact/", "contact", { "#contact-name": "QC Test", "#contact-email": "qc@example.com", "#contact-about": "Prayer", "#contact-message": "QC message" }],
+    ["/prayer/", "prayer", { "#prayer-request": "QC prayer request" }],
+    ["/need-help/", "help", { "#help-reach": "QC evenings", "#help-safe_contact": 2, "#help-need": 1 }],
+    ["/give/", "give", { "#give-name": "QC Test", "#give-email": "qc@example.com", "#give-gift_type": "Prayer line partner ($15/month)", "#give-designation": 1 }],
+    ["/events/", "newsletter", { "#newsletter-name": "QC Test", "#newsletter-email": "qc@example.com" }],
+    ["/volunteer/", "volunteer", null],
+    ["/partner/", "partner", null],
+    ["/discipleship/", "discipleship", null],
+  ];
+  for (const [path, kind, fill] of CASES) {
+    await p.goto(BASE + path, { waitUntil: "networkidle" });
+    const f = `form[data-kam-form=${kind}]`;
+    if (await p.$(`${f} .form__pre`)) bad(`${path} still shows the not-connected notice`);
+    if (fill) {
+      for (const [sel, v] of Object.entries(fill)) {
+        const tag = await p.$eval(sel, (e) => e.tagName);
+        if (tag === "SELECT") await p.selectOption(sel, typeof v === "number" ? { index: v } : v);
+        else await p.fill(sel, String(v));
+      }
+    } else {
+      // Fill every required field generically.
+      const req = await p.$$eval(`${f} [required]`, (n) => n.map((x) => [x.id, x.tagName, x.type]));
+      for (const [id, tag, type] of req) {
+        if (tag === "SELECT") await p.selectOption("#" + id, { index: 1 });
+        else if (type === "email") await p.fill("#" + id, "qc@example.com");
+        else if (type !== "checkbox") await p.fill("#" + id, "QC Test");
+      }
+    }
+    const before = seen.length;
+    await p.click(`${f} button[type=submit]`);
+    await p.waitForTimeout(600);
+    const st = (await p.textContent(`${f} .form__status`)) || "";
+    const body = seen[before] || "";
+    if (seen.length === before + 1 && body.includes(`name="_form"\r\n\r\n${kind}`) && /QC/.test(body) && !/did not go through|not connected/i.test(st))
+      ok(`${path} ${kind}: one POST to the worker, status "${st.trim().slice(0, 48)}"`);
+    else bad(`${path} ${kind}: posts=${seen.length - before}, status="${st.trim().slice(0, 60)}"`);
+  }
+  if (!others.length) ok("nothing posted anywhere but the worker"); else bad("other POSTs: " + others.join(", "));
   await p.close();
 }
 
