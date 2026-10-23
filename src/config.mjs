@@ -54,8 +54,11 @@ export const site = {
      2026-10-22: the links first dialled only the first ten (888-337-7294) on
      the theory that the network drops the extra three, and Selvin reported
      the tap reached the wrong place while the full number dialled by hand
-     works. A tel: link with all thirteen reproduces the hand-dialled call;
-     +1 plus thirteen is 14 digits, inside the 15-digit international limit.
+     works. Then (2026-10-23) the 13-digit link WITH a "+" came back "not in
+     service": "+" marks strict international (E.164) format, and for country
+     code 1 that must be exactly ten digits, so the carrier rejects thirteen.
+     So `digits` has NO plus: it is the exact string a person types on the
+     keypad, 1 888 33 7729 4968, and the phone dials it the same way.
      `live` was FALSE until someone had called the line and confirmed it
      reaches KAM's prayer line (Selvin's own 2026-10-22 brief: do not promote
      the hotline as answered until routing is verified). While false, the
@@ -67,7 +70,7 @@ export const site = {
   hotline: {
     label: "Nationwide Prayer Hotline",
     display: "1-888-33-PRAY-4YOU",
-    digits: "+1-888-33-7729-4968",
+    digits: "18883377294968",
     // Shown under the vanity spelling, the way KAM writes it (Eli 2026-10-22).
     digitsLabel: "1-888-33-7729-4968",
     // LIVE since 2026-10-22: Eli confirmed the line is answered.

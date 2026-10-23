@@ -99,7 +99,7 @@ console.log("\nhotline placement Selvin asked for");
     const txt = el ? await el.innerText() : "";
     if (!/1-888-33-PRAY-4YOU/.test(txt)) { bad(`${what}: number missing in ${sel}`); continue; }
     if (LIVE) {
-      const tel = await p.$eval(sel, (e) => (e.matches("a") ? e : e.querySelector('a[href^="tel:+1"]'))?.getAttribute("href")).catch(() => null);
+      const tel = await p.$eval(sel, (e) => (e.matches("a") ? e : e.querySelector('a[href^="tel:1"], a[href^="tel:+1"]'))?.getAttribute("href")).catch(() => null);
       if (tel === HOTLINE_TEL) ok(`${what} dials ${HOTLINE_TEL}`); else bad(`${what} href=${tel}`);
     } else {
       const near = await p.$eval(sel, (e) => (e.closest(".pray-band__call, .foot__pray, .title-page__foot, dd") || e).innerText);
