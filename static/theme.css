@@ -393,7 +393,14 @@ body { background: var(--sc-canvas); }
   padding-inline: var(--sc-gutter);
 }
 .mend__art { display: grid; place-items: center; }
-.mend__fig { width: min(28rem, 100%); height: auto; overflow: visible; }
+/* Width is also capped by the viewport HEIGHT: on a short laptop (1366x650)
+   a 28rem-wide jar is taller than the space between the sticky bar and the
+   bottom of the stage, and its neck sat under the bar. Centred in the stage,
+   a jar no taller than 100svh - 2 bars - 2rem always clears it. */
+.mend__fig {
+  width: min(28rem, 100%, calc((100svh - 2 * var(--bar-h) - 2rem) * 400 / 570));
+  height: auto; overflow: visible;
+}
 .mend__copy h2 { margin: 0; }
 .mend__copy p { margin: var(--sc-5) 0 0; max-width: 46ch; color: var(--sc-ink-soft); }
 .mend__ref {
@@ -1006,3 +1013,16 @@ a.title-page__pray, a.foot__pray-num, a.pray-band__num, .menu__pray, .event__met
 /* Anchor jumps (the header prayer link goes to #prayer-line) land below the
    sticky bar, not under it. */
 main [id] { scroll-margin-top: calc(var(--bar-h) + 1rem); }
+
+/* ------------------------------------------------- the mending, in 3D ---- */
+/* static/mending3d.js puts a WebGL canvas behind the copy across the whole
+   pinned stage (so shards can fly past the column edges) and hides the SVG
+   jar it replaces. The SVG keeps its box, so the layout never shifts. */
+.mend__gl {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 1; pointer-events: none;
+  opacity: 0; transition: opacity 600ms var(--sc-ease-out);
+}
+.mend__fig { transition: opacity 600ms var(--sc-ease-out); }
+#mending.is-3d .mend__gl { opacity: 1; }
+#mending.is-3d .mend__fig { opacity: 0; }

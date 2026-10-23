@@ -242,6 +242,9 @@ export function home() {
   const body = [
     titlePage, pathway, prayerLine, index, why, mending, areas, discipleship,
     core, eventBlock, tablingBlock, doors, stories, closingBand(),
+    // The jar in 3D. Progressive: the SVG above is the fallback and the
+    // reduced-motion version; this module loads three.js only near the act.
+    `<script type="module" src="/mending3d.js"></script>`,
   ].join("\n");
 
   return {
