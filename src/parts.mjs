@@ -1,5 +1,5 @@
-import { esc, isTBD, orTBA, giveHref, giveAttrs } from "./layout.mjs";
-import { site, model, programs, events, crisisResources, bibleStudy } from "./config.mjs";
+import { esc, isTBD, orTBA, giveHref, giveAttrs, hotlineLink, hotlineHref } from "./layout.mjs";
+import { site, model, programs, events, crisisResources, bibleStudy, corePrograms, givingLevels } from "./config.mjs";
 
 /* The weekday is DERIVED, never typed. A hand-written "Thursday, October 9"
    shipped once and 9 October 2026 is a Friday, which is the kind of error that
@@ -38,7 +38,7 @@ export function crumb(...pairs) {
 }
 
 /* ------------------------------------------------------------- the model -- */
-export function modelSection({ ground = "dark", heading = "How we serve", lede = "" } = {}) {
+export function modelSection({ ground = "dark", heading = "Call. Connect. Restore.", lede = "" } = {}) {
   const steps = model
     .map(
       (m) => `
@@ -57,10 +57,10 @@ export function modelSection({ ground = "dark", heading = "How we serve", lede =
   <div class="wrap">
     <div class="split-side">
       <div class="stack sticky-side" data-sc-in data-sc-stagger="70">
-        <span class="rule-label">The KAM outreach model</span>
+        <span class="rule-label">Our pathway</span>
         <h2 class="h-lg">${esc(heading)}</h2>
         ${lede ? `<p class="body">${esc(lede)}</p>` : ""}
-        <p class="body">Nobody is handed a tract and sent on their way, and nobody is handed a meal and left where we found them. Every part of this leads to the next part, and the last one is the point: a person who was served becomes a person who serves.</p>
+        <p class="body">All three lead to the same place: discipleship. Nobody is handed a tract and sent on their way, and nobody is handed a meal and left where we found them. A person who was served becomes a person who serves.</p>
       </div>
       <div class="model" data-model>
         <span class="model__line" aria-hidden="true"><i></i></span>
@@ -87,7 +87,7 @@ export function programGrid({ ground = "dark" } = {}) {
 <section class="sec ground--${ground}" id="programs">
   <div class="wrap">
     <div class="stack" data-sc-in data-sc-stagger="70" style="margin-bottom:var(--sc-8)">
-      <span class="rule-label">Our mission in action</span>
+      <span class="rule-label">Our service priorities</span>
       <h2 class="h-lg">Five places we are putting our hands.</h2>
       <p class="body">These are not five departments. They are five doors into the same house, and a person who walks through one of them usually needs two of the others.</p>
     </div>
@@ -139,6 +139,94 @@ export function eventCard(e, { level = 2 } = {}) {
 }
 
 export const upcoming = () => events.filter((e) => e.status === "upcoming");
+
+/* -------------------------------------------------------- prayer hotline -- */
+/* The Nationwide Prayer Hotline as a block. Used on the homepage, the prayer
+   page, the give page and the programs page. The number always dials the real
+   ten digits (see site.hotline in config). Hours are only stated once they
+   are confirmed. */
+export function hotlineBand({ ground = "cream", head = "Need prayer?", body = "" } = {}) {
+  const h = site.hotline;
+  const hours = isTBD(h.hours) ? "" : `<p class="pray-band__hours">${esc(h.hours)}</p>`;
+  return `
+<section class="sec sec--tight pray-band ground--${ground}" id="prayer-line">
+  <div class="wrap">
+    <div class="pray-band__grid" data-sc-in data-sc-stagger="70">
+      <div class="stack">
+        <span class="rule-label">${esc(h.label)}</span>
+        <h2 class="h-lg">${esc(head)}</h2>
+        ${body ? `<p class="body">${body}</p>` : ""}
+      </div>
+      <div class="pray-band__call">
+        ${h.live
+          ? `<a class="pray-band__num" href="${hotlineHref()}" aria-label="Call the ${esc(h.label)}, ${esc(h.digitsLabel)}">${esc(h.display)}</a>
+        <p class="pray-band__digits">Dial ${esc(h.digitsLabel)}</p>`
+          : `<p class="pray-band__num">${esc(h.display)}</p><p class="pray-band__digits"><span class="tba">Launching soon</span></p>`}
+        ${hours}
+        <div class="btn-row" style="margin-top:var(--sc-4)">
+          ${h.live ? `<a class="btn btn--gold" href="${hotlineHref()}">Call the prayer line</a>` : ""}
+          <a class="btn btn--line" href="/prayer/#prayer-form">Send a prayer request</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>`;
+}
+
+/* --------------------------------------------------------- core programs -- */
+export function coreProgramsSection({ ground = "dark", heading = "What we do, regularly." } = {}) {
+  return `
+<section class="sec ground--${ground}" id="core-programs">
+  <div class="wrap">
+    <div class="stack" data-sc-in data-sc-stagger="70" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Core programs</span>
+      <h2 class="h-lg">${esc(heading)}</h2>
+      <p class="body">Prayer, a shared table, and a meal. These are the regular rhythm of the ministry, and every gathering is open to everyone.</p>
+    </div>
+    <div class="plate-grid plate-grid--core" data-sc-in data-sc-stagger="70">
+      ${corePrograms
+        .map(
+          (c, i) => `
+      <a class="plate" href="${c.href}">
+        <span class="plate__no">${String(i + 1).padStart(2, "0")}</span>
+        <h3>${esc(c.name)}</h3>
+        <p>${esc(c.hotline && !site.hotline.live ? c.lineSoon : c.line)}</p>
+        <span class="plate__go">${c.hotline ? (site.hotline.live ? "Call or write" : "Write a request") : c.href === "/events/" ? "See dates" : "Learn more"}</span>
+      </a>`
+        )
+        .join("")}
+    </div>
+  </div>
+</section>`;
+}
+
+/* -------------------------------------------------------- giving levels --- */
+/* Renders only when all of Selvin's cause-based levels are filled in. A level
+   with a `url` links straight to its payment page; without one it routes to
+   the give form, so nothing points at a checkout that does not exist. */
+export function givingLevelsSection({ ground = "dark" } = {}) {
+  if (!givingLevels.length) return "";
+  return `
+<section class="sec ground--${ground}" id="levels">
+  <div class="wrap">
+    <div class="stack" data-sc-in data-sc-stagger="70" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Choose a cause</span>
+      <h2 class="h-lg">Give to the work you care about most.</h2>
+    </div>
+    <div class="doors" data-sc-in data-sc-stagger="80">
+      ${givingLevels
+        .map(
+          (l) => `
+      <a class="door" href="${isTBD(l.url) ? "#give-form" : esc(l.url)}"${isTBD(l.url) ? "" : ' target="_blank" rel="noopener"'}>
+        <div><span class="rule-label">${esc(l.amount)}</span><h3>${esc(l.title)}</h3><p>${esc(l.line)}</p></div>
+        <span class="door__go">${isTBD(l.url) ? "Use the form below" : "Give " + esc(l.amount)}</span>
+      </a>`
+        )
+        .join("")}
+    </div>
+  </div>
+</section>`;
+}
 
 /* ------------------------------------------------------------ the doors -- */
 export function doorsSection({ ground = "dark" } = {}) {
@@ -285,8 +373,20 @@ export function form({ id, submit = "Send", success, fields, note = "" }) {
 
   const rows = fields.filter((f) => f.row);
 
+  /* Known at build time: with no endpoint and no HubSpot form, say so ABOVE
+     the fields, before anyone types. On the safety form most of all: someone
+     on a monitored device should not learn that nothing was sent only after
+     writing it down. */
+  const unconnected = isTBD(site.formEndpoint) && isTBD(site.hubspot?.formGuid);
+  const pre = !unconnected
+    ? ""
+    : id === "help"
+    ? `<p class="form__pre">This form is not connected yet, so nothing typed here is sent. Please use the numbers at the top of this page.</p>`
+    : `<p class="form__pre">Our online form is not connected yet. When you press send, we will open an email to KAM${isTBD(site.email) ? "" : ` (${esc(site.email)})`} with what you wrote, for you to send${id === "prayer" ? " from your own email address, so it will not be anonymous" : ""}.</p>`;
+
   return `
 <form class="form" data-kam-form="${id}"${success ? ` data-success="${esc(success)}"` : ""} novalidate>
+  ${pre}
   ${body}
   <div class="hp"><label for="${id}-hp">Leave this field empty</label><input type="text" id="${id}-hp" name="_hp" tabindex="-1" autocomplete="off"></div>
   ${note ? `<p class="hint" style="color:var(--sc-ink-soft);font-size:0.88rem;line-height:1.55">${note}</p>` : ""}
@@ -307,12 +407,13 @@ export function orgJsonLd() {
     url: site.origin,
     logo: site.origin + "/img/kam-emblem.png",
     slogan: site.tagline,
-    description:
-      "Kingdom Assembly Missions is a Christian community outreach and discipleship ministry in Greenville, South Carolina, serving mental health, homelessness, at-risk youth, women leaving abuse, and addiction recovery.",
+    description: site.statement,
     areaServed: { "@type": "City", name: "Greenville", address: { "@type": "PostalAddress", addressRegion: "SC", addressCountry: "US" } },
   };
   if (!isTBD(site.email)) o.email = site.email;
   if (!isTBD(site.phone)) o.telephone = site.phone;
+  if (site.hotline.live)
+    o.contactPoint = { "@type": "ContactPoint", contactType: "prayer line", telephone: site.hotline.digits, areaServed: "US" };
   const socials = Object.values(site.social).filter((v) => !isTBD(v));
   if (socials.length) o.sameAs = socials;
   return o;

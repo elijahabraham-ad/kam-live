@@ -1,13 +1,14 @@
-import { esc, isTBD, orTBA, giveHref, giveAttrs } from "../layout.mjs";
+import { esc, isTBD, orTBA, giveHref, giveAttrs, hotlineLink, hotlineHref } from "../layout.mjs";
 import {
   site, programs, events, volunteerRoles, partnerTypes, model,
   discipleshipTrack, givingDesignations, meetingFlow, scriptures, journeys,
-  testimonials, team, campaigns, posts, bibleStudy, gallery,
+  testimonials, team, campaigns, posts, bibleStudy, gallery, givingLevels,
 } from "../config.mjs";
 import {
   pageHead, crumb, modelSection, programGrid, eventCard, upcoming,
   doorsSection, closingBand, crisisBlock, form, orgJsonLd, eventJsonLd, programPlate,
   testimonialList, teamList, campaignList, eventDate, galleryBlock,
+  hotlineBand, coreProgramsSection, givingLevelsSection,
 } from "../parts.mjs";
 
 /* ============================================================== ABOUT ===== */
@@ -34,9 +35,9 @@ export function about() {
 ${pageHead({
       crumb: crumb({ label: "Home", href: "/" }, { label: "About" }),
       label: "About",
-      h1: "We exist to empower and restore communities.",
+      h1: "We call people to Christ and help restore lives.",
       lede:
-        "Kingdom Assembly Missions is a Christian community outreach committed to restoring our communities through faith, discipleship, practical assistance, mentorship, outreach, prayer and service.",
+        "Kingdom Assembly Missions is a Christian community outreach ministry committed to sharing the love of Jesus Christ through prayer, discipleship, practical service, and community engagement. Call. Connect. Restore.",
     })}
 
 <section class="sec sec--tight ground--dark">
@@ -50,7 +51,9 @@ ${pageHead({
       <div class="stack" data-sc-in data-sc-stagger="70">
         <h2 class="h-md">Where we work</h2>
         <p class="body">${esc(site.city)}, ${esc(site.region)}, and the neighborhoods around it. We table in public spaces, host gatherings, run outreach events, and partner with churches, businesses and organizations already doing good work here.</p>
-        <p class="body">Our first major event is the KAM Christian Open Mic on October 9. Everything else grows from the relationships built in rooms like that one.</p>
+        <p class="body">Prayer reaches further than that. ${site.hotline.live
+          ? `Our Nationwide Prayer Hotline, ${hotlineLink()}, takes calls from anywhere in the country.`
+          : `Our Nationwide Prayer Hotline, ${esc(site.hotline.display)}, is launching soon for callers anywhere in the country.`}</p>
         <a class="tlink" href="/events/">See what is coming up</a>
       </div>
     </div>
@@ -80,7 +83,7 @@ ${pageHead({
 
 ${galleryBlock(gallery, { ground: "dark", heading: "The work, as it happens" })}
 ${teamList(team)}
-${modelSection({ ground: team.length ? "dark" : "cream", heading: "How we serve, in order.", lede: "Six stations. Each one earns the right to the next." })}
+${modelSection({ ground: team.length ? "dark" : "cream", lede: "Feeding people spiritually, emotionally, and physically." })}
 ${closingBand()}`,
   };
 }
@@ -91,14 +94,14 @@ export function mission() {
     path: "/mission/",
     title: "Our Mission",
     description:
-      "Our mission in action: mental health, homelessness, at-risk youth, women leaving abuse, and addiction recovery, all leading to discipleship.",
+      "Kingdom Assembly Missions exists to call people to Christ, connect through prayer and practical service, and help restore lives spiritually, emotionally, and physically.",
     jsonld: [orgJsonLd()],
     body: `
 ${pageHead({
       crumb: crumb({ label: "Home", href: "/" }, { label: "Our Mission" }),
-      label: "Our mission in action",
-      h1: "We reach the broken, restore lives, empower communities, and make disciples.",
-      lede: "Five areas of community impact. One outcome we are actually aiming at.",
+      label: "Our mission",
+      h1: "Call people to Christ. Connect through prayer and practical service. Restore lives.",
+      lede: "Feeding people spiritually, emotionally, and physically. Five service priorities, and one outcome we are actually aiming at: discipleship.",
       actions: `<a class="btn btn--gold btn--lg" href="/programs/">See the programs</a><a class="btn btn--line btn--lg" href="/discipleship/">Discipleship</a>`,
     })}
 
@@ -106,8 +109,9 @@ ${pageHead({
   <div class="wrap">
     <div class="split-2">
       <div class="stack" data-sc-in data-sc-stagger="70">
-        <h2 class="h-md">Practical help is the door, not the destination</h2>
-        <p class="body">Hunger, addiction, abuse, instability and untreated mental illness are real problems that need real answers. We treat them that way. We hand out food that people actually want to eat, we connect people to professionals who are trained for what they are facing, and we do not pretend a prayer replaces a prescription.</p>
+        <h2 class="h-md">Spiritual, emotional, physical: one person</h2>
+        <p class="body">Feeding people spiritually, emotionally, and physically is not three programs. It is one person, met whole. A hungry person is often a lonely one too, and a lonely one is often carrying something spiritual that nobody has asked about.</p>
+        <p class="body">So we pray with people, we sit with them, and we put food on the table, and we do not pretend any one of those replaces the others. A prayer does not replace a meal. A meal does not replace a counselor. We hand out food that people actually want to eat, and we connect people to professionals who are trained for what they are facing.</p>
         <p class="body">And we keep going after that. Because the thing underneath most of what we encounter is not a missing resource. It is a person who has decided their life does not matter.</p>
       </div>
       <div class="stack" data-sc-in data-sc-stagger="70">
@@ -121,7 +125,7 @@ ${pageHead({
 </section>
 
 ${programGrid({ ground: "cream" })}
-${modelSection({ ground: "dark", heading: "The KAM outreach model", lede: "This is the shape of every outreach we run." })}
+${modelSection({ ground: "dark", lede: "This is the shape of every outreach we run." })}
 
 <section class="sec ground--cream">
   <div class="wrap wrap--mid">
@@ -146,18 +150,25 @@ export function programsIndex() {
     path: "/programs/",
     title: "Programs",
     description:
-      "KAM programs: mental health, homelessness outreach, at-risk youth mentorship, support for women leaving abuse, and Christian addiction recovery in Greenville, SC.",
+      "KAM programs: the Nationwide Prayer Hotline, prayer breakfasts, prayer dinners and monthly community feeding, plus five service priorities in Greenville, SC.",
     jsonld: [orgJsonLd()],
     body: `
 ${pageHead({
       crumb: crumb({ label: "Home", href: "/" }, { label: "Programs" }),
       label: "Programs",
-      h1: "Five doors into the same house.",
-      lede: "A person who walks through one of these usually needs two of the others. That is why they are built together.",
+      h1: "What we do.",
+      lede: "Our core programs are the regular rhythm of the ministry. Our five service priorities are where we are building, some directly and some alongside partners. Where something is still in development, we say so.",
     })}
 
-<section class="sec sec--tight ground--dark">
+${coreProgramsSection({ ground: "cream" })}
+
+<section class="sec ground--dark" id="priorities">
   <div class="wrap">
+    <div class="stack" data-sc-in data-sc-stagger="70" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Service priorities</span>
+      <h2 class="h-lg">Five doors into the same house.</h2>
+      <p class="body">A person who walks through one of these usually needs two of the others. That is why they are built together.</p>
+    </div>
     <div class="plate-grid" data-sc-in data-sc-stagger="70">${programs.map(programPlate).join("")}</div>
   </div>
 </section>
@@ -241,7 +252,7 @@ export function programPage(p) {
     body: `
 ${pageHead({
       crumb: crumb({ label: "Home", href: "/" }, { label: "Programs", href: "/programs/" }, { label: p.short }),
-      label: "Our mission in action",
+      label: "Our service priorities",
       h1: esc(p.kicker),
       lede: esc(p.mission),
       actions,
@@ -376,7 +387,7 @@ export function eventsPage() {
   const up = upcoming();
   const cards = up.length
     ? up.map((e) => `<div style="margin-bottom:var(--sc-6)">${eventCard(e, { level: 2 })}</div>`).join("")
-    : `<div class="notice"><span class="rule-label">Nothing on the calendar yet</span><p>Our next outreach has not been posted. Check back, or ask us to let you know when it is.</p></div>`;
+    : `<div class="notice"><span class="rule-label">Next dates are being confirmed</span><p>Prayer breakfasts, prayer dinners and the monthly community feeding are posted here as each date is set. Every prayer gathering is open to everyone, whatever church you go to or whether you go to one at all.</p><p>Want the date the moment it is set? Use the signup below.</p></div>`;
 
   const detail = up
     .map(
@@ -436,14 +447,14 @@ export function eventsPage() {
     path: "/events/",
     title: "Events",
     description:
-      "Upcoming Kingdom Assembly Missions events and community outreach in Greenville, SC, including the KAM Christian Open Mic on October 9.",
+      "Kingdom Assembly Missions gatherings and community outreach in Greenville, SC: prayer breakfasts, prayer dinners and monthly community feeding, all open to everyone.",
     jsonld: [orgJsonLd(), ...up.map(eventJsonLd)],
     body: `
 ${pageHead({
       crumb: crumb({ label: "Home", href: "/" }, { label: "Events" }),
       label: "Events and outreach",
       h1: "Come find community.",
-      lede: "Gatherings, outreach events and community tables. Everything here is open to anyone.",
+      lede: "Prayer gatherings, outreach events and community tables. Everything here is open to everyone.",
     })}
 
 <section class="sec sec--tight ground--dark">
@@ -454,7 +465,7 @@ ${pageHead({
 
 ${detail}
 
-<section class="sec ground--dark">
+<section class="sec ground--${up.length ? "dark" : "cream"}">
   <div class="wrap">
     <div class="split-2">
       <div class="stack" data-sc-in data-sc-stagger="70">
@@ -484,7 +495,7 @@ ${detail}
   </div>
 </section>
 
-${closingBand({ head: "Come share your gift. Come hear a story. Come find community." })}`,
+${closingBand({ head: "Every gathering is open to everyone. Come find community." })}`,
   };
 }
 
@@ -504,15 +515,15 @@ export function give() {
     : `
     <div class="notice">
       <span class="rule-label">Online giving is being set up</span>
-      <p>Kingdom Assembly Missions is finalizing secure online giving right now. Rather than send you to a half-configured payment page, we would rather you tell us how you want to give and we will get back to you personally within a day.</p>
-      <p>If you want to give today, use the form and say so. We will call you.</p>
+      <p>Kingdom Assembly Missions is setting up secure online giving. Rather than send you to a half-configured payment page, we would rather you tell us how you want to give, and someone from KAM will get back to you personally.</p>
+      <p>If you want to give today, use the form below and say so.</p>
     </div>`;
 
   return {
     path: "/give/",
     title: "Give",
     description:
-      "Give to Kingdom Assembly Missions. Your gift funds community meals, hygiene kits, Bibles, youth programs, recovery outreach and transitional support for women leaving abuse.",
+      "Give to Kingdom Assembly Missions. Support the Nationwide Prayer Hotline, monthly community feeding, Bibles and outreach in Greenville, SC.",
     jsonld: [orgJsonLd()],
     body: `
 ${pageHead({
@@ -538,9 +549,31 @@ ${pageHead({
   </div>
 </section>
 
+<section class="sec sec--tight ground--cream" id="prayer-line-partner">
+  <div class="wrap">
+    <div class="pray-band__grid" data-sc-in data-sc-stagger="70">
+      <div class="stack">
+        <span class="rule-label">${esc(site.hotline.label)}</span>
+        <h2 class="h-md">Become a prayer line partner for ${esc(site.hotline.monthly)}.</h2>
+        <p class="body">A separate monthly gift that supports the hotline itself. It can stand on its own or sit alongside any other gift.</p>
+      </div>
+      <div class="pray-band__call">
+        ${hotlineLink("pray-band__num")}
+        <p class="pray-band__digits">The line this supports</p>
+        <div class="btn-row" style="margin-top:var(--sc-4)">
+          ${isTBD(site.hotline.partnerUrl)
+            ? `<a class="btn btn--line" href="#give-form">Ask about partnering</a>`
+            : `<a class="btn btn--gold" href="${esc(site.hotline.partnerUrl)}" target="_blank" rel="noopener">Give ${esc(site.hotline.monthly)}</a>`}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+${givingLevelsSection({ ground: "dark" })}
 ${campaignList(campaigns)}
 
-<section class="sec ground--cream">
+<section class="sec ground--${givingLevels.length ? "cream" : "dark"}">
   <div class="wrap">
     <div class="doors" data-sc-in data-sc-stagger="80">
       <div class="door">
@@ -559,7 +592,7 @@ ${campaignList(campaigns)}
   </div>
 </section>
 
-<section class="sec ground--dark" id="give-form">
+<section class="sec ground--${givingLevels.length ? "dark" : "cream"}" id="give-form">
   <div class="wrap">
     <div class="split-2">
       <div class="stack" data-sc-in data-sc-stagger="70">
@@ -581,7 +614,7 @@ ${campaignList(campaigns)}
             name: "gift_type",
             label: "How you would like to give",
             required: true,
-            options: ["One-time gift", "Monthly partner", "Sponsor an event", "In-kind donation (goods or services)", "Not sure, tell me the options"],
+            options: ["One-time gift", "Monthly partner", `Prayer line partner (${site.hotline.monthly})`, "Sponsor an event", "In-kind donation (goods or services)", "Not sure, tell me the options"],
           },
           { type: "select", name: "designation", label: "Where you want it to go", required: true, options: givingDesignations },
           { type: "textarea", name: "message", label: "Anything else (optional)" },
@@ -627,7 +660,7 @@ ${doorsSection({ ground: "dark" })}
       <a href="${j.href}">
         <span class="idx">${String(i + 1).padStart(2, "0")}</span>
         <span class="lbl">${esc(j.label)}</span>
-        <span class="nte">${esc(j.note)}</span>
+        <span class="nte">${esc(j.hotline && !site.hotline.live ? j.noteSoon : j.note)}</span>
       </a>`
         )
         .join("")}
@@ -903,18 +936,28 @@ export function prayer() {
   return {
     path: "/prayer/",
     title: "Request Prayer",
-    description: "Submit a prayer request to Kingdom Assembly Missions. Confidential, and read by real people who will pray.",
+    description: site.hotline.live
+      ? "Call the Kingdom Assembly Missions Nationwide Prayer Hotline at 1-888-33-PRAY-4YOU, or send a confidential prayer request."
+      : "Send Kingdom Assembly Missions a confidential prayer request. A real person on our prayer team reads every one.",
     jsonld: [orgJsonLd()],
     body: `
 ${pageHead({
       crumb: crumb({ label: "Home", href: "/" }, { label: "Prayer" }),
       label: "Request prayer",
       h1: "Somebody will actually pray for this.",
-      lede:
-        "Not a form that goes into a database. A real person on our prayer team reads every request that comes through here.",
+      lede: site.hotline.live
+        ? "Call the Nationwide Prayer Hotline from anywhere in the country, or write to us below. Not a form that goes into a database: a real person on our prayer team reads every request."
+        : "Write to us below. Our Nationwide Prayer Hotline is launching soon. Not a form that goes into a database: a real person on our prayer team reads every request.",
+      actions: site.hotline.live
+        ? `<a class="btn btn--gold btn--lg" href="${hotlineHref()}">Call ${esc(site.hotline.display)}</a><a class="btn btn--line btn--lg" href="#prayer-form">Write a request</a>`
+        : `<a class="btn btn--gold btn--lg" href="#prayer-form">Write a request</a>`,
     })}
 
-<section class="sec sec--tight ground--dark">
+${site.hotline.live
+  ? hotlineBand({ ground: "cream", head: "Pray with us by phone.", body: "One number, nationwide. If you would rather write it down, the form is just below." })
+  : hotlineBand({ ground: "cream", head: "A prayer line is coming.", body: "One number, nationwide, launching soon. Until it opens, write to us using the form just below." })}
+
+<section class="sec sec--tight ground--dark" id="prayer-form">
   <div class="wrap">
     <div class="split-2">
       <div class="stack" data-sc-in data-sc-stagger="70">
@@ -925,7 +968,7 @@ ${pageHead({
         </div>
         <div class="notice" style="margin-top:var(--sc-5)">
           <span class="rule-label">If this is a crisis</span>
-          <p>Prayer is not a substitute for help that arrives in the next ten minutes. If you are in danger or thinking about ending your life, call <a class="tlink" href="tel:988">988</a> or <a class="tlink" href="tel:911">911</a> right now, then write to us afterward.</p>
+          <p>Prayer is not a substitute for help that arrives in the next ten minutes, and our prayer line is not an emergency service. If you are in danger or thinking about ending your life, call <a class="tlink" href="tel:988">988</a> or <a class="tlink" href="tel:911">911</a> right now, then reach us afterward.</p>
         </div>
       </div>
       ${form({
@@ -953,6 +996,7 @@ export function contact() {
   const contactLines = [
     isTBD(site.email) ? null : `<div><dt>Email</dt><dd><a class="tlink" href="mailto:${esc(site.email)}">${esc(site.email)}</a></dd></div>`,
     isTBD(site.phone) ? null : `<div><dt>Phone</dt><dd><a class="tlink" href="tel:${esc(site.phone.replace(/[^\d+]/g, ""))}">${esc(site.phone)}</a></dd></div>`,
+    `<div><dt>Prayer line</dt><dd>${hotlineLink()}</dd></div>`,
     isTBD(site.mailingAddress) ? null : `<div><dt>Mail</dt><dd>${esc(site.mailingAddress)}</dd></div>`,
   ].filter(Boolean);
 

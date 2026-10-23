@@ -1,9 +1,9 @@
-import { esc, giveHref, giveAttrs, orTBA, isTBD } from "../layout.mjs";
+import { esc, giveHref, giveAttrs, orTBA, isTBD, hotlineLink, hotlineHref } from "../layout.mjs";
 import { site, journeys, programs, scriptures, tabling } from "../config.mjs";
 import { mendingSvg } from "../mending.mjs";
 import {
   modelSection, eventCard, upcoming, doorsSection, closingBand,
-  programPlate, orgJsonLd, eventJsonLd,
+  programPlate, orgJsonLd, eventJsonLd, hotlineBand, coreProgramsSection,
 } from "../parts.mjs";
 
 export function home() {
@@ -21,26 +21,46 @@ export function home() {
   <div class="wrap title-page__inner">
     <div class="title-page__seal">
       <img src="/img/kam-emblem-sm.webp" width="208" height="240" alt="Kingdom Assembly Missions" decoding="async">
-      <span>Kingdom Assembly Missions<br>Greenville, South Carolina<br>Love. Serve. Impact.</span>
+      <span>Kingdom Assembly Missions<br>Greenville, South Carolina</span>
     </div>
 
-    <h1 class="h-xl" data-sc-kinetic="lines">Reach. Restore.<br>Empower. Disciple.</h1>
+    <h1 class="h-xl" data-sc-kinetic="lines">Call. Connect.<br>Restore.</h1>
 
-    <p class="title-page__sub">Kingdom Assembly Missions exists to serve our communities, restore broken lives, and advance the Kingdom of God.</p>
+    <p class="title-page__tag">${esc(site.tagline)}</p>
+
+    <p class="title-page__sub">Kingdom Assembly Missions (KAM) is a Christian community outreach ministry committed to sharing the love of Jesus Christ through prayer, discipleship, practical service, and community engagement.</p>
 
     <div class="btn-row title-page__acts">
-      <a class="btn btn--gold btn--lg" href="/get-involved/">Get involved</a>
-      <a class="btn btn--line btn--lg" href="${giveHref()}"${giveAttrs()}>Give</a>
+      <a class="btn btn--gold btn--lg" href="/prayer/">Request prayer</a>
+      <a class="btn btn--line btn--lg" href="/get-involved/">Get involved</a>
+      <a class="btn btn--line btn--lg" href="${giveHref()}"${giveAttrs()}>Support our mission</a>
     </div>
 
     <p class="title-page__foot">
-      <span class="rule-label">Next</span>
-      <a class="tlink" href="/events/">October 9 &middot; KAM Christian Open Mic</a>
+      <span class="rule-label">Need prayer?</span>
+      ${hotlineLink("title-page__pray")}
+      <span>${esc(site.hotline.label)}</span>
     </p>
   </div>
 </section>`;
 
-  /* --- 2 · THE INDEX. Six journeys, set as an index rather than as cards.
+  /* --- 1b · THE PATHWAY. Selvin's three-step framework, straight after the
+     title, with the homepage copy he supplied 2026-10-22. ---------------- */
+  const pathway = modelSection({
+    ground: "cream",
+    heading: "How we serve, in three steps.",
+    lede: "We meet people where they are, build meaningful relationships, respond to practical needs, and help individuals grow in faith, hope, and purpose. Through our nationwide prayer hotline, community prayer gatherings, feeding outreach, and support for individuals and families facing difficult circumstances, we work to bring people closer to Christ and help communities grow stronger.",
+  });
+
+  const prayerLine = hotlineBand({
+    ground: "dark",
+    head: "Need prayer?",
+    body: site.hotline.live
+      ? "Call from anywhere in the country, or send us a prayer request in writing. You do not need to explain anything first."
+      : "Our nationwide prayer line is launching soon. Until then, send us a prayer request in writing. You do not need to explain anything first.",
+  });
+
+  /* --- 2 · THE INDEX. The journeys, set as an index rather than as cards.
      This is the most important navigation on the site: a visitor should find
      their own line within seconds of landing. --------------------------- */
   const index = `
@@ -57,7 +77,7 @@ export function home() {
       <a href="${j.href}">
         <span class="idx">${String(i + 1).padStart(2, "0")}</span>
         <span class="lbl">${esc(j.label)}</span>
-        <span class="nte">${esc(j.note)}</span>
+        <span class="nte">${esc(j.hotline && !site.hotline.live ? j.noteSoon : j.note)}</span>
       </a>`
         )
         .join("")}
@@ -109,7 +129,7 @@ export function home() {
   <div data-sc-stage>
     <div class="rail" data-sc-pan="0.05">
       <div class="rail__lead stack">
-        <span class="rule-label">Chapter two &middot; Our mission in action</span>
+        <span class="rule-label">Chapter two &middot; Our service priorities</span>
         <h2 class="h-lg">Five places we are putting our hands.</h2>
         <p class="body">Not five departments. Five doors into the same house. A person who walks through one of them usually needs two of the others.</p>
       </div>
@@ -151,12 +171,13 @@ export function home() {
   </div>
 </section>`;
 
-  /* --- 7 · CHAPTER V: THE MODEL ----------------------------------------- */
-  const modelBlock = modelSection({
-    ground: "dark",
-    heading: "How we serve, in order.",
-    lede: "Six stations. Each one earns the right to the next.",
-  });
+  /* --- 7 · CHAPTER V: CORE PROGRAMS. Replaced the six-station model, which
+     now lives at the top of the page as the three-step pathway. ----------- */
+  const core = coreProgramsSection({ ground: "dark" });
+
+  /* With no upcoming event the cream event plate drops out, so the sections
+     after it swap grounds to keep the hard dark/cream cuts alternating. */
+  const g = ev ? ["dark", "cream", "dark"] : ["cream", "dark", "cream"];
 
   /* --- 8 · CHAPTER VI: THE EVENT. A black plate on cream paper. --------- */
   const eventBlock = ev
@@ -177,10 +198,10 @@ export function home() {
 
   /* --- 9 · CHAPTER VII: TABLING ----------------------------------------- */
   const tablingBlock = `
-<section class="sec statement ground--dark" id="tabling">
+<section class="sec statement ground--${g[0]}" id="tabling">
   <div class="wrap">
     <div data-sc-in data-sc-stagger="70">
-      <span class="rule-label">Chapter five &middot; Meet us in the community</span>
+      <span class="rule-label">Chapter ${ev ? "five" : "four"} &middot; Meet us in the community</span>
       <p class="statement__big" style="margin-top:var(--sc-4)">We don't wait for the community to come to us. <em>We go to the community.</em></p>
     </div>
     <div class="split-2" style="margin-top:var(--sc-8)">
@@ -200,14 +221,14 @@ export function home() {
 </section>`;
 
   /* --- 10 · CHAPTER VIII: THE DOORS ------------------------------------- */
-  const doors = doorsSection({ ground: "cream" });
+  const doors = doorsSection({ ground: g[1] });
 
   /* --- 11 · CHAPTER IX: STORIES ----------------------------------------- */
   const stories = `
-<section class="sec ground--dark" id="stories">
+<section class="sec ground--${g[2]}" id="stories">
   <div class="wrap wrap--mid center">
     <div class="stack" data-sc-in data-sc-stagger="70">
-      <span class="rule-label">Chapter six &middot; Broken doesn't mean finished</span>
+      <span class="rule-label">Chapter ${ev ? "six" : "five"} &middot; Broken doesn't mean finished</span>
       <h2 class="h-lg">We would rather show you an empty shelf.</h2>
       <p class="body" style="margin-inline:auto">This is where the testimonies will live. We are only at the beginning, and we would rather show you an honest empty shelf than fill it with somebody else's story.</p>
       <p class="body" style="margin-inline:auto">When someone chooses to tell what God did, in their own words and with their full permission, it goes here.</p>
@@ -219,8 +240,8 @@ export function home() {
 </section>`;
 
   const body = [
-    titlePage, index, why, mending, areas, discipleship,
-    modelBlock, eventBlock, tablingBlock, doors, stories, closingBand(),
+    titlePage, pathway, prayerLine, index, why, mending, areas, discipleship,
+    core, eventBlock, tablingBlock, doors, stories, closingBand(),
   ].join("\n");
 
   return {
@@ -228,7 +249,7 @@ export function home() {
     title: "Kingdom Assembly Missions · Christian community outreach in Greenville, SC",
     ogTitle: "Kingdom Assembly Missions",
     description:
-      "Kingdom Assembly Missions is a Christian community outreach and discipleship ministry in Greenville, SC. We reach the broken, restore lives, empower communities and make disciples.",
+      "Call. Connect. Restore. Kingdom Assembly Missions is a Christian outreach ministry in Greenville, SC, feeding people spiritually, emotionally, and physically.",
     jsonld: [orgJsonLd(), ...(ev ? [eventJsonLd(ev)] : [])],
     body,
   };

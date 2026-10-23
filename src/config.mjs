@@ -9,14 +9,19 @@ export const site = {
   name: "Kingdom Assembly Missions",
   short: "Kingdom Assembly Missions",
   abbr: "KAM",
-  tagline: "Reaching the broken. Restoring the community. Advancing the Kingdom.",
-  motto: "Love. Serve. Impact.",
+  // Selvin's direction 2026-10-22: one framework and one tagline everywhere.
+  // "Love. Serve. Impact." stays on the emblem artwork only.
+  tagline: "Feeding People Spiritually, Emotionally, and Physically.",
+  pathwayLine: "Call. Connect. Restore.",
+  statement:
+    "Kingdom Assembly Missions exists to call people to Christ, connect with people through prayer and practical service, and help restore lives spiritually, emotionally, and physically.",
   city: "Greenville",
   region: "South Carolina",
   regionCode: "SC",
 
   // TBD values render as "To be announced". Fill them in and rebuild.
-  email: "TBD",
+  // The ministry's own inbox (Selvin sent the 2026-10-22 updates from it).
+  email: "kingdomassemblymissions@gmail.com",
   phone: "TBD",
   mailingAddress: "TBD",
 
@@ -40,6 +45,32 @@ export const site = {
   // region   = "na1" for US accounts, "eu1" if the portal URL has app-eu1.
   hubspot: { portalId: "TBD", formGuid: "TBD", region: "na1" },
 
+  /* The Nationwide Prayer Hotline. `display` is the vanity spelling people
+     remember. `digits` is what actually dials: 33-PRAY-4YOU spells thirteen
+     digits, and a US number is ten, so the phone network uses the first ten
+     (888-337-7294) and drops the "YOU". Every tel: link uses `digits`, never
+     the vanity, so a tap on a phone always rings the right line.
+     `live` is FALSE until someone has called 888-337-7294 and confirmed it
+     reaches KAM's prayer line (Selvin's own 2026-10-22 brief: do not promote
+     the hotline as answered until routing is verified). While false, the
+     number still shows everywhere, marked "launching soon", with no call
+     links and no schema.org contactPoint. Flip to true and rebuild once it
+     rings through. KAM_HOTLINE_LIVE=1|0 overrides it for testing.
+     `hours`: who answers and when. Leave TBD until confirmed; the site never
+     claims round-the-clock coverage it has not been told about. */
+  hotline: {
+    label: "Nationwide Prayer Hotline",
+    display: "1-888-33-PRAY-4YOU",
+    digits: "+18883377294",
+    digitsLabel: "1-888-337-7294",
+    live: process.env.KAM_HOTLINE_LIVE ? process.env.KAM_HOTLINE_LIVE === "1" : false,
+    hours: "TBD",
+    monthly: "$15/month",
+    // Payment link for the $15/month prayer line partner gift. Until it is
+    // set, the Give button scrolls to the give form instead.
+    partnerUrl: "TBD",
+  },
+
   social: {
     instagram: "TBD",
     facebook: "TBD",
@@ -54,19 +85,22 @@ export const site = {
     (process.env.BASE_PATH || "").replace(/\/$/, ""),
 };
 
+/* Simplified 2026-10-22 per Selvin: Mission, Programs, Events, Prayer, Get
+   Involved, with Give as the header button. About and Discipleship are still
+   full pages, reached from the menu, the footer and the Mission page. */
 export const nav = [
-  { label: "About", href: "/about/" },
   { label: "Our Mission", href: "/mission/" },
   { label: "Programs", href: "/programs/" },
   { label: "Events", href: "/events/" },
-  { label: "Discipleship", href: "/discipleship/" },
+  { label: "Prayer", href: "/prayer/" },
   { label: "Get Involved", href: "/get-involved/" },
 ];
 
-/* --- The six journeys. This is the index on the homepage, and it is the
+/* --- The journeys. This is the index on the homepage, and it is the
    single most important piece of navigation on the site. ------------------ */
 export const journeys = [
   { label: "I need help", href: "/need-help/", note: "Confidential. Start here." },
+  { label: "I need prayer", href: "/prayer/", note: "Call the hotline or write to us.", noteSoon: "Write to us. The prayer line is launching soon.", hotline: true },
   { label: "I want to find community", href: "/events/", note: "Come to something." },
   { label: "I want to follow Christ", href: "/discipleship/", note: "Take the next step." },
   { label: "I want to serve", href: "/volunteer/", note: "Give your time." },
@@ -74,14 +108,41 @@ export const journeys = [
   { label: "I want to partner", href: "/partner/", note: "For churches and businesses." },
 ];
 
-/* --- The KAM outreach model ---------------------------------------------- */
+/* --- The KAM pathway. Replaced the six-stage outreach model 2026-10-22
+   (Selvin). Discipleship is not a step here: it is where all three lead. --- */
 export const model = [
-  { step: "Reach",   line: "Meet people where they are." },
-  { step: "Serve",   line: "Address practical needs." },
-  { step: "Connect", line: "Build genuine relationships." },
-  { step: "Restore", line: "Point people toward healing, hope and stability." },
-  { step: "Disciple",line: "Teach them how to follow Christ." },
-  { step: "Empower", line: "Help them discover purpose and serve others." },
+  { step: "Call",    line: "Connect people to prayer, encouragement, and the hope found in Jesus Christ." },
+  { step: "Connect", line: "Build relationships through community outreach, service, prayer gatherings, and fellowship." },
+  { step: "Restore", line: "Encourage spiritual growth, emotional well-being, practical stability, and discipleship." },
+];
+
+/* --- Core programs: what KAM runs as the ministry's regular rhythm.
+   The five areas of impact below are service priorities, some run directly
+   and some through partners; each of those pages says plainly what is still
+   in development. Dates for gatherings go in `events` once confirmed. ----- */
+export const corePrograms = [
+  {
+    name: "Nationwide Prayer Hotline",
+    line: "One number for prayer, from anywhere in the country. Call it, or send a request in writing.",
+    lineSoon: "One number for prayer, from anywhere in the country, launching soon. Until then, send a request in writing.",
+    hotline: true,
+    href: "/prayer/",
+  },
+  {
+    name: "Prayer breakfasts",
+    line: "Morning gatherings to pray together, open to everyone. Dates go on the events page as each one is confirmed.",
+    href: "/events/",
+  },
+  {
+    name: "Prayer dinners",
+    line: "An evening table for prayer and fellowship, open to everyone. Dates go on the events page as each one is confirmed.",
+    href: "/events/",
+  },
+  {
+    name: "Monthly community feeding",
+    line: "A meal for the community every month, served with dignity and no strings attached.",
+    href: "/programs/homelessness/",
+  },
 ];
 
 /* --- The five areas of impact -------------------------------------------- */
@@ -91,7 +152,7 @@ export const programs = [
     name: "Mental Health",
     short: "Mental Health",
     kicker: "You are not alone.",
-    card: "Spaces where people find encouragement, community, prayer and real resources, without being told to just pray harder.",
+    card: "Encouragement, community, prayer and connection to real professional care, without being told to just pray harder.",
     mission:
       "Create spaces where people can find encouragement, community, prayer, counseling resources and hope, while recognizing that mental health struggles require compassion, support and appropriate professional care.",
     beliefs: [
@@ -123,7 +184,7 @@ export const programs = [
     name: "Homelessness",
     short: "Homelessness",
     kicker: "We don't just want to feed someone for a day. We want to remind them that they matter.",
-    card: "Food, hygiene, necessities, prayer and relationship for people and families living without a stable address.",
+    card: "A monthly community meal, plus food, hygiene, necessities, prayer and relationship for people living without a stable address.",
     mission:
       "Serve individuals and families experiencing homelessness through practical assistance, dignity, compassion and relationship building.",
     beliefs: [
@@ -135,6 +196,10 @@ export const programs = [
       {
         h: "The work",
         p: "Food drives. Community meals. Hygiene product distribution. Basic necessities. Prayer. Encouragement. Connection to community resources. Outreach events where people are already standing rather than where it is convenient for us.",
+      },
+      {
+        h: "Monthly community feeding",
+        p: "Once a month KAM serves a community meal, open to anyone who walks up. It is one of the core programs of the ministry. Each date goes on the events page as soon as it is confirmed.",
       },
       {
         h: "Why dignity is the whole strategy",
@@ -153,7 +218,7 @@ export const programs = [
     name: "At-Risk Youth",
     short: "At-Risk Youth",
     kicker: "Character matters when nobody is watching.",
-    card: "Life skills, biblical principles, real role models and mentorship for young people making decisions that will follow them for years.",
+    card: "Life skills, biblical principles, real role models, and a mentorship program we are building, for young people making decisions that will follow them for years.",
     mission:
       "Help young people develop the skills, confidence, character, relationships and biblical foundation necessary to make positive decisions and pursue a healthy future.",
     beliefs: [
@@ -187,7 +252,7 @@ export const programs = [
     name: "Battered & Abused Women",
     short: "Women's Support",
     kicker: "Help us help her start again.",
-    card: "Confidential support, self-defense training, resource connection and transitional help for women leaving abusive situations.",
+    card: "Confidential support and resource connection for women leaving abusive situations, with self-defense classes and transitional help in development.",
     mission:
       "Support women transitioning out of abusive environments by providing encouragement, practical assistance, resources and a pathway toward stability.",
     beliefs: [
@@ -278,7 +343,9 @@ export const events = [
     // form, which is the right default for a free event.
     ticketUrl: "TBD",
     priceLabel: "TBD",
-    status: "upcoming",
+    // Moved off the calendar 2026-10-22 (Selvin): the date has passed. Past
+    // events are not listed anywhere, so nothing implies how it went.
+    status: "past",
     featured: true,
     blurb: "Come share your gift. Come hear a story. Come find community.",
     body:
@@ -422,9 +489,18 @@ export const discipleshipTrack = [
   "Leadership development",
 ];
 
+/* --- Cause-based giving levels (Selvin 2026-10-22: four levels, starting at
+   $25). The four causes and amounts have not been supplied yet, so this ships
+   EMPTY and the Give page shows nothing invented. Fill in all four and they
+   render as cards. Shape: { amount: "$25", title, line, url }
+   `url` is the payment link for that level; leave it out until it exists. */
+export const givingLevels = [];
+
 /* --- Giving designations -------------------------------------------------- */
 export const givingDesignations = [
   "Where it is needed most",
+  "Nationwide Prayer Hotline",
+  "Monthly community feeding",
   "Mental health outreach",
   "Homelessness outreach",
   "At-risk youth programs",

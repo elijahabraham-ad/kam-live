@@ -17,7 +17,7 @@ await p.setContent(`<!doctype html><html><head>
  .t{position:relative;z-index:2}
  .k{font:600 15px/1 "Instrument Sans",sans-serif;letter-spacing:.24em;text-transform:uppercase;color:#D9B450;margin:0 0 22px}
  h1{font-family:"Fraunces",serif;font-variation-settings:"SOFT" 0,"WONK" 0;font-weight:500;
-    font-size:50px;line-height:1.02;letter-spacing:-.028em;color:#F6F1E5;margin:0}
+    font-size:64px;line-height:1.02;letter-spacing:-.028em;color:#F6F1E5;margin:0}
  h1 em{font-style:italic;color:#D9B450}
  p{font:400 22px/1.5 "Instrument Sans",sans-serif;color:#A99C86;margin:26px 0 0;max-width:26ch}
  .r{position:absolute;left:64px;right:64px;bottom:46px;height:1px;background:linear-gradient(90deg,#D9B450,rgba(217,180,80,.06));z-index:2}
@@ -28,10 +28,11 @@ await p.setContent(`<!doctype html><html><head>
   <img src="http://localhost:4500/img/kam-emblem.webp" alt="">
   <div class="t">
     <p class="k">Kingdom Assembly Missions</p>
-    <h1>Reaching the broken.<br>Restoring the community.<br><em>Advancing the Kingdom.</em></h1>
+    <h1>Call. Connect.<br><em>Restore.</em></h1>
+    <p>Feeding People Spiritually, Emotionally, and Physically.</p>
   </div>
   <span class="r"></span>
-  <span class="f">Greenville, South Carolina &nbsp;&middot;&nbsp; Love. Serve. Impact.</span>
+  <span class="f">Greenville, South Carolina &nbsp;&middot;&nbsp; kingdomassemblymissions.org</span>
 </div></body></html>`, { waitUntil: "networkidle" });
 await p.evaluate(() => document.fonts.ready);
 await p.waitForTimeout(700);

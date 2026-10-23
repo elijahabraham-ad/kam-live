@@ -87,7 +87,7 @@
   })();
 
   /* --------------------------------------------------- the outreach model - */
-  /* A single gold line draws itself down the six stations as the reader
+  /* A single gold line draws itself down the pathway steps as the reader
      travels the section, lighting each one as it arrives. */
   (function model() {
     var root = document.querySelector("[data-model]");
@@ -142,6 +142,20 @@
     var hsRegion = root.getAttribute("data-hs-region") || "na1";
     var hubspot = hsPortal && hsPortal !== "TBD" && hsForm && hsForm !== "TBD";
     var live = hubspot || (endpoint && endpoint !== "TBD");
+    var inbox = root.getAttribute("data-email") || "";
+    var prayDisp = root.getAttribute("data-pray") || "";
+    var prayTel = root.getAttribute("data-pray-tel") || "";
+
+    /* Until a form backend is connected, a form does not dead-end: it offers
+       to send the same message from the visitor's own email app instead.
+       EXCEPT the safety form. An email leaves a copy in the sender's own Sent
+       folder, which is exactly what someone on a monitored device cannot have. */
+    var NO_EMAIL_FALLBACK = { help: true };
+    var SUBJECT = {
+      contact: "Message from the website", prayer: "Prayer request", volunteer: "Volunteer",
+      partner: "Partnership", discipleship: "Discipleship", give: "Giving",
+      rsvp: "Event RSVP", newsletter: "Send me the next outreach date"
+    };
 
     // HubSpot path: map the four core fields, fold everything else into the
     // message so nothing a visitor typed is lost, tag which form it came from.
@@ -198,6 +212,60 @@
         return null;
       }
 
+      // Builds a mailto: with everything the visitor typed, labelled, and puts
+      // a button in the status line. Nodes, never innerHTML: the body carries
+      // visitor text.
+      function emailInstead(kind) {
+        var lines = [], fd = new FormData(form);
+        fd.forEach(function (v, k) {
+          if (k === "_hp" || v === "" || v == null) return;
+          var f = form.querySelector('[name="' + k + '"]');
+          if (f && f.type === "checkbox") {
+            // A group of boxes shares one name, so look up the box that was
+            // actually ticked, and label it with the group's legend.
+            var box = form.querySelector('input[name="' + k + '"][value="' + (window.CSS && CSS.escape ? CSS.escape(v) : v) + '"]') || f;
+            var set = box.closest("fieldset");
+            var legend = set && set.querySelector("legend");
+            lines.push(legend ? legend.textContent.trim() + ": " + v : (box.closest("label") || box).textContent.trim());
+            return;
+          }
+          lines.push((f ? labelFor(f) : k) + ": " + v);
+        });
+        var body = lines.join("\n\n");
+        // Some desktop mail apps silently cut long mailto: links, so the cap is
+        // on the ENCODED length, not the raw text.
+        if (encodeURIComponent(body).length > 1500) {
+          while (body.length && encodeURIComponent(body + "...").length > 1500) body = body.slice(0, -20);
+          body += "...";
+        }
+        var href = "mailto:" + inbox + "?subject=" + encodeURIComponent((SUBJECT[kind] || "Message from the website") + " (kingdomassemblymissions.org)") +
+          "&body=" + encodeURIComponent(body);
+
+        status.hidden = false;
+        status.className = "form__status form__status--err";
+        status.textContent = "";
+        status.appendChild(document.createTextNode(
+          "Our online form is not connected yet, so this has not been sent. Send the same message from your own email instead" +
+          (kind === "prayer" ? " (it will come from your email address, so it will not be anonymous)" : "") + ":"
+        ));
+        var row = document.createElement("span");
+        row.className = "form__fallback";
+        var a = document.createElement("a");
+        a.className = "btn btn--gold";
+        a.href = href;
+        a.textContent = "Email this to KAM";
+        row.appendChild(a);
+        if (prayTel && (kind === "prayer" || kind === "contact")) {
+          var t = document.createElement("a");
+          t.className = "btn btn--line";
+          t.href = prayTel;
+          t.textContent = "Call " + prayDisp;
+          row.appendChild(t);
+        }
+        status.appendChild(row);
+        status.appendChild(document.createTextNode("Or write to " + inbox + " directly."));
+      }
+
       form.addEventListener("submit", function (e) {
         e.preventDefault();
 
@@ -214,11 +282,16 @@
         }
 
         if (!live) {
-          say(
-            "This form is not connected yet. Kingdom Assembly Missions is standing up its inbox now. " +
-            "Please check back shortly, or reach us through the contact details on this site.",
-            "err"
-          );
+          var kind = form.getAttribute("data-kam-form");
+          if (!inbox || NO_EMAIL_FALLBACK[kind]) {
+            say(
+              "This form is not connected yet, so nothing was sent. If you need help now, use the numbers at the top of this page." +
+              (inbox && kind !== "help" ? " You can also email " + inbox + "." : ""),
+              "err"
+            );
+            return;
+          }
+          emailInstead(kind);
           return;
         }
 
