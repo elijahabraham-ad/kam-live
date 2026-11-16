@@ -443,12 +443,9 @@ export const bibleStudy = {
    KAM's permission for its own team, who are the subject of every item here.
    Neighbors appear only at a distance or in passing, the way KAM's own
    flyer shows them, and no poster frame is a neighbor's face.
-   HELD, not published: IMG_0519, two men served that day filmed up close
-   (one in a wheelchair). The homelessness page promises "We will not
-   photograph people at their lowest point", so it waits for Selvin to confirm
-   both men said yes. The encoded clip is kept OUTSIDE this repo
-   (~/projects/kam-media-raw/2026-11-16-held/), because anything in static/
-   is public the moment it is pushed.
+   IMG_0519 (two men served that day, filmed up close, one in a wheelchair)
+   was held at first for their consent. Eli 2026-11-16: "he sent those to me
+   so I would add it", so it publishes on KAM's say-so like the rest.
 
    Every file was re-encoded with its metadata stripped: the iPhone originals
    carry the GPS position of every shot. Photos: WebP at 1600 and 800 on the
@@ -555,6 +552,15 @@ export const gallery = [
     caption: "Gloves on, and the hygiene kits ready to go.",
     event: "outreach-2026-11-15", program: "homelessness",
     consent: "2026-11-15",
+  },
+  {
+    src: "/media/2026-11-15-neighbors.mp4",
+    poster: "/img/gallery/2026-11-15-neighbors-poster.webp",
+    w: 1280, h: 720, video: true,
+    alt: "Video: two men who came by the outreach, one in a wheelchair and one in a navy and yellow coat, both smiling and laughing with the team.",
+    caption: "\u201CYou look so happy, man.\u201D \u201CI love it, I love it.\u201D",
+    event: "outreach-2026-11-15", program: "homelessness",
+    consent: "2026-11-16",
   },
   {
     src: "/img/gallery/2026-11-09-belk-charity-sale-1600.webp",
