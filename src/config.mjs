@@ -151,7 +151,9 @@ export const corePrograms = [
   },
   {
     name: "Monthly community feeding",
-    line: "A meal for the community every month, served with dignity and no strings attached.",
+    // Food, clothing, hygiene items, coats and blankets: the list on KAM's own
+    // outreach flyer (Drive folder, 2026-11-16).
+    line: "A meal for the community every month, with clothing, hygiene items, coats and blankets, served with dignity and no strings attached.",
     href: "/programs/homelessness/",
   },
 ];
@@ -435,8 +437,153 @@ export const bibleStudy = {
    to be photographed does not go on the internet.
    Shape: { src, alt, caption, event, consent, video }
    `consent` is the date permission was given. No consent, no publish.
+
+   Added 2026-11-16 from the Drive folder Selvin sent after the Nov 15
+   outreach (his text to Eli: "update the website with them"). That request is
+   KAM's permission for its own team, who are the subject of every item here.
+   Neighbors appear only at a distance or in passing, the way KAM's own
+   flyer shows them, and no poster frame is a neighbor's face.
+   HELD, not published: IMG_0519, two men served that day filmed up close
+   (one in a wheelchair). The homelessness page promises "We will not
+   photograph people at their lowest point", so it waits for Selvin to confirm
+   both men said yes. The encoded clip is kept OUTSIDE this repo
+   (~/projects/kam-media-raw/2026-11-16-held/), because anything in static/
+   is public the moment it is pushed.
+
+   Every file was re-encoded with its metadata stripped: the iPhone originals
+   carry the GPS position of every shot. Photos: WebP at 1600 and 800 on the
+   long edge. Video: H.264 MP4 (the HEVC originals do not play in most
+   browsers), tone-mapped from the phone's HDR so it is not washed out.
+   Extra fields: `small` is the 800 version, `w`/`h` the 1600 size (stops the
+   layout jumping as images load), `program` puts an item on that program's
+   page, `home` marks the photos picked for the homepage.
    ------------------------------------------------------------------------- */
-export const gallery = [];
+export const galleryEvents = [
+  {
+    key: "outreach-2026-11-15",
+    title: "Community outreach",
+    date: "2026-11-15",
+    place: "Greenville, SC",
+    blurb: "Food, clothing, hygiene items, coats and blankets, set out on folding tables in a parking lot and free to anyone who walked up.",
+  },
+  {
+    key: "belk-2026-11-09",
+    title: "Belk Charity Sale",
+    date: "2026-11-09",
+    place: "Greenville, SC",
+    blurb: "Telling shoppers about the ministry from a table inside the store.",
+  },
+  {
+    key: "be-the-light-2026-10-31",
+    title: "Be the Light",
+    date: "2026-10-31",
+    place: "Downtown",
+    blurb: "Halloween night downtown, handing out glow sticks and candy.",
+  },
+];
+
+/* The homepage reel: a silent loop cut from two of the Nov 15 clips. */
+export const reel = {
+  src: "/media/2026-11-15-reel.mp4",
+  poster: "/img/gallery/2026-11-15-reel-poster.webp",
+  w: 1920, h: 1080,
+  event: "outreach-2026-11-15",
+  label: "The KAM outreach table in a parking lot: volunteers in gloves handing out meals, water and clothing.",
+  consent: "2026-11-15",
+};
+
+export const gallery = [
+  {
+    src: "/img/gallery/2026-11-15-plates-packed-1600.webp",
+    small: "/img/gallery/2026-11-15-plates-packed-800.webp",
+    w: 1600, h: 1200,
+    alt: "Rows of takeout trays on a folding table, each packed with chicken, green beans, a side and a dinner roll.",
+    caption: "Plates packed that morning, before the team headed out.",
+    event: "outreach-2026-11-15", program: "homelessness", home: true,
+    consent: "2026-11-15",
+  },
+  {
+    src: "/img/gallery/2026-11-15-kam-table-1600.webp",
+    small: "/img/gallery/2026-11-15-kam-table-800.webp",
+    w: 1600, h: 1200,
+    alt: "Two volunteers in gloves at the Kingdom Assembly Missions table, beside cases of water and stacked meal trays, sorting donated clothes.",
+    caption: "The KAM table: meals, water and clothing.",
+    event: "outreach-2026-11-15", program: "homelessness", home: true,
+    consent: "2026-11-15",
+  },
+  {
+    src: "/media/2026-11-15-plates-handed-out.mp4",
+    poster: "/img/gallery/2026-11-15-plates-handed-out-poster.webp",
+    w: 1280, h: 720, video: true,
+    alt: "Video: volunteers handing out meals and water at the table.",
+    caption: "“Is it hamburger?” “Chicken.” “It looks good.”",
+    event: "outreach-2026-11-15", program: "homelessness",
+    consent: "2026-11-15",
+  },
+  {
+    src: "/img/gallery/2026-11-15-water-and-plates-1600.webp",
+    small: "/img/gallery/2026-11-15-water-and-plates-800.webp",
+    w: 1600, h: 1200,
+    alt: "Two smiling volunteers in gloves standing beside cases of bottled water in a sunny parking lot.",
+    caption: "Two of the volunteers at the water and meal table.",
+    event: "outreach-2026-11-15", program: "homelessness", home: true,
+    consent: "2026-11-15",
+  },
+  {
+    src: "/media/2026-11-15-outreach.mp4",
+    poster: "/img/gallery/2026-11-15-outreach-poster.webp",
+    w: 1280, h: 720, video: true,
+    alt: "Video: a wide view of the outreach, with tables of clothing, water and meals and people stopping by.",
+    caption: "The whole setup, in one shot.",
+    event: "outreach-2026-11-15", program: "homelessness",
+    consent: "2026-11-15",
+  },
+  {
+    src: "/img/gallery/2026-11-15-clothing-table-1600.webp",
+    small: "/img/gallery/2026-11-15-clothing-table-800.webp",
+    w: 1600, h: 1200,
+    alt: "Two men at a folding table of donated clothing in a sunny parking lot.",
+    caption: "Donated clothing, coats and blankets.",
+    event: "outreach-2026-11-15", program: "homelessness",
+    consent: "2026-11-15",
+  },
+  {
+    src: "/media/2026-11-15-volunteers.mp4",
+    poster: "/img/gallery/2026-11-15-volunteers-poster.webp",
+    w: 1280, h: 720, video: true,
+    alt: "Video: volunteers in gloves at the table, then a close look at the packed hygiene kits.",
+    caption: "Gloves on, and the hygiene kits ready to go.",
+    event: "outreach-2026-11-15", program: "homelessness",
+    consent: "2026-11-15",
+  },
+  {
+    src: "/img/gallery/2026-11-09-belk-charity-sale-1600.webp",
+    small: "/img/gallery/2026-11-09-belk-charity-sale-800.webp",
+    w: 1200, h: 1600,
+    alt: "A man in a suit and tie beside a red-draped table of Kingdom Assembly Missions flyers inside a Belk store.",
+    caption: "Representing KAM at the Belk Charity Sale.",
+    event: "belk-2026-11-09",
+    consent: "2026-11-15",
+  },
+  {
+    src: "/media/2026-10-31-be-the-light.mp4",
+    poster: "/img/gallery/2026-10-31-be-the-light-poster.webp",
+    w: 720, h: 1280, video: true,
+    alt: "Video: a man and his wife walking downtown on Halloween, explaining that they are handing out Be the Light glow sticks and candy.",
+    caption: "“She has the candy, I got the glow. We both are the light.”",
+    event: "be-the-light-2026-10-31",
+    consent: "2026-11-15",
+  },
+  {
+    src: "/img/gallery/2026-10-31-be-the-light-downtown-1600.webp",
+    small: "/img/gallery/2026-10-31-be-the-light-downtown-800.webp",
+    w: 1200, h: 1600,
+    alt: "A man and a woman smiling on a downtown sidewalk at dusk, holding glow sticks and a bag of candy.",
+    caption: "Glow sticks and candy, ready to hand out.",
+    event: "be-the-light-2026-10-31",
+    consent: "2026-11-15",
+  },
+];
 
 /* --- Volunteer roles ------------------------------------------------------ */
 export const volunteerRoles = [

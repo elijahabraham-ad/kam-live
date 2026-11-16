@@ -1,4 +1,4 @@
-import { site, nav, posts, bibleStudy } from "./config.mjs";
+import { site, nav, posts, bibleStudy, gallery } from "./config.mjs";
 
 export const esc = (s) =>
   String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -125,6 +125,7 @@ function footer(safety) {
       <a href="/partner/">Partner with us</a>
       <a href="/give/">Give</a>
       <a href="/stories/">Stories of restoration</a>
+      ${gallery.some((g) => g.consent) ? '<a href="/gallery/">Photos and video</a>' : ""}
       ${posts.length ? '<a href="/news/">News and updates</a>' : ""}
     </nav>
 

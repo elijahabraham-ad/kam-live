@@ -971,6 +971,31 @@ body { background: var(--sc-canvas); }
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-accent);
 }
 
+/* The homepage reel (added 2026-11-16, first real footage): one wide clip
+   under the tabling promise, three photos under it. Same hairline and radius
+   as the column wall so it reads as part of the same system. */
+.reel { margin: var(--sc-8) 0 0; }
+.reel__v {
+  width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; object-fit: cover;
+  border-radius: var(--sc-r-lg); border: 1px solid var(--sc-hairline); background: var(--sc-surface);
+}
+.reel figcaption {
+  margin-top: var(--sc-4); max-width: 62ch; font-size: 0.95rem; line-height: 1.55; color: var(--sc-ink-soft);
+}
+.reel figcaption .rule-label { display: block; margin-bottom: var(--sc-2); }
+.reel-strip {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.75rem, 1.6vw, 1.25rem); margin-top: var(--sc-6);
+}
+.reel-strip img {
+  width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block;
+  border-radius: var(--sc-r-lg); border: 1px solid var(--sc-hairline); background: var(--sc-surface);
+}
+@media (max-width: 560px) {
+  .reel-strip { grid-template-columns: 1fr 1fr; }
+  .reel-strip img:nth-child(3) { display: none; }
+}
+
 /* ------------------------------------------------------- prayer hotline --- */
 /* Added 2026-10-22: the Nationwide Prayer Hotline as its own band. The number
    is set large in the display face, because it is the thing to remember. */

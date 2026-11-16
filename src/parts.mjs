@@ -1,5 +1,5 @@
 import { esc, isTBD, orTBA, giveHref, giveAttrs, hotlineLink, hotlineHref } from "./layout.mjs";
-import { site, model, programs, events, crisisResources, bibleStudy, corePrograms, givingLevels } from "./config.mjs";
+import { site, model, programs, events, crisisResources, bibleStudy, corePrograms, givingLevels, gallery, galleryEvents, reel } from "./config.mjs";
 
 /* The weekday is DERIVED, never typed. A hand-written "Thursday, October 9"
    shipped once and 9 October 2026 is a Friday, which is the kind of error that
@@ -539,28 +539,63 @@ export function campaignList(items) {
    Renders only when `gallery` has entries that carry a consent date. A
    photograph of somebody who did not agree to be photographed does not go on a
    ministry website, so the consent field is a gate, not a note. */
-export function galleryBlock(items, { ground = "dark", heading = "The work, as it happens" } = {}) {
-  const ok = (items || []).filter((g) => g.consent);
-  if (!ok.length) return "";
-  const cells = ok
-    .map(
-      (g) => `
+export const published = (items) => (items || []).filter((g) => g.consent);
+
+/* The label under a caption: "Community outreach · November 15". */
+function shotTag(g) {
+  const ev = galleryEvents.find((e) => e.key === g.event);
+  if (!ev) return "";
+  return `${ev.title} &middot; ${esc(eventDate(ev).d.toLocaleString("en-US", { month: "long", day: "numeric" }))}`;
+}
+
+/* One photo or clip. width/height plus aspect-ratio reserve the space before
+   the file arrives, so the column wall never jumps while it loads. Clips are
+   preload="none": nothing downloads until somebody presses play. */
+export function shotFigure(g, { tag = true } = {}) {
+  const ar = g.w && g.h ? ` style="aspect-ratio:${g.w}/${g.h}"` : "";
+  const dims = g.w && g.h ? ` width="${g.w}" height="${g.h}"` : "";
+  const media = g.video
+    ? `<video controls preload="none" playsinline${dims}${ar}${g.poster ? ` poster="${esc(g.poster)}"` : ""} aria-label="${esc(g.alt)}"><source src="${esc(g.src)}" type="video/mp4"></video>`
+    : `<img src="${esc(g.small || g.src)}"${g.small && g.w ? ` srcset="${esc(g.small)} ${Math.round(g.w / 2)}w, ${esc(g.src)} ${g.w}w" sizes="(max-width: 560px) 100vw, (max-width: 900px) 50vw, 400px"` : ""}${dims}${ar} alt="${esc(g.alt)}" loading="lazy" decoding="async">`;
+  const t = tag ? shotTag(g) : "";
+  return `
       <figure class="shot${g.video ? " shot--video" : ""}">
-        ${g.video
-          ? `<video src="${esc(g.src)}" ${g.poster ? `poster="${esc(g.poster)}"` : ""} controls preload="none" playsinline></video>`
-          : `<img src="${esc(g.src)}" alt="${esc(g.alt)}" loading="lazy" decoding="async">`}
-        ${g.caption ? `<figcaption>${esc(g.caption)}${g.event ? ` <span>${esc(g.event)}</span>` : ""}</figcaption>` : ""}
-      </figure>`
-    )
-    .join("");
+        ${media}
+        ${g.caption ? `<figcaption>${esc(g.caption)}${t ? ` <span>${t}</span>` : ""}</figcaption>` : ""}
+      </figure>`;
+}
+
+export function galleryBlock(items, { ground = "dark", heading = "The work, as it happens", lede = "", more = false } = {}) {
+  const ok = published(items);
+  if (!ok.length) return "";
   return `
 <section class="sec ground--${ground}" id="gallery">
   <div class="wrap">
     <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-7)">
       <span class="rule-label">Photos and video</span>
       <h2 class="h-lg">${esc(heading)}</h2>
+      ${lede ? `<p class="body">${esc(lede)}</p>` : ""}
     </div>
-    <div class="shots" data-sc-in data-sc-stagger="60">${cells}</div>
+    <div class="shots" data-sc-in data-sc-stagger="60">${ok.map((g) => shotFigure(g)).join("")}</div>
+    ${more ? `<p style="margin-top:var(--sc-6)"><a class="tlink" href="/gallery/">See all photos and video</a></p>` : ""}
   </div>
 </section>`;
+}
+
+/* The homepage reel. A silent loop that kam.js plays only while it is on
+   screen, and never for anyone who asked for reduced motion (they get the
+   poster and the controls). Three photos underneath, then the full page. */
+export function reelBlock() {
+  if (!reel || !reel.consent) return "";
+  const ev = galleryEvents.find((e) => e.key === reel.event);
+  const picks = published(gallery).filter((g) => g.home && !g.video).slice(0, 3);
+  return `
+    <figure class="reel" data-sc-in>
+      <video class="reel__v" data-autoplay muted loop playsinline preload="none" width="${reel.w}" height="${reel.h}" poster="${esc(reel.poster)}" aria-label="${esc(reel.label)}"><source src="${esc(reel.src)}" type="video/mp4"></video>
+      ${ev ? `<figcaption><span class="rule-label">${esc(ev.title)} &middot; ${esc(eventDate(ev).label)}</span>${esc(ev.blurb)}</figcaption>` : ""}
+    </figure>
+    ${picks.length ? `<div class="reel-strip" data-sc-in data-sc-stagger="60">${picks
+      .map((g) => `<img src="${esc(g.small || g.src)}" width="${Math.round(g.w / 2)}" height="${Math.round(g.h / 2)}" alt="${esc(g.alt)}" loading="lazy" decoding="async">`)
+      .join("")}</div>` : ""}
+    <p style="margin-top:var(--sc-5)"><a class="tlink" href="/gallery/">See all photos and video</a></p>`;
 }

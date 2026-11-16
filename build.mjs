@@ -75,6 +75,7 @@ async function collect() {
     // half-built page never ships.
     ...(cfg.bibleStudy.active ? [inner.bibleStudyPage()] : []),
     ...(cfg.posts.length ? [inner.news()] : []),
+    ...(cfg.gallery.some((g) => g.consent) ? [inner.galleryPage()] : []),
     inner.notFound(),
   ];
 

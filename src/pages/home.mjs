@@ -3,7 +3,7 @@ import { site, journeys, programs, scriptures, tabling } from "../config.mjs";
 import { mendingSvg } from "../mending.mjs";
 import {
   modelSection, eventCard, upcoming, doorsSection, closingBand,
-  programPlate, orgJsonLd, eventJsonLd, hotlineBand, coreProgramsSection,
+  programPlate, orgJsonLd, eventJsonLd, hotlineBand, coreProgramsSection, reelBlock,
 } from "../parts.mjs";
 
 export function home() {
@@ -217,6 +217,7 @@ export function home() {
         ${tabling.map((t) => `<li>${esc(t)}</li>`).join("")}
       </ul>
     </div>
+    ${/* The proof under the promise: real footage from the last outreach. */ reelBlock()}
   </div>
 </section>`;
 

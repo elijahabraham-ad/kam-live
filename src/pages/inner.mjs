@@ -2,12 +2,12 @@ import { esc, isTBD, orTBA, giveHref, giveAttrs, hotlineLink, hotlineHref } from
 import {
   site, programs, events, volunteerRoles, partnerTypes, model,
   discipleshipTrack, givingDesignations, meetingFlow, scriptures, journeys,
-  testimonials, team, campaigns, posts, bibleStudy, gallery, givingLevels,
+  testimonials, team, campaigns, posts, bibleStudy, gallery, galleryEvents, givingLevels,
 } from "../config.mjs";
 import {
   pageHead, crumb, modelSection, programGrid, eventCard, upcoming,
   doorsSection, closingBand, crisisBlock, form, orgJsonLd, eventJsonLd, programPlate,
-  testimonialList, teamList, campaignList, eventDate, galleryBlock,
+  testimonialList, teamList, campaignList, eventDate, galleryBlock, shotFigure, published,
   hotlineBand, coreProgramsSection, givingLevelsSection,
 } from "../parts.mjs";
 
@@ -81,9 +81,9 @@ ${pageHead({
   </div>
 </section>
 
-${galleryBlock(gallery, { ground: "dark", heading: "The work, as it happens" })}
+${galleryBlock(gallery.filter((g) => g.home), { ground: "cream", heading: "The work, as it happens", more: true })}
 ${teamList(team)}
-${modelSection({ ground: team.length ? "dark" : "cream", lede: "Feeding people spiritually, emotionally, and physically." })}
+${modelSection({ ground: team.length || published(gallery).some((g) => g.home) ? "dark" : "cream", lede: "Feeding people spiritually, emotionally, and physically." })}
 ${closingBand()}`,
   };
 }
@@ -266,8 +266,14 @@ ${pageHead({
 
 ${safety}
 ${flow}
+${galleryBlock(gallery.filter((g) => g.program === p.slug), {
+      ground: "dark",
+      heading: "From the last outreach.",
+      lede: "Our own team, on our own phones. Nobody is photographed at their lowest point.",
+      more: true,
+    })}
 
-<section class="sec ground--${p.safety ? "cream" : "dark"}">
+<section class="sec ground--${p.safety || published(gallery).some((g) => g.program === p.slug) ? "cream" : "dark"}">
   <div class="wrap wrap--mid">
     <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-6)">
       <span class="rule-label">What we hold to</span>
@@ -281,6 +287,60 @@ ${flow}
 </section>
 
 ${closingBand({ head: p.cta.head })}`,
+  };
+}
+
+/* ============================================================ GALLERY ===== */
+/* Photos and video, newest outreach first, one section per outreach. Only
+   items with a consent date render; build.mjs skips the page entirely while
+   there are none, so an empty gallery never ships. */
+export function galleryPage() {
+  const ok = published(gallery);
+  const groups = galleryEvents
+    .map((ev) => ({ ev, items: ok.filter((g) => g.event === ev.key) }))
+    .filter((x) => x.items.length)
+    .sort((a, b) => (a.ev.date < b.ev.date ? 1 : -1));
+  const loose = ok.filter((g) => !galleryEvents.some((e) => e.key === g.event));
+
+  const sections = groups
+    .map(({ ev, items }, i) => `
+<section class="sec ground--${i % 2 ? "dark" : "cream"}" id="${esc(ev.key)}">
+  <div class="wrap">
+    <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">${esc(eventDate(ev).label)}, ${eventDate(ev).year} &middot; ${esc(ev.place)}</span>
+      <h2 class="h-lg">${esc(ev.title)}</h2>
+      <p class="body">${esc(ev.blurb)}</p>
+    </div>
+    <div class="shots" data-sc-in data-sc-stagger="60">${items.map((g) => shotFigure(g, { tag: false })).join("")}</div>
+  </div>
+</section>`)
+    .join("");
+
+  const rest = loose.length
+    ? `
+<section class="sec ground--${groups.length % 2 ? "dark" : "cream"}">
+  <div class="wrap">
+    <div class="shots" data-sc-in data-sc-stagger="60">${loose.map((g) => shotFigure(g, { tag: false })).join("")}</div>
+  </div>
+</section>`
+    : "";
+
+  return {
+    path: "/gallery/",
+    title: "Photos and Video",
+    description: "Photos and video from Kingdom Assembly Missions outreach in Greenville, SC: meals, clothing, hygiene kits, prayer, and the people who serve.",
+    jsonld: [orgJsonLd()],
+    body: `
+${pageHead({
+      crumb: crumb({ label: "Home", href: "/" }, { label: "Photos and video" }),
+      label: "Photos and video",
+      h1: "The work, as it happens.",
+      lede: "Taken by our own team on the day. Nobody is photographed at their lowest point, and nothing here is stock.",
+      actions: `<a class="btn btn--gold" href="/volunteer/?role=Outreach">Come with us next time</a><a class="btn btn--line" href="/events/">See upcoming events</a>`,
+    })}
+${sections}
+${rest}
+${closingBand({ head: "Come with us next time." })}`,
   };
 }
 

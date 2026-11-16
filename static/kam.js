@@ -321,6 +321,32 @@
     });
   })();
 
+  /* ------------------------------------------------- photos and video --- */
+  /* The homepage reel is a silent loop. It plays only while it is on screen
+     (nothing downloads until it is close), and never for anyone who asked for
+     reduced motion: they get the poster and the controls instead. Gallery
+     clips are tap-to-play; starting one pauses any other. */
+  (function media() {
+    document.querySelectorAll("video[data-autoplay]").forEach(function (v) {
+      v.muted = true;
+      if (reduced || !("IntersectionObserver" in window)) { v.controls = true; return; }
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            var p = v.play();
+            if (p && p.catch) p.catch(function () { v.controls = true; });
+          } else if (!v.paused) v.pause();
+        });
+      }, { rootMargin: "160px 0px" }).observe(v);
+    });
+    var clips = document.querySelectorAll(".shot video");
+    clips.forEach(function (v) {
+      v.addEventListener("play", function () {
+        clips.forEach(function (o) { if (o !== v && !o.paused) o.pause(); });
+      });
+    });
+  })();
+
   /* --------------------------------------------------------- quick exit --- */
   /* On the safety page only. Replaces the current history entry so the page
      does not sit in the back button, and opens the real destination fresh. */
