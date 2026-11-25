@@ -1,260 +1,147 @@
-import { esc, giveHref, giveAttrs, orTBA, isTBD, hotlineLink, hotlineHref } from "../layout.mjs";
-import { site, journeys, programs, scriptures, tabling } from "../config.mjs";
-import { mendingSvg } from "../mending.mjs";
-import {
-  modelSection, eventCard, upcoming, doorsSection, closingBand,
-  programPlate, orgJsonLd, eventJsonLd, hotlineBand, coreProgramsSection, reelBlock,
-} from "../parts.mjs";
+import { esc, bibleHref, bibleAttrs } from "../layout.mjs";
+import { site, gallery, feeding, supportCities, tablingArea } from "../config.mjs";
+import { impactSection, closingBand, orgJsonLd, photo } from "../parts.mjs";
 
+/* The homepage, in the order Selvin set on 2026-11-25:
+   hero, mission, impact, outreach, Bible study and discipleship, get
+   involved, final call to action. Nothing else. */
 export function home() {
-  const ev = upcoming()[0];
+  const pic = (name) => gallery.find((g) => g.src.includes(name));
+  const heroPic = pic("kam-table");
+  const feedPics = [pic("plates-packed"), pic("water-and-plates"), pic("clothing-table")];
+  const tablingPic = pic("belk-charity-sale");
+  const list = (a) => a.slice(0, -1).join(", ") + ", and " + a[a.length - 1];
 
-  /* --- 1 · TITLE PAGE. Type on the ground, no media above the fold. The
-     emblem is set as part of the composition rather than as a bar item. ---- */
-  const titlePage = `
-<section class="title-page ground--dark">
-  <span class="title-page__glow" aria-hidden="true"></span>
-  <div class="title-page__plate" aria-hidden="true" data-sc-parallax="0.5">
-    <img src="/img/kam-emblem.webp" width="800" height="924" alt="" decoding="async" fetchpriority="high">
-  </div>
-
-  <div class="wrap title-page__inner">
-    <div class="title-page__seal">
-      <img src="/img/kam-emblem-sm.webp" width="208" height="240" alt="Kingdom Assembly Missions" decoding="async">
-      <span>Kingdom Assembly Missions<br>Greenville, South Carolina</span>
+  /* --- 1 · HERO ----------------------------------------------------------- */
+  const hero = `
+<section class="hero ground--dark">
+  <span class="hero__glow" aria-hidden="true"></span>
+  <div class="wrap hero__grid">
+    <div class="hero__copy">
+      <h1 class="hero__h">
+        <span class="hero__org">Kingdom Assembly Missions</span>
+        <span class="hero__words">Love. Serve. Impact.</span>
+      </h1>
+      <p class="hero__tag">${esc(site.tagline)}</p>
+      <p class="hero__sub">${esc(site.statement)}</p>
+      <div class="btn-row hero__acts">
+        <a class="btn btn--gold btn--lg" href="/donate/">Donate</a>
+        <a class="btn btn--line btn--lg" href="${bibleHref()}"${bibleAttrs()}>Join Bible Study</a>
+      </div>
     </div>
-
-    <h1 class="h-xl" data-sc-kinetic="lines">Call. Connect.<br>Restore.</h1>
-
-    <p class="title-page__tag">${esc(site.tagline)}</p>
-
-    <p class="title-page__sub">Kingdom Assembly Missions (KAM) is a Christian community outreach ministry committed to sharing the love of Jesus Christ through prayer, discipleship, practical service, and community engagement.</p>
-
-    <div class="btn-row title-page__acts">
-      <a class="btn btn--gold btn--lg" href="/prayer/">Request prayer</a>
-      <a class="btn btn--line btn--lg" href="/get-involved/">Get involved</a>
-      <a class="btn btn--line btn--lg" href="${giveHref()}"${giveAttrs()}>Support our mission</a>
-    </div>
-
-    <p class="title-page__foot">
-      <span class="rule-label">Need prayer?</span>
-      ${hotlineLink("title-page__pray")}
-      <span>${esc(site.hotline.label)}</span>
-    </p>
+    <figure class="hero__pic">
+      ${photo(heroPic, { eager: true })}
+      <figcaption>Feeding outreach, Greenville, SC</figcaption>
+    </figure>
   </div>
 </section>`;
 
-  /* --- 1b · THE PATHWAY. Selvin's three-step framework, straight after the
-     title, with the homepage copy he supplied 2026-10-22. ---------------- */
-  const pathway = modelSection({
-    ground: "cream",
-    heading: "How we serve, in three steps.",
-    lede: "We meet people where they are, build meaningful relationships, respond to practical needs, and help individuals grow in faith, hope, and purpose. Through our nationwide prayer hotline, community prayer gatherings, feeding outreach, and support for individuals and families facing difficult circumstances, we work to bring people closer to Christ and help communities grow stronger.",
-  });
-
-  const prayerLine = hotlineBand({
-    ground: "dark",
-    head: "Need prayer?",
-    body: site.hotline.live
-      ? "Call from anywhere in the country, or send us a prayer request in writing. You do not need to explain anything first."
-      : "Our nationwide prayer line is launching soon. Until then, send us a prayer request in writing. You do not need to explain anything first.",
-  });
-
-  /* --- 2 · THE INDEX. The journeys, set as an index rather than as cards.
-     This is the most important navigation on the site: a visitor should find
-     their own line within seconds of landing. --------------------------- */
-  const index = `
-<section class="sec ground--cream" id="start">
+  /* --- 2 · OUR MISSION ---------------------------------------------------- */
+  const mission = `
+<section class="sec ground--cream" id="mission">
   <div class="wrap">
-    <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-6)">
-      <span class="rule-label">Start here</span>
-      <h2 class="h-md">Whatever brought you to this page, one of these is you.</h2>
+    <div class="split-side">
+      <div class="stack" data-sc-in data-sc-stagger="70">
+        <span class="rule-label">Our mission</span>
+        <h2 class="h-lg">Be a light in darkness.</h2>
+        <hr class="gold-rule">
+      </div>
+      <div class="stack" data-sc-in data-sc-stagger="70">
+        <p class="lede">We believe the love of Jesus Christ should be demonstrated through action.</p>
+        <p class="body">Kingdom Assembly Missions goes into the community to build relationships, share the Gospel, pray with individuals, distribute Bibles, and serve practical needs.</p>
+        <p class="body">Our mission is to reach people where they are, demonstrate the love of Christ, and help individuals grow in their relationship with Jesus through discipleship.</p>
+        <p><a class="tlink" href="/about/">About us</a></p>
+      </div>
     </div>
-    <nav class="index-list" aria-label="Where to start">
-      ${journeys
-        .map(
-          (j, i) => `
-      <a href="${j.href}">
-        <span class="idx">${String(i + 1).padStart(2, "0")}</span>
-        <span class="lbl">${esc(j.label)}</span>
-        <span class="nte">${esc(j.hotline && !site.hotline.live ? j.noteSoon : j.note)}</span>
-      </a>`
-        )
-        .join("")}
-    </nav>
   </div>
 </section>`;
 
-  /* --- 3 · CHAPTER I: OUR WHY ------------------------------------------- */
-  const why = `
-<section class="sec ground--dark">
+  /* --- 3 · OUR IMPACT ----------------------------------------------------- */
+  const impact = impactSection({ ground: "dark" });
+
+  /* --- 4 · OUR OUTREACH. Feed the Homeless gets the most weight on the
+     page; retail tabling sits under it as how KAM meets the community and
+     funds the work, not as a program of its own. ------------------------- */
+  const outreach = `
+<section class="sec ground--cream" id="outreach">
   <div class="wrap">
+    <div class="stack" data-sc-in data-sc-stagger="70" style="margin-bottom:var(--sc-7)">
+      <span class="rule-label">Our outreach &middot; ${esc(feeding.name)}</span>
+      <h2 class="h-lg">Serving our community. Sharing the Gospel.</h2>
+    </div>
     <div class="split-2">
       <div class="stack" data-sc-in data-sc-stagger="70">
-        <span class="rule-label">Chapter one</span>
-        <h2 class="h-lg">Broken doesn't mean finished.</h2>
-        <hr class="gold-rule" style="margin-top:var(--sc-5)">
+        <p class="lede">Through monthly community feeding outreach, Kingdom Assembly Missions provides meals, essential supplies, Bibles, prayer, and spiritual encouragement to individuals experiencing homelessness.</p>
+        <p class="body">We currently conduct monthly feeding outreach at ${esc(feeding.location)}, and support local nonprofit and homeless-service organizations throughout ${esc(list(supportCities))}.</p>
+        <div class="btn-row" style="margin-top:var(--sc-6)">
+          <a class="btn btn--gold" href="/outreach/">Learn more about our outreach</a>
+        </div>
       </div>
-      <div class="stack" data-sc-in data-sc-stagger="70">
-        <p class="lede">Most people are not looking for a program. They are looking for one person who will not flinch at where they actually are.</p>
-        <p class="body">There is a season most people go through that they never put a name to. The bills stop matching the paycheck. The relationship ends badly. The drinking stops being social. A child starts making decisions that scare you. Something happens that you cannot tell anyone about, and the not telling becomes its own weight.</p>
-        <p class="body">People in that season do not usually walk into a church building. So we go out. We bring food, prayer, resources, and time, and we keep coming back after the event is over, because a single good day does not undo a hard year.</p>
-        <p class="body"><strong>We do not believe a person should be defined by their worst moment.</strong> We have watched God take lives that everyone had written off and rebuild them into something stronger than the original. That is not a slogan to us. It is the reason this ministry exists.</p>
+      <div class="pics">
+        ${feedPics.map((g) => photo(g)).join("")}
+      </div>
+    </div>
+
+    <div class="aside-row" data-sc-in>
+      ${photo(tablingPic, { cls: "aside-row__pic" })}
+      <div class="stack">
+        <span class="rule-label">Out in the community</span>
+        <h3 class="h-sm">You may meet us at a table near you.</h3>
+        <p class="body">We table at retail locations throughout ${esc(tablingArea)} to share our mission, build relationships with local businesses and neighbors, and raise support for our feeding outreach, Bibles, and supplies.</p>
       </div>
     </div>
   </div>
 </section>`;
 
-  /* --- 4 · CHAPTER II: THE MENDING. The peak. Largest span on the page.
-     A clay jar in eight pieces, drawn back together by the reader's own
-     scroll, then gold poured into every fracture. -------------------------- */
-  const mending = `
-<section class="ground--ink" data-sc-act="pin" data-sc-span="2.4" id="mending">
-  <div data-sc-stage class="mend">
-    <span class="mend__glow" aria-hidden="true"></span>
-    <div class="mend__grid">
-      <div class="mend__art">${mendingSvg()}</div>
-      <div class="mend__copy" data-sc-cue="0.30 1 0.16 0.06">
-        <h2 class="h-lg">God does not throw the pieces away.</h2>
-        <p>He gathers them, sets them back where they belong, and runs something precious through every crack. The repair is visible on purpose. It is the part of the story worth telling.</p>
-        <p class="mend__ref">&ldquo;${esc(scriptures.jars.text)}&rdquo;<br>${esc(scriptures.jars.ref)}</p>
-      </div>
-    </div>
-  </div>
-</section>`;
-
-  /* --- 5 · CHAPTER III: FIVE AREAS. Lateral travel reads as breadth. ----- */
-  const areas = `
-<section class="ground--dark sec--after-pin" data-sc-act="pan" data-sc-span="3.0" id="impact">
-  <div data-sc-stage>
-    <div class="rail" data-sc-pan="0.05">
-      <div class="rail__lead stack">
-        <span class="rule-label">Chapter two &middot; Our service priorities</span>
-        <h2 class="h-lg">Five places we are putting our hands.</h2>
-        <p class="body">Not five departments. Five doors into the same house. A person who walks through one of them usually needs two of the others.</p>
-      </div>
-      ${programs.map(programPlate).join("")}
-      <div class="rail__end stack">
-        <h3 class="h-sm">All of it leads to the same place.</h3>
-        <p class="body">Practical help opens a door. Relationship keeps it open. Discipleship is what we are actually building.</p>
-        <a class="tlink" href="/mission/">Read our mission</a>
-      </div>
-    </div>
-  </div>
-</section>`;
-
-  /* --- 6 · CHAPTER IV: DISCIPLESHIP. The thesis of the whole site. ------- */
-  const discipleship = `
-<section class="sec statement ground--cream" id="discipleship">
+  /* --- 5 · BIBLE STUDY & DISCIPLESHIP ------------------------------------- */
+  const grow = `
+<section class="sec ground--dark" id="bible-study">
   <div class="wrap">
-    <div data-sc-in data-sc-stagger="80">
-      <span class="rule-label">Chapter three</span>
-      <p class="statement__big" style="margin-top:var(--sc-4)">Everything leads to <em>discipleship</em>.</p>
-    </div>
-    <div class="split-2" style="margin-top:var(--sc-8)">
+    <div class="split-side">
       <div class="stack" data-sc-in data-sc-stagger="70">
-        <p class="lede">We are not trying to run a charity that happens to mention God at the end.</p>
-        <p class="body">Meeting a need is real work and it matters on its own terms. But a meal wears off. A gift card runs out. A single good conversation fades. What actually changes a life is a person learning who God says they are and then building the rest of their life on that.</p>
-        <p class="body">So every outreach we run has the same shape. We meet a need honestly, with no strings attached. We build a real relationship. And when someone is ready, and only when they are ready, we offer them a way to keep going: Scripture, prayer, accountability, character, purpose, and eventually the chance to do this for somebody else.</p>
+        <span class="rule-label">Bible study &amp; discipleship</span>
+        <h2 class="h-lg">Grow in the Word. Become a disciple.</h2>
+        <hr class="gold-rule">
       </div>
       <div class="stack" data-sc-in data-sc-stagger="70">
-        <p class="scripture">${esc(scriptures.brokenhearted.text)}<cite>${esc(scriptures.brokenhearted.ref)}</cite></p>
-        <div class="notice" style="margin-top:var(--sc-6)">
-          <span class="rule-label">Ready to take the next step?</span>
-          <p>Your story doesn't have to end where your struggle began. Discipleship at KAM starts with a conversation, not a commitment you are not ready for.</p>
-          <div class="btn-row" style="margin-top:var(--sc-5)">
-            <a class="btn btn--gold" href="/discipleship/">Start discipleship</a>
-          </div>
+        <p class="body">Our commitment extends beyond introducing people to Jesus Christ. We believe in helping individuals grow in their faith, develop an understanding of Scripture, and become equipped to live out the Gospel.</p>
+        <p class="body">Through our Zoom Bible study and ongoing discipleship, we create opportunities for people to learn, grow, and strengthen their walk with Christ.</p>
+        <div class="btn-row" style="margin-top:var(--sc-6)">
+          <a class="btn btn--gold btn--lg" href="${bibleHref()}"${bibleAttrs()}>Join Bible Study</a>
         </div>
       </div>
     </div>
   </div>
 </section>`;
 
-  /* --- 7 · CHAPTER V: CORE PROGRAMS. Replaced the six-station model, which
-     now lives at the top of the page as the three-step pathway. ----------- */
-  const core = coreProgramsSection({ ground: "dark" });
-
-  /* With no upcoming event the cream event plate drops out, so the sections
-     after it swap grounds to keep the hard dark/cream cuts alternating. */
-  const g = ev ? ["dark", "cream", "dark"] : ["cream", "dark", "cream"];
-
-  /* --- 8 · CHAPTER VI: THE EVENT. A black plate on cream paper. --------- */
-  const eventBlock = ev
-    ? `
-<section class="sec ground--cream" id="event">
-  <div class="wrap">
-    <div class="stack" data-sc-in data-sc-stagger="60" style="margin-bottom:var(--sc-7)">
-      <span class="rule-label">Chapter four &middot; Come to something</span>
-      <h2 class="h-lg">Come share your gift. Come hear a story. Come find community.</h2>
-    </div>
-    <div data-sc-reveal="up" data-sc-reveal-at="0.1 0.5">
-      ${eventCard(ev)}
-    </div>
-    <p class="body" style="margin-top:var(--sc-5)">${esc(ev.body)}</p>
-  </div>
-</section>`
-    : "";
-
-  /* --- 9 · CHAPTER VII: TABLING ----------------------------------------- */
-  const tablingBlock = `
-<section class="sec statement ground--${g[0]}" id="tabling">
-  <div class="wrap">
-    <div data-sc-in data-sc-stagger="70">
-      <span class="rule-label">Chapter ${ev ? "five" : "four"} &middot; Meet us in the community</span>
-      <p class="statement__big" style="margin-top:var(--sc-4)">We don't wait for the community to come to us. <em>We go to the community.</em></p>
-    </div>
-    <div class="split-2" style="margin-top:var(--sc-8)">
-      <div class="stack" data-sc-in data-sc-stagger="70">
-        <p class="body">You will find us at a folding table in the places people already are. Not to run a service. To be available.</p>
-        <p class="body">Some people take a Bible. Some ask for prayer. Some tell us what this neighborhood actually needs, which is the most useful thing anyone gives us all day.</p>
-        <div class="btn-row" style="margin-top:var(--sc-5)">
-          <a class="btn btn--gold" href="/events/">Find our next outreach</a>
-          <a class="btn btn--line" href="/volunteer/?role=Outreach">Come with us</a>
-        </div>
-      </div>
-      <ul class="ticks ticks--two" data-sc-in data-sc-stagger="40">
-        ${tabling.map((t) => `<li>${esc(t)}</li>`).join("")}
-      </ul>
-    </div>
-    ${/* The proof under the promise: real footage from the last outreach. */ reelBlock()}
-  </div>
-</section>`;
-
-  /* --- 10 · CHAPTER VIII: THE DOORS ------------------------------------- */
-  const doors = doorsSection({ ground: g[1] });
-
-  /* --- 11 · CHAPTER IX: STORIES ----------------------------------------- */
-  const stories = `
-<section class="sec ground--${g[2]}" id="stories">
+  /* --- 6 · GET INVOLVED --------------------------------------------------- */
+  const involved = `
+<section class="sec ground--cream" id="get-involved">
   <div class="wrap wrap--mid center">
     <div class="stack" data-sc-in data-sc-stagger="70">
-      <span class="rule-label">Chapter ${ev ? "six" : "five"} &middot; Broken doesn't mean finished</span>
-      <h2 class="h-lg">We would rather show you an empty shelf.</h2>
-      <p class="body" style="margin-inline:auto">This is where the testimonies will live. We are only at the beginning, and we would rather show you an honest empty shelf than fill it with somebody else's story.</p>
-      <p class="body" style="margin-inline:auto">When someone chooses to tell what God did, in their own words and with their full permission, it goes here.</p>
-      <div class="btn-row" style="justify-content:center;margin-top:var(--sc-5)">
-        <a class="btn btn--line" href="/stories/">About these stories</a>
+      <span class="rule-label">Get involved</span>
+      <h2 class="h-lg">Be part of the impact.</h2>
+      <p class="lede">There is a place for everyone who wants to help demonstrate the love of Jesus Christ.</p>
+      <p class="body">Whether you want to volunteer, support our feeding outreach, contribute essential supplies, or help fund the mission, your involvement helps us continue serving our communities.</p>
+      <div class="btn-row" style="justify-content:center;margin-top:var(--sc-6)">
+        <a class="btn btn--gold btn--lg" href="/get-involved/#volunteer">Volunteer</a>
+        <a class="btn btn--line btn--lg" href="/donate/">Donate</a>
+        <a class="btn btn--line btn--lg" href="/get-involved/#contact">Contact us</a>
       </div>
     </div>
   </div>
 </section>`;
 
-  const body = [
-    titlePage, pathway, prayerLine, index, why, mending, areas, discipleship,
-    core, eventBlock, tablingBlock, doors, stories, closingBand(),
-    // The jar in 3D. Progressive: the SVG above is the fallback and the
-    // reduced-motion version; this module loads three.js only near the act.
-    `<script type="module" src="/mending3d.js"></script>`,
-  ].join("\n");
+  /* --- 7 · FINAL CALL TO ACTION ------------------------------------------- */
+  const close = closingBand();
 
   return {
     path: "/",
-    title: "Kingdom Assembly Missions · Christian community outreach in Greenville, SC",
+    title: "Kingdom Assembly Missions · Love. Serve. Impact.",
     ogTitle: "Kingdom Assembly Missions",
     description:
-      "Call. Connect. Restore. Kingdom Assembly Missions is a Christian outreach ministry in Greenville, SC, feeding people spiritually, emotionally, and physically.",
-    jsonld: [orgJsonLd(), ...(ev ? [eventJsonLd(ev)] : [])],
-    body,
+      "Kingdom Assembly Missions is a Christian community outreach ministry in Greenville, SC: monthly feeding outreach for people experiencing homelessness, Bibles, prayer, Zoom Bible study, and discipleship.",
+    jsonld: [orgJsonLd()],
+    body: [hero, mission, impact, outreach, grow, involved, close].join("\n"),
   };
 }

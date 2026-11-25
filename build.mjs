@@ -7,7 +7,7 @@
                                on every request
 
    Every page is a plain object { path, title, description, body }. The layout
-   wraps it. One nav, one footer, one head, nineteen pages.
+   wraps it. One nav, one footer, one head, five pages plus privacy and 404.
    ------------------------------------------------------------------------- */
 
 import { mkdir, writeFile, readdir, copyFile, rm, stat } from "node:fs/promises";
@@ -26,7 +26,7 @@ const STATIC = join(ROOT, "static");
    BASE_PATH is "" for a site at the root of its own domain, and "/kam-live"
    (no trailing slash) for a GitHub project Pages URL. Every page is authored
    with root-absolute paths; the prefix is applied once here rather than being
-   threaded through nineteen page modules. */
+   threaded through every page module. */
 const BASE = (process.env.BASE_PATH || "").replace(/\/$/, "");
 
 /* Rewrite root-absolute internal URLs. Leaves //host, http(s):, mailto:, tel:
@@ -49,38 +49,49 @@ async function rebuild() {
 
 async function collect() {
   const bust = `?t=${Date.now()}`;
-  const { render } = await import("./src/layout.mjs" + bust);
+  const { render, redirectPage } = await import("./src/layout.mjs" + bust);
   const { site } = await import("./src/config.mjs" + bust);
-  const cfg = await import("./src/config.mjs" + bust);
   const { home } = await import("./src/pages/home.mjs" + bust);
   const inner = await import("./src/pages/inner.mjs" + bust);
 
+  // Five pages (Selvin 2026-11-25), plus the privacy policy and the 404.
   const pages = [
     home(),
     inner.about(),
-    inner.mission(),
-    inner.programsIndex(),
-    ...cfg.programs.map((p) => inner.programPage(p)),
-    inner.discipleship(),
-    inner.eventsPage(),
-    inner.give(),
+    inner.outreach(),
     inner.getInvolved(),
-    inner.volunteer(),
-    inner.partner(),
-    inner.stories(),
-    inner.prayer(),
-    inner.contact(),
-    inner.needHelp(),
-    // Both are generated only when there is something real behind them, so a
-    // half-built page never ships.
-    ...(cfg.bibleStudy.active ? [inner.bibleStudyPage()] : []),
-    ...(cfg.posts.length ? [inner.news()] : []),
-    ...(cfg.gallery.some((g) => g.consent) ? [inner.galleryPage()] : []),
+    inner.donate(),
+    inner.privacy(),
     inner.notFound(),
   ];
 
-  return { pages, render, site };
+  return { pages, render, redirectPage, site };
 }
+
+/* Retired addresses (the pre-2026-11-25 site). Each becomes a tiny noindex
+   stub that forwards to the page that replaced it, so an old link or search
+   result lands somewhere real and none of the old content stays reachable. */
+const REDIRECTS = {
+  "/mission/": "/about/",
+  "/stories/": "/about/",
+  "/programs/": "/outreach/",
+  "/programs/homelessness/": "/outreach/",
+  "/programs/mental-health/": "/outreach/",
+  "/programs/youth/": "/outreach/",
+  "/programs/womens-support/": "/outreach/",
+  "/programs/recovery/": "/outreach/",
+  "/events/": "/outreach/",
+  "/gallery/": "/outreach/#photos",
+  "/discipleship/": "/#bible-study",
+  "/bible-study/": "/#bible-study",
+  "/news/": "/",
+  "/need-help/": "/",
+  "/give/": "/donate/",
+  "/volunteer/": "/get-involved/#volunteer",
+  "/partner/": "/get-involved/#contact",
+  "/prayer/": "/get-involved/#contact",
+  "/contact/": "/get-involved/#contact",
+};
 
 function outPath(p) {
   if (p === "/") return join(DIST, "index.html");
@@ -99,7 +110,7 @@ async function copyDir(from, to) {
 }
 
 async function build() {
-  const { pages, render, site } = await collect();
+  const { pages, render, redirectPage, site } = await collect();
 
   await rm(DIST, { recursive: true, force: true });
   await mkdir(DIST, { recursive: true });
@@ -108,6 +119,12 @@ async function build() {
     const file = outPath(page.path);
     await mkdir(dirname(file), { recursive: true });
     await writeFile(file, rebase(render(page)), "utf8");
+  }
+
+  for (const [from, to] of Object.entries(REDIRECTS)) {
+    const file = outPath(from);
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, rebase(redirectPage(from, to)).replace(/(url=|location\.replace\(")\//g, `$1${BASE}/`), "utf8");
   }
 
   await copyDir(STATIC, DIST);
@@ -154,6 +171,7 @@ const MIME = {
   ".xml": "application/xml",
   ".txt": "text/plain; charset=utf-8",
   ".webp": "image/webp",
+  ".mp4": "video/mp4",
 };
 
 async function serve(port) {

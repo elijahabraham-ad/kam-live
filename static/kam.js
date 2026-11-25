@@ -1,7 +1,6 @@
 /* ---------------------------------------------------------------------------
    Kingdom Assembly Missions: page behaviour.
-   The scrollcraft engine is untouched. Everything bespoke here is driven off
-   the --sc-p custom property the engine publishes, or off plain observers.
+   Menu, forms, and tap-to-play video. The scrollcraft engine is untouched.
    ------------------------------------------------------------------------- */
 (function () {
   "use strict";
@@ -33,12 +32,12 @@
     open.addEventListener("click", function () { setOpen(panel.hidden); });
     if (close) close.addEventListener("click", function () { setOpen(false); });
     panel.addEventListener("click", function (e) {
-      if (e.target.tagName === "A") setOpen(false);
+      if (e.target.closest("a")) setOpen(false);
     });
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && !panel.hidden) setOpen(false);
     });
-    // Trap focus inside the panel while it is open.
+    // Keep focus inside the panel while it is open.
     panel.addEventListener("keydown", function (e) {
       if (e.key !== "Tab") return;
       var items = panel.querySelectorAll("a[href], button:not([disabled])");
@@ -49,33 +48,10 @@
     });
   })();
 
-  /* ------------------------------------------- the mending (signature) ---- */
-  /* Nine shards plus a core piece fan from shared vertices, so they tile the vessel exactly.
-     Scroll drives them home; the gold seams then draw themselves along every
-     fracture. The engine publishes --sc-p on the act; the transforms are pure
-     CSS calc against it. All this needs from JS is each seam's real length. */
-  (function mending() {
-    var fig = document.querySelector("[data-mend]");
-    if (!fig) return;
-
-    var seams = fig.querySelectorAll(".mend__seam");
-    Array.prototype.forEach.call(seams, function (s) {
-      var len;
-      try { len = s.getTotalLength(); } catch (err) { len = 0; }
-      if (!len) return;
-      s.style.setProperty("--len", len);
-      s.style.strokeDasharray = len;
-    });
-
-    if (reduced) fig.setAttribute("data-mend-static", "");
-  })();
-
   /* ------------------------------------------------- reveal safety net ---- */
-  /* The engine reveals on intersection, so a deep anchor or a jump to the end
-     of the page can leave blocks ABOVE the viewport still at opacity 0. They
-     recover as soon as the reader scrolls back up, but a reader who lands on
-     an anchor and scrolls DOWN never sees them at all. Reveal anything already
-     behind us on load. */
+  /* The engine reveals on intersection, so landing on an anchor can leave
+     blocks ABOVE the viewport at opacity 0. Reveal anything already behind
+     the reader on load. */
   (function revealBehind() {
     if (reduced) return;
     requestAnimationFrame(function () {
@@ -86,48 +62,20 @@
     });
   })();
 
-  /* --------------------------------------------------- the outreach model - */
-  /* A single gold line draws itself down the pathway steps as the reader
-     travels the section, lighting each one as it arrives. */
-  (function model() {
-    var root = document.querySelector("[data-model]");
-    if (!root) return;
-    var fill = root.querySelector(".model__line i");
-    var steps = Array.prototype.slice.call(root.querySelectorAll(".model__step"));
-    if (!fill || !steps.length) return;
-
-    if (reduced) {
-      fill.style.setProperty("--draw", 1);
-      steps.forEach(function (s) { s.classList.add("is-lit"); });
-      return;
+  /* ---------------------------------------------- preselect a topic ------ */
+  /* JOIN BIBLE STUDY falls back to /get-involved/?topic=...#contact until the
+     Zoom link is in config. Choose that topic so the visitor only has to add
+     their name and email. */
+  (function topic() {
+    var want = new URLSearchParams(location.search).get("topic");
+    if (!want) return;
+    var sel = document.querySelector('#contact select[name="topic"]');
+    if (!sel) return;
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].value === want) { sel.selectedIndex = i; break; }
     }
-
-    var ticking = false;
-
-    function frame() {
-      ticking = false;
-      var r = root.getBoundingClientRect();
-      var vh = window.innerHeight || document.documentElement.clientHeight;
-      // Start when the section's top passes 78% of the viewport, finish when
-      // its bottom passes 42%. Both inside the fold, so it draws while read.
-      var span = r.height + vh * 0.36;
-      var travelled = vh * 0.78 - r.top;
-      var p = Math.max(0, Math.min(1, travelled / span));
-      fill.style.setProperty("--draw", p.toFixed(4));
-
-      var lit = p * steps.length;
-      steps.forEach(function (s, i) { s.classList.toggle("is-lit", lit > i + 0.15); });
-    }
-
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(frame);
-    }
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    frame();
+    var msg = document.querySelector('#contact textarea[name="message"]');
+    if (msg && !msg.value && /bible/i.test(want)) msg.value = "I would like to join the Bible study.";
   })();
 
   /* ------------------------------------------------------------- forms ---- */
@@ -135,54 +83,11 @@
     var all = document.querySelectorAll("form[data-kam-form]");
     if (!all.length) return;
 
-    var endpoint = document.documentElement.getAttribute("data-endpoint") || "";
     var root = document.documentElement;
-    var hsPortal = root.getAttribute("data-hs-portal") || "";
-    var hsForm = root.getAttribute("data-hs-form") || "";
-    var hsRegion = root.getAttribute("data-hs-region") || "na1";
-    var hubspot = hsPortal && hsPortal !== "TBD" && hsForm && hsForm !== "TBD";
-    var live = hubspot || (endpoint && endpoint !== "TBD");
+    var endpoint = root.getAttribute("data-endpoint") || "";
+    var live = endpoint && endpoint !== "TBD";
     var inbox = root.getAttribute("data-email") || "";
-    var prayDisp = root.getAttribute("data-pray") || "";
-    var prayTel = root.getAttribute("data-pray-tel") || "";
-
-    /* Until a form backend is connected, a form does not dead-end: it offers
-       to send the same message from the visitor's own email app instead.
-       EXCEPT the safety form. An email leaves a copy in the sender's own Sent
-       folder, which is exactly what someone on a monitored device cannot have. */
-    var NO_EMAIL_FALLBACK = { help: true };
-    var SUBJECT = {
-      contact: "Message from the website", prayer: "Prayer request", volunteer: "Volunteer",
-      partner: "Partnership", discipleship: "Discipleship", give: "Giving",
-      rsvp: "Event RSVP", newsletter: "Send me the next outreach date"
-    };
-
-    // HubSpot path: map the four core fields, fold everything else into the
-    // message so nothing a visitor typed is lost, tag which form it came from.
-    function toHubSpot(form, labelFor) {
-      var fd = new FormData(form), core = {}, extra = [];
-      fd.forEach(function (v, k) {
-        if (k === "_hp" || v === "" || v == null) return;
-        if (k === "name") { var parts = String(v).trim().split(/\s+/); core.firstname = parts.shift(); if (parts.length) core.lastname = parts.join(" "); return; }
-        if (k === "email" || k === "phone") { core[k] = v; return; }
-        if (k === "message") { extra.unshift(String(v)); return; }
-        var lab = form.querySelector('[name="' + k + '"]');
-        var label = lab ? labelFor(lab) : k;
-        extra.push(label + ": " + v);
-      });
-      var kind = form.getAttribute("data-kam-form");
-      core.message = "[" + kind + " form, " + location.pathname + "]\n" + extra.join("\n");
-      var hutk = (document.cookie.match(/(?:^|; )hubspotutk=([^;]+)/) || [])[1];
-      var body = {
-        fields: Object.keys(core).map(function (k) { return { objectTypeId: "0-1", name: k, value: String(core[k]) }; }),
-        context: { pageUri: location.href, pageName: document.title }
-      };
-      if (hutk) body.context.hutk = hutk;
-      var host = hsRegion === "eu1" ? "https://api-eu1.hsforms.com" : "https://api.hsforms.com";
-      return fetch(host + "/submissions/v3/integration/submit/" + hsPortal + "/" + hsForm, {
-        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
-      });
-    }
+    var SUBJECT = { contact: "Message from the website", volunteer: "Volunteer" };
 
     Array.prototype.forEach.call(all, function (form) {
       var status = form.querySelector(".form__status");
@@ -190,9 +95,6 @@
 
       function say(msg, kind) {
         if (!status) return;
-        // The role and aria-live are already in the markup. A live region
-        // created in the same tick as its content is generally not announced,
-        // so only the text and the styling change here.
         status.hidden = false;
         status.className = "form__status form__status--" + kind;
         status.textContent = msg;
@@ -212,28 +114,22 @@
         return null;
       }
 
-      // Builds a mailto: with everything the visitor typed, labelled, and puts
-      // a button in the status line. Nodes, never innerHTML: the body carries
-      // visitor text.
+      // No backend: offer the same message as an email from the visitor's own
+      // app. Built with nodes, never innerHTML, because it carries visitor text.
       function emailInstead(kind) {
         var lines = [], fd = new FormData(form);
         fd.forEach(function (v, k) {
           if (k === "_hp" || v === "" || v == null) return;
           var f = form.querySelector('[name="' + k + '"]');
           if (f && f.type === "checkbox") {
-            // A group of boxes shares one name, so look up the box that was
-            // actually ticked, and label it with the group's legend.
-            var box = form.querySelector('input[name="' + k + '"][value="' + (window.CSS && CSS.escape ? CSS.escape(v) : v) + '"]') || f;
-            var set = box.closest("fieldset");
+            var set = f.closest("fieldset");
             var legend = set && set.querySelector("legend");
-            lines.push(legend ? legend.textContent.trim() + ": " + v : (box.closest("label") || box).textContent.trim());
+            lines.push((legend ? legend.textContent.trim() : k) + ": " + v);
             return;
           }
           lines.push((f ? labelFor(f) : k) + ": " + v);
         });
         var body = lines.join("\n\n");
-        // Some desktop mail apps silently cut long mailto: links, so the cap is
-        // on the ENCODED length, not the raw text.
         if (encodeURIComponent(body).length > 1500) {
           while (body.length && encodeURIComponent(body + "...").length > 1500) body = body.slice(0, -20);
           body += "...";
@@ -244,10 +140,7 @@
         status.hidden = false;
         status.className = "form__status form__status--err";
         status.textContent = "";
-        status.appendChild(document.createTextNode(
-          "Our online form is not connected yet, so this has not been sent. Send the same message from your own email instead" +
-          (kind === "prayer" ? " (it will come from your email address, so it will not be anonymous)" : "") + ":"
-        ));
+        status.appendChild(document.createTextNode("Our online form is not connected yet, so this has not been sent. Send the same message from your own email instead:"));
         var row = document.createElement("span");
         row.className = "form__fallback";
         var a = document.createElement("a");
@@ -255,13 +148,6 @@
         a.href = href;
         a.textContent = "Email this to KAM";
         row.appendChild(a);
-        if (prayTel && (kind === "prayer" || kind === "contact")) {
-          var t = document.createElement("a");
-          t.className = "btn btn--line";
-          t.href = prayTel;
-          t.textContent = "Call " + prayDisp;
-          row.appendChild(t);
-        }
         status.appendChild(row);
         status.appendChild(document.createTextNode("Or write to " + inbox + " directly."));
       }
@@ -269,7 +155,6 @@
       form.addEventListener("submit", function (e) {
         e.preventDefault();
 
-        // Honeypot: a real person never fills this.
         var hp = form.querySelector('input[name="_hp"]');
         if (hp && hp.value) { say("Thank you. Your message has been received.", "ok"); return; }
 
@@ -277,32 +162,24 @@
         if (invalid) {
           say("Please fill in " + labelFor(invalid) + " before sending.", "err");
           invalid.focus();
-          if (status) status.focus();
           return;
         }
 
+        var kind = form.getAttribute("data-kam-form");
         if (!live) {
-          var kind = form.getAttribute("data-kam-form");
-          if (!inbox || NO_EMAIL_FALLBACK[kind]) {
-            say(
-              "This form is not connected yet, so nothing was sent. If you need help now, use the numbers at the top of this page." +
-              (inbox && kind !== "help" ? " You can also email " + inbox + "." : ""),
-              "err"
-            );
-            return;
-          }
-          emailInstead(kind);
+          if (inbox) emailInstead(kind);
+          else say("This form is not connected yet, so nothing was sent.", "err");
           return;
         }
 
         var data = new FormData(form);
-        data.append("_form", form.getAttribute("data-kam-form"));
+        data.append("_form", kind);
         data.append("_page", location.pathname);
 
         if (submit) { submit.disabled = true; submit.dataset.label = submit.textContent; submit.textContent = "Sending"; }
         say("Sending.", "ok");
 
-        (hubspot ? toHubSpot(form, labelFor) : fetch(endpoint, { method: "POST", body: data }))
+        fetch(endpoint, { method: "POST", body: data })
           .then(function (r) {
             if (!r.ok) throw new Error("bad status " + r.status);
             return r.json().catch(function () { return {}; });
@@ -312,7 +189,7 @@
             say(form.getAttribute("data-success") || "Thank you. Someone from KAM will be in touch.", "ok");
           })
           .catch(function () {
-            say("That did not go through. Please try again, or reach us directly using the contact details on this site.", "err");
+            say("That did not go through. Please try again, or email " + (inbox || "us") + " directly.", "err");
           })
           .finally(function () {
             if (submit) { submit.disabled = false; submit.textContent = submit.dataset.label || "Send"; }
@@ -322,51 +199,13 @@
   })();
 
   /* ------------------------------------------------- photos and video --- */
-  /* The homepage reel is a silent loop. It plays only while it is on screen
-     (nothing downloads until it is close), and never for anyone who asked for
-     reduced motion: they get the poster and the controls instead. Gallery
-     clips are tap-to-play; starting one pauses any other. */
+  /* Clips are tap-to-play; starting one pauses any other. */
   (function media() {
-    document.querySelectorAll("video[data-autoplay]").forEach(function (v) {
-      v.muted = true;
-      if (reduced || !("IntersectionObserver" in window)) { v.controls = true; return; }
-      new IntersectionObserver(function (entries) {
-        entries.forEach(function (e) {
-          if (e.isIntersecting) {
-            var p = v.play();
-            if (p && p.catch) p.catch(function () { v.controls = true; });
-          } else if (!v.paused) v.pause();
-        });
-      }, { rootMargin: "160px 0px" }).observe(v);
-    });
     var clips = document.querySelectorAll(".shot video");
     clips.forEach(function (v) {
       v.addEventListener("play", function () {
         clips.forEach(function (o) { if (o !== v && !o.paused) o.pause(); });
       });
-    });
-  })();
-
-  /* --------------------------------------------------------- quick exit --- */
-  /* On the safety page only. Replaces the current history entry so the page
-     does not sit in the back button, and opens the real destination fresh. */
-  (function quickExit() {
-    var btn = document.querySelector("[data-exit]");
-    if (!btn) return;
-    function go() {
-      // ONE destination. An earlier version also opened a second tab, which is
-      // the opposite of what a quick exit is for: it left two tabs open and the
-      // foreground one on a Google CAPTCHA interstitial.
-      location.replace("https://www.weather.com/");
-    }
-    btn.addEventListener("click", go);
-    document.addEventListener("keydown", function (e) {
-      // Three quick Escapes leaves the page, for anyone who cannot reach the button.
-      if (e.key !== "Escape") return;
-      quickExit.n = (quickExit.n || 0) + 1;
-      clearTimeout(quickExit.t);
-      quickExit.t = setTimeout(function () { quickExit.n = 0; }, 900);
-      if (quickExit.n >= 3) go();
     });
   })();
 })();

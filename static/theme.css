@@ -3,8 +3,8 @@
    Theme on top of scrollcraft.css. The engine is the mechanism and is never
    edited; everything below is this brand's own markup and tokens.
 
-   The page hard-cuts between two grounds (near-black and cream) because it is
-   a chaptered editorial, not one continuous place. A single accent stop cannot
+   Black, white and gold (Selvin 2026-11-25). The page cuts between a
+   near-black ground and a warm white ground. A single accent stop cannot
    clear 4.5:1 on both grounds, so the accent is one hue at two lightnesses,
    redefined per ground alongside the ink.
    ========================================================================= */
@@ -21,8 +21,8 @@
   /* brand extras */
   --gold-lo:  #7A5C0D;   /* the accent's dark stop, for cream grounds */
   --gold-hi:  #EFDCA6;   /* highlight only, never body text */
-  --cream:    #F4EDDF;
-  --cream-2:  #EAE0CB;
+  --cream:    #FBF9F4;
+  --cream-2:  #F1EBDD;
   --ink-dark: #14110C;
   --ink-dark-soft: #59503F;
 
@@ -78,7 +78,6 @@
 }
 
 body { background: var(--sc-canvas); }
-.sc-grain { opacity: 0.045; }
 
 /* ---------------------------------------------------------------- layout -- */
 .wrap { width: 100%; max-width: var(--sc-maxw); margin-inline: auto; padding-inline: var(--sc-gutter); }
@@ -194,94 +193,6 @@ body { background: var(--sc-canvas); }
 .tlink::after { content: "\2192"; transition: transform 160ms var(--sc-ease-out); }
 @media (hover: hover) and (pointer: fine) { .tlink:hover::after { transform: translateX(3px); } }
 
-/* ------------------------------------------------------------------ bar --- */
-.bar {
-  position: sticky; top: 0; z-index: var(--sc-z-chrome);
-  display: flex; align-items: center; gap: var(--sc-5);
-  height: var(--bar-h); padding-inline: var(--sc-gutter);
-  background: color-mix(in oklab, #0B0A08 88%, transparent);
-  backdrop-filter: blur(14px) saturate(120%);
-  border-bottom: 1px solid color-mix(in oklab, #D9B450 18%, transparent);
-  color: #F6F1E5;
-}
-.bar__mark { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: inherit; margin-inline-end: auto; }
-.bar__mark img { width: auto; height: 2.5rem; }
-.bar__mark-txt { display: grid; line-height: 1; }
-.bar__mark-txt b {
-  font-family: var(--sc-font-text); font-size: 0.62rem; font-weight: 600;
-  letter-spacing: 0.2em; text-transform: uppercase; color: #C8BBA2;
-}
-.bar__mark-txt i {
-  font-family: var(--sc-font-display); font-style: normal; font-weight: 600;
-  font-size: 1.12rem; letter-spacing: 0.03em; color: #F6F1E5; margin-top: 0.15em;
-}
-.bar__nav { display: flex; align-items: center; gap: clamp(0.9rem, 1.7vw, 1.9rem); }
-.bar__link {
-  font-size: 0.82rem; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase;
-  color: #CFC4AE; text-decoration: none; padding-block: 0.4rem;
-  border-bottom: 1px solid transparent; transition: color 140ms var(--sc-ease-out), border-color 140ms var(--sc-ease-out);
-}
-.bar__link:hover { color: #F6F1E5; }
-.bar__link[aria-current="page"] { color: #D9B450; border-bottom-color: #D9B450; }
-.bar__end { display: flex; align-items: center; gap: var(--sc-3); }
-.bar__give { padding: 0.7em 1.35em; font-size: 0.82rem; letter-spacing: 0.12em; text-transform: uppercase; }
-
-/* The prayer hotline lives in the bar at every width (Selvin 2026-10-22):
-   the full number on wide screens, a compact "Pray" call button on phones,
-   where a tap actually dials. */
-.bar__pray {
-  display: inline-flex; align-items: center; gap: 0.55rem; min-height: 44px;
-  color: #D9B450; text-decoration: none; white-space: nowrap;
-}
-.bar__pray-ico { flex: none; }
-.bar__pray-txt { display: grid; line-height: 1.1; }
-.bar__pray-txt span {
-  font-size: 0.66rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: #C8BBA2;
-}
-.bar__pray-txt b { font-size: 0.86rem; font-weight: 600; letter-spacing: 0.05em; color: #D9B450; }
-.bar__pray:hover .bar__pray-txt b { color: #F6F1E5; }
-.bar__pray-short { display: none; font-size: 0.74rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-/* Between the burger breakpoint and ~1300px the full number does not fit
-   beside five nav links and GIVE, so the bar uses the compact call button. */
-@media (max-width: 1300px) and (min-width: 1021px) {
-  .bar__pray-txt { display: none; }
-  .bar__pray-short { display: inline; }
-  .bar__pray { gap: 0.35rem; }
-}
-
-.bar__burger {
-  display: none; align-items: center; gap: 0.55rem;
-  background: none; border: 0; padding: 0.5rem 0.25rem; cursor: pointer; color: #F6F1E5;
-  min-height: 44px;
-}
-/* The bars are stacked inside their own box. Three bare spans as flex children
-   of the button lay out in a row and read as three dashes. */
-.bar__burger-ico { display: grid; gap: 4px; width: 20px; }
-.bar__burger-ico i { display: block; height: 1.5px; background: currentColor; }
-.bar__burger em {
-  font-style: normal; font-size: 0.72rem; font-weight: 600;
-  letter-spacing: 0.14em; text-transform: uppercase;
-}
-
-@media (max-width: 1020px) {
-  .bar__nav { display: none; }
-  .bar__burger { display: inline-flex; }
-}
-@media (max-width: 560px) {
-  /* GIVE is the primary action on the site and it stays reachable at every
-     width. The kicker shortens to the abbreviation rather than disappearing:
-     hiding it entirely left the ministry's own header reading "Missions". */
-  .bar__mark-txt b { font-size: 0.58rem; }
-  .bar__mark-txt b::before { content: "KAM"; }
-  .bar__mark-txt b { color: transparent; width: 0; overflow: visible; white-space: nowrap; }
-  .bar__mark-txt b::before { color: #C8BBA2; }
-  .bar__give { padding: 0.5em 0.95em; font-size: 0.74rem; letter-spacing: 0.08em; min-height: 44px; }
-  .bar__burger em { display: none; }
-  .bar { gap: var(--sc-3); padding-inline: var(--sc-4); }
-  .bar__pray-txt { display: none; }
-  .bar__pray-short { display: inline; }
-  .bar__pray { gap: 0.35rem; }
-}
 
 /* ----------------------------------------------------------------- menu --- */
 .menu {
@@ -305,371 +216,10 @@ body { background: var(--sc-canvas); }
   padding-block: 0.16em; border-bottom: 1px solid color-mix(in oklab, #F6F1E5 10%, transparent);
 }
 .menu__nav a:hover { color: #D9B450; }
-.menu__foot { display: grid; gap: var(--sc-2); }
-.menu__foot a { color: #CFC4AE; text-decoration: none; font-weight: 500; }
-.menu__foot a:hover { color: #F6F1E5; }
-.menu__help { color: #D9B450 !important; font-weight: 700 !important; }
+.menu__foot { display: grid; gap: var(--sc-3); }
+.menu__foot .btn { width: 100%; }
+.menu__nav a[aria-current="page"] { color: #D9B450; }
 
-/* =========================================================== HOME: title -- */
-.title-page {
-  position: relative; min-height: calc(100svh - var(--bar-h));
-  display: grid; align-items: center;
-  padding-block: clamp(3rem, 9vh, 7rem);
-  overflow: clip;
-}
-.title-page__plate {
-  position: absolute; inset: 0; pointer-events: none;
-  display: grid; place-items: center; opacity: 0.16;
-}
-.title-page__plate img { width: min(46rem, 92vw); height: auto; filter: saturate(0.7); }
-.title-page__glow {
-  position: absolute; left: 50%; top: 46%; translate: -50% -50%;
-  width: min(58rem, 120vw); aspect-ratio: 1; pointer-events: none;
-  background: radial-gradient(circle, color-mix(in oklab, #D9B450 13%, transparent) 0%, transparent 62%);
-}
-.title-page__inner { position: relative; z-index: 2; }
-.title-page__seal {
-  display: flex; align-items: center; gap: var(--sc-4);
-  margin-bottom: var(--sc-6);
-}
-.title-page__seal img { height: 4.5rem; width: auto; }
-.title-page__seal span {
-  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.22em;
-  text-transform: uppercase; color: var(--sc-accent); line-height: 1.8;
-}
-.title-page h1 { max-width: 15ch; }
-.title-page__sub { margin-top: var(--sc-5); max-width: 48ch; font-size: var(--sc-t-lg); line-height: 1.5; color: var(--sc-ink-soft); }
-.title-page__acts { margin-top: var(--sc-7); }
-.title-page__foot {
-  position: relative; z-index: 2;
-  margin-top: var(--sc-8); padding-top: var(--sc-4);
-  border-top: 1px solid var(--sc-hairline);
-  display: flex; flex-wrap: wrap; gap: var(--sc-3) var(--sc-6); align-items: baseline;
-}
-.title-page__foot .rule-label { display: inline; }
-.title-page__foot p { margin: 0; color: var(--sc-ink-soft); font-size: 0.95rem; }
-.title-page__foot b { color: var(--sc-ink); font-weight: 600; }
-
-/* ============================================================ HOME: index - */
-.index-list { display: grid; gap: 0; border-top: 1px solid var(--sc-hairline); }
-.index-list a {
-  display: grid; grid-template-columns: auto 1fr auto; align-items: baseline;
-  gap: var(--sc-4); padding-block: clamp(1rem, 2.2vw, 1.5rem);
-  border-bottom: 1px solid var(--sc-hairline);
-  text-decoration: none; color: var(--sc-ink);
-  transition: padding-inline-start 200ms var(--sc-ease-out), color 140ms var(--sc-ease-out);
-}
-.index-list a:hover { color: var(--sc-accent); }
-@media (hover: hover) and (pointer: fine) { .index-list a:hover { padding-inline-start: var(--sc-3); } }
-.index-list .idx {
-  font-family: var(--sc-font-text); font-size: 0.72rem; font-weight: 600;
-  letter-spacing: 0.14em; color: var(--sc-accent); min-width: 2.2ch;
-}
-.index-list .lbl { font-family: var(--sc-font-display); font-size: clamp(1.35rem, 3.2vw, 2.1rem); font-weight: 500; letter-spacing: -0.018em; }
-.index-list .nte { font-size: 0.86rem; color: var(--sc-ink-soft); text-align: right; }
-@media (max-width: 640px) {
-  .index-list a { grid-template-columns: auto 1fr; }
-  .index-list .nte { grid-column: 2; text-align: left; }
-}
-
-/* ======================================================= THE MENDING (peak) */
-.mend {
-  /* No height here. The engine's .sc-stage owns it (100vh, sticky), and any
-     height declared on this element wins on equal specificity, kills the
-     sticky travel, and the peak silently stops pinning. */
-  display: grid; place-items: center;
-}
-.mend__glow {
-  position: absolute; left: 34%; top: 50%; translate: -50% -50%;
-  width: min(46rem, 120vw); aspect-ratio: 1; pointer-events: none;
-  background: radial-gradient(circle, color-mix(in oklab, #D9B450 20%, transparent) 0%, transparent 62%);
-  opacity: calc(var(--sc-p, 0) * 1.6 - 0.15);
-}
-.mend__grid {
-  position: relative; z-index: 2;
-  display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
-  align-items: center; gap: clamp(1.5rem, 5vw, 4.5rem);
-  width: 100%; max-width: var(--sc-maxw); margin-inline: auto;
-  padding-inline: var(--sc-gutter);
-}
-.mend__art { display: grid; place-items: center; }
-/* Width is also capped by the viewport HEIGHT: on a short laptop (1366x650)
-   a 28rem-wide jar is taller than the space between the sticky bar and the
-   bottom of the stage, and its neck sat under the bar. Centred in the stage,
-   a jar no taller than 100svh - 2 bars - 2rem always clears it. */
-.mend__fig {
-  width: min(28rem, 100%, calc((100svh - 2 * var(--bar-h) - 2rem) * 400 / 570));
-  height: auto; overflow: visible;
-}
-.mend__copy h2 { margin: 0; }
-.mend__copy p { margin: var(--sc-5) 0 0; max-width: 46ch; color: var(--sc-ink-soft); }
-.mend__ref {
-  font-family: var(--sc-font-display); font-style: italic;
-  font-size: var(--sc-t-base); line-height: 1.5;
-  color: color-mix(in oklab, #D9B450 82%, #F6F1E5) !important;
-  border-inline-start: 1px solid color-mix(in oklab, #D9B450 45%, transparent);
-  padding-inline-start: var(--sc-4);
-}
-
-@media (max-width: 860px) {
-  .mend__grid { grid-template-columns: 1fr; gap: var(--sc-5); align-content: center; }
-  .mend__art { order: -1; }
-  .mend__fig { width: min(13rem, 46vw); }
-  .mend__copy p { margin-top: var(--sc-4); }
-  .mend__glow { left: 50%; top: 34%; }
-}
-
-/* Every shard's travel is pure CSS calc against the --sc-p the engine writes
-   on the act. No per-frame JavaScript, so it runs on the compositor.
-   --st staggers each shard's arrival; --lp is that shard's own local progress.
-   transform-box: view-box puts the rotation origin at the fracture point in the
-   jar rather than at each shard's own bounding box, which is what makes this
-   read as one thing breaking instead of eight things spinning. */
-/* 2026-10-22 timing: each shard travels for 0.34 of the act (was 0.62) and
-   the last starts by 0.18, so the jar is whole by about p 0.52 and the act is
-   2.4 screens long (was 3.6). --rest is (1 - lp) cubed: a cubic ease-out, so
-   every piece decelerates and settles instead of sliding in at one speed. */
-.mend__frag {
-  --lp: clamp(0, (var(--sc-p, 0) - var(--st, 0)) / 0.34, 1);
-  --rest: calc((1 - var(--lp)) * (1 - var(--lp)) * (1 - var(--lp)));
-  fill: url(#kamClay);
-  /* The broken face of fired clay is darker than its glaze, not lighter. A
-     cream outline made every shard read as a drawn cell. */
-  stroke: #0E0906;
-  stroke-width: 1.2;
-  stroke-linejoin: round;
-  transform-box: view-box;
-  transform-origin: 178px 344px;
-  transform:
-    translate(
-      calc(var(--dx, 0) * var(--rest) * 1px),
-      calc(var(--dy, 0) * var(--rest) * 1px)
-    )
-    rotate(calc(var(--rot, 0) * var(--rest) * 1deg));
-}
-
-/* The shape the pieces are travelling back to, faint at the start and gone by
-   the time they arrive. It stops the opening frame reading as random debris. */
-.mend__ghost {
-  stroke: color-mix(in oklab, #D9B450 46%, transparent);
-  stroke-width: 1.2;
-  stroke-dasharray: 4 8;
-  opacity: calc(0.9 - var(--sc-p, 0) * 3);
-}
-
-/* Gold arrives along the fractures only once the pieces are home: drawn from
-   p 0.5 to 0.7, then the whole mended jar holds for the rest of the act. */
-.mend__seam {
-  stroke: url(#kamGold);
-  stroke-width: 2.6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dashoffset: calc(var(--len, 0) * (1 - clamp(0, (var(--sc-p, 0) - 0.5) / 0.2, 1)));
-  opacity: clamp(0, (var(--sc-p, 0) - 0.48) * 10, 1);
-}
-/* A soft bloom under the metal, so the seams glow against the dark clay. */
-.mend__seams--glow .mend__seam { stroke-width: 6; }
-.mend__seams--glow { opacity: 0.55; }
-
-/* Glaze and a grounding shadow, only once the jar is whole. */
-.mend__finish { opacity: clamp(0, (var(--sc-p, 0) - 0.5) * 5, 1); pointer-events: none; }
-.mend__floor { opacity: clamp(0, (var(--sc-p, 0) - 0.3) * 2.5, 0.9); }
-
-.mend__rim {
-  stroke: color-mix(in oklab, #D9B450 34%, transparent);
-  stroke-width: 1.2;
-  opacity: clamp(0, (var(--sc-p, 0) - 0.5) * 4, 1);
-}
-
-/* Reduced motion keeps the meaning and drops the travel: the vessel is whole,
-   the gold is in the cracks, nothing moves. */
-@media (prefers-reduced-motion: reduce) {
-  .mend__frag { transform: none; }
-  .mend__ghost { opacity: 0; }
-  .mend__seam { stroke-dashoffset: 0; opacity: 1; }
-  .mend__rim { opacity: 1; }
-  .mend__glow { opacity: 0.55; }
-  .mend__finish { opacity: 1; }
-  .mend__floor { opacity: 0.9; }
-}
-[data-mend-static] .mend__frag { transform: none; }
-[data-mend-static] .mend__seam { stroke-dashoffset: 0; opacity: 1; }
-[data-mend-static] .mend__rim { opacity: 1; }
-[data-mend-static] .mend__finish { opacity: 1; }
-[data-mend-static] .mend__floor { opacity: 0.9; }
-
-/* ============================================================ five areas -- */
-.rail {
-  display: flex; align-items: stretch; gap: clamp(1.25rem, 2.6vw, 2.25rem);
-  padding-inline: var(--sc-gutter); height: 100%;
-}
-.rail__lead {
-  flex: 0 0 auto; width: min(26rem, 78vw); align-self: center;
-  display: grid; gap: var(--sc-4); align-content: center;
-}
-.rail__end {
-  flex: 0 0 auto; width: min(22rem, 72vw); align-self: center;
-  display: grid; gap: var(--sc-4); align-content: center;
-}
-.plate {
-  /* Same rule as .event: a dark card on a cream section must restate its own
-     ink tokens AND `color`, or it inherits the section's near-black. */
-  --sc-ink: #F6F1E5; --sc-ink-soft: #A99C86; --sc-accent: #D9B450;
-  color: var(--sc-ink);
-  flex: 0 0 auto; width: min(21rem, 74vw); align-self: center;
-  display: flex; flex-direction: column; gap: var(--sc-4);
-  padding: var(--sc-6) var(--sc-5) var(--sc-5);
-  background-color: #12100B;
-  background-image: linear-gradient(180deg, #16130E, #0E0C09);
-  border: 1px solid color-mix(in oklab, #D9B450 24%, transparent);
-  border-radius: var(--sc-r-lg);
-  box-shadow: var(--sc-e2), inset 0 1px 0 color-mix(in oklab, #D9B450 22%, transparent);
-  min-height: 24rem; text-decoration: none;
-  transition: border-color 180ms var(--sc-ease-out), transform 180ms var(--sc-ease-out);
-}
-.plate:hover { border-color: color-mix(in oklab, #D9B450 62%, transparent); }
-.plate__no {
-  font-family: var(--sc-font-text); font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.2em; color: #D9B450;
-}
-.plate__mark { width: 3rem; height: 3rem; color: #D9B450; }
-.plate h3 { font-size: var(--sc-t-xl); line-height: 1.1; letter-spacing: -0.015em; margin: 0; }
-.plate p { margin: 0; color: #A99C86; font-size: 0.95rem; line-height: 1.6; }
-.plate__go { margin-top: auto; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #D9B450; }
-
-/* The rail's transform is the navigation, so reduced motion turns the stage
-   into a real scroll region rather than parking it on screen one. */
-@media (prefers-reduced-motion: reduce) {
-  .rail { overflow-x: auto; scroll-snap-type: x proximity; }
-  .plate, .rail__lead, .rail__end { scroll-snap-align: center; }
-}
-
-/* grid version of the same plates, used on interior pages */
-.plate-grid {
-  display: grid; gap: var(--sc-5);
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
-}
-.plate-grid .plate { width: auto; min-height: 20rem; }
-
-/* ============================================================== the model - */
-.model { position: relative; display: grid; gap: 0; }
-.model__line {
-  position: absolute; left: 0.75rem; top: 0.5rem; bottom: 0.5rem; width: 2px;
-  background: var(--sc-hairline);
-  overflow: hidden;
-}
-.model__line i {
-  position: absolute; inset: 0; display: block; background: var(--sc-accent);
-  transform-origin: top; transform: scaleY(var(--draw, 0));
-  transition: transform 90ms linear;
-}
-.model__step {
-  display: grid; grid-template-columns: 1.75rem 1fr; gap: var(--sc-5);
-  align-items: start; padding-block: clamp(1.1rem, 2.6vw, 1.9rem);
-}
-.model__dot {
-  width: 1.75rem; height: 1.75rem; border-radius: 50%;
-  border: 1.5px solid var(--sc-hairline-strong);
-  background: var(--sc-canvas);
-  display: grid; place-items: center; position: relative; z-index: 2;
-  transition: background-color 220ms var(--sc-ease-out), border-color 220ms var(--sc-ease-out);
-}
-.model__dot::after {
-  content: ""; width: 0.5rem; height: 0.5rem; border-radius: 50%;
-  background: var(--sc-hairline-strong);
-  transition: background-color 220ms var(--sc-ease-out), transform 220ms var(--sc-ease-out);
-}
-.model__step.is-lit .model__dot { border-color: var(--sc-accent); }
-.model__step.is-lit .model__dot::after { background: var(--sc-accent); transform: scale(1.25); }
-.model__step h3 {
-  font-size: clamp(1.5rem, 3.6vw, 2.4rem); line-height: 1; letter-spacing: -0.02em; margin: 0;
-  color: var(--sc-ink-soft); transition: color 220ms var(--sc-ease-out);
-}
-.model__step.is-lit h3 { color: var(--sc-ink); }
-.model__step p { margin: var(--sc-2) 0 0; color: var(--sc-ink-soft); max-width: 46ch; }
-
-/* ============================================================ event plate - */
-/* A dark plate that can sit on either ground. It carries its OWN ink, because
-   on the cream ground --sc-ink resolves to near-black and this plate would
-   render dark text on a dark card. Restating the token is not enough on its
-   own: `color` is inherited as a computed value, so it has to be restated too
-   or the text keeps whatever the section already resolved. */
-.event {
-  position: relative; overflow: clip;
-  --sc-ink: #F6F1E5; --sc-ink-soft: #A99C86;
-  --sc-accent: #D9B450; --sc-accent-ink: #14100A;
-  --sc-hairline: color-mix(in oklab, #D9B450 26%, transparent);
-  --sc-hairline-strong: color-mix(in oklab, #D9B450 52%, transparent);
-  color: var(--sc-ink);
-  border: 1px solid var(--sc-hairline-strong); border-radius: var(--sc-r-lg);
-  background-color: #0F0D0A;
-  background-image: linear-gradient(160deg, #16130E 0%, #0B0A08 62%);
-  box-shadow: 0 4px 8px hsl(38 40% 3% / 0.22), 0 18px 40px -8px hsl(38 40% 3% / 0.38),
-              inset 0 1px 0 color-mix(in oklab, #D9B450 26%, transparent);
-}
-.event .btn--line { color: #F6F1E5; border-color: color-mix(in oklab, #D9B450 52%, transparent); }
-.event .btn--line:hover { color: #D9B450; border-color: #D9B450; }
-.event__grid {
-  display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
-  gap: clamp(1.5rem, 4vw, 3.5rem);
-  padding: clamp(1.75rem, 4.5vw, 3.5rem);
-}
-.event__date {
-  display: grid; align-content: start; gap: 0.15rem;
-  border-inline-end: 1px solid var(--sc-hairline);
-  padding-inline-end: clamp(1rem, 3vw, 2.5rem);
-}
-.event__mon { font-family: var(--sc-font-text); font-size: 0.86rem; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--sc-accent); }
-.event__day { font-family: var(--sc-font-display); font-size: clamp(4.5rem, 12vw, 8rem); line-height: 0.82; font-weight: 500; letter-spacing: -0.04em; color: var(--sc-ink); }
-.event__yr { font-family: var(--sc-font-text); font-size: 0.86rem; font-weight: 600; letter-spacing: 0.2em; color: var(--sc-ink-soft); margin-top: 0.5rem; }
-.event__body { display: grid; gap: var(--sc-4); align-content: start; }
-.event__meta { display: grid; gap: 0.4rem; margin: 0; font-size: 0.92rem; }
-.event__meta > div { display: grid; grid-template-columns: 6.5rem 1fr; gap: var(--sc-3); }
-.event__meta dt { color: var(--sc-ink-soft); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding-top: 0.25em; }
-.event__meta dd { margin: 0; color: var(--sc-ink); }
-@media (max-width: 720px) {
-  .event__grid { grid-template-columns: 1fr; }
-  .event__date { border-inline-end: 0; border-bottom: 1px solid var(--sc-hairline); padding-inline-end: 0; padding-bottom: var(--sc-4); }
-  .event__meta > div { grid-template-columns: 1fr; gap: 0.1rem; }
-}
-
-/* ============================================================= statements - */
-.statement { padding-block: clamp(5rem, 14vw, 12rem); }
-.statement__big {
-  font-family: var(--sc-font-display); font-weight: 500;
-  font-size: clamp(2.4rem, 8.5vw, 7rem); line-height: 0.96; letter-spacing: -0.035em;
-  margin: 0; max-width: 18ch; text-wrap: balance;
-}
-.statement__big em { font-style: italic; color: var(--sc-accent); }
-
-/* ---------------------------------------------------------------- doors --- */
-.doors { display: grid; gap: var(--sc-4); grid-template-columns: repeat(3, 1fr); }
-@media (max-width: 860px) { .doors { grid-template-columns: 1fr; } }
-.door {
-  display: grid; align-content: space-between; gap: var(--sc-6);
-  min-height: 17rem; padding: var(--sc-6);
-  border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-lg);
-  text-decoration: none; color: inherit; background: var(--sc-surface);
-  transition: border-color 180ms var(--sc-ease-out), background-color 180ms var(--sc-ease-out);
-}
-.door:hover { border-color: var(--sc-accent); }
-.door h3 { font-size: var(--sc-t-2xl); line-height: 1.06; letter-spacing: -0.02em; margin: 0; }
-.door p { margin: var(--sc-3) 0 0; color: var(--sc-ink-soft); font-size: 0.95rem; }
-.door__go { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-accent); }
-
-/* --------------------------------------------------------------- pillars -- */
-/* Two-column zigzag, never three equal feature columns. */
-.zig { display: grid; gap: clamp(2rem, 5vw, 4.5rem); }
-.zig__row {
-  display: grid; gap: clamp(1.25rem, 3.5vw, 3rem);
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  align-items: start;
-  padding-block: clamp(1.5rem, 3.5vw, 2.75rem);
-  border-top: 1px solid var(--sc-hairline);
-}
-.zig__row:first-child { border-top: 0; padding-top: 0; }
-@media (max-width: 800px) { .zig__row { grid-template-columns: 1fr; } }
-.zig__h { margin: 0; font-size: var(--sc-t-xl); line-height: 1.12; letter-spacing: -0.018em; }
 
 /* ----------------------------------------------------------------- list --- */
 .ticks { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sc-3); }
@@ -684,29 +234,6 @@ body { background: var(--sc-canvas); }
 .ticks--two { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--sc-3) var(--sc-6); }
 @media (max-width: 640px) { .ticks--two { grid-template-columns: 1fr; } }
 
-.beliefs { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
-.beliefs li {
-  font-family: var(--sc-font-display); font-size: clamp(1.15rem, 2.6vw, 1.6rem);
-  font-weight: 400; letter-spacing: -0.012em; line-height: 1.35;
-  padding-block: var(--sc-4); border-bottom: 1px solid var(--sc-hairline);
-}
-.beliefs li:first-child { border-top: 1px solid var(--sc-hairline); }
-
-/* --------------------------------------------------------------- flow ----- */
-.flow-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; counter-reset: fs; }
-.flow-steps li {
-  counter-increment: fs;
-  display: grid; grid-template-columns: 2.5rem 1fr; gap: var(--sc-4); align-items: baseline;
-  padding-block: var(--sc-4); border-bottom: 1px solid var(--sc-hairline);
-  font-size: var(--sc-t-lg); letter-spacing: -0.01em;
-}
-.flow-steps li::before {
-  content: counter(fs, decimal-leading-zero);
-  font-family: var(--sc-font-text); font-size: 0.74rem; font-weight: 700;
-  letter-spacing: 0.14em; color: var(--sc-accent);
-}
-.flow-steps li:last-child { border-bottom: 0; }
-.flow-steps li:last-child::before { color: var(--gold-hi); }
 
 /* ---------------------------------------------------------------- forms --- */
 .form { display: grid; gap: var(--sc-5); max-width: 40rem; }
@@ -752,40 +279,6 @@ body { background: var(--sc-canvas); }
 .notice p { margin: 0; color: var(--sc-ink-soft); font-size: 0.94rem; line-height: 1.6; }
 .notice p + p { margin-top: var(--sc-3); }
 
-/* --------------------------------------------------------------- crisis --- */
-.crisis { display: grid; gap: var(--sc-4); }
-.crisis__item {
-  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--sc-4);
-  align-items: center; padding: var(--sc-5);
-  border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-md);
-  background: var(--sc-surface);
-}
-.crisis__item--urgent { border-color: #C4593F; background: color-mix(in oklab, #C4593F 12%, var(--sc-surface)); }
-.crisis__item h3 { margin: 0; font-size: var(--sc-t-lg); letter-spacing: -0.012em; }
-.crisis__item p { margin: var(--sc-2) 0 0; font-size: 0.92rem; color: var(--sc-ink-soft); line-height: 1.55; }
-.crisis__num {
-  font-family: var(--sc-font-display); font-size: clamp(1.4rem, 3.4vw, 2rem);
-  font-weight: 600; letter-spacing: -0.01em; color: var(--sc-accent);
-  text-decoration: none; white-space: nowrap;
-}
-.crisis__num:hover { text-decoration: underline; text-underline-offset: 0.2em; }
-@media (max-width: 620px) { .crisis__item { grid-template-columns: 1fr; } }
-
-/* The quick exit lives IN the sticky header, not floating over the page.
-   A fixed button in the bottom corner covers whatever happens to be in the
-   bottom strip of the viewport at that scroll position, and on this page that
-   was the footer's own crisis numbers and the DV hotline card heading. The
-   header already reserves its own space, and top-right is where a person
-   looking for a way out looks first. */
-.bar__exit {
-  background: #A8452C; color: #FFF7F2; border: 0; cursor: pointer;
-  padding: 0.62em 1.1em; border-radius: var(--sc-r-md); min-height: 44px;
-  font-family: var(--sc-font-text); font-size: 0.8rem; font-weight: 700;
-  letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap;
-  transition: background-color 140ms var(--sc-ease-out);
-}
-.bar__exit:hover { background: #C4593F; }
-@media (max-width: 560px) { .bar__exit { padding: 0.5em 0.8em; font-size: 0.72rem; letter-spacing: 0.06em; } }
 
 /* ------------------------------------------------------------ page head --- */
 .phead { padding-block: clamp(3.5rem, 9vw, 7.5rem) clamp(2rem, 5vw, 4rem); }
@@ -806,48 +299,6 @@ body { background: var(--sc-canvas); }
   background: radial-gradient(ellipse at center, color-mix(in oklab, #D9B450 12%, transparent) 0%, transparent 62%);
 }
 
-/* ---------------------------------------------------------------- foot ---- */
-.foot {
-  background: #060504; color: #F6F1E5;
-  border-top: 1px solid color-mix(in oklab, #D9B450 24%, transparent);
-  padding-block: clamp(3rem, 6vw, 5rem) var(--sc-6);
-}
-.foot__grid {
-  display: grid; gap: clamp(2rem, 4vw, 3.5rem);
-  grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, 1fr));
-}
-@media (max-width: 900px) { .foot__grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 560px) { .foot__grid { grid-template-columns: 1fr; } }
-.foot__brand img { height: 4rem; width: auto; }
-.foot__stmt { margin: var(--sc-4) 0 0; font-family: var(--sc-font-display); font-size: 1.05rem; line-height: 1.45; color: #F6F1E5; }
-.foot__where { margin: var(--sc-3) 0 0; font-size: 0.82rem; letter-spacing: 0.14em; text-transform: uppercase; color: #A99C86; }
-.foot__tag { margin: var(--sc-2) 0 0; font-size: 0.92rem; line-height: 1.5; color: #C8BBA2; max-width: 30ch; }
-.foot__pray { margin: var(--sc-5) 0 0; display: grid; gap: var(--sc-2); }
-.foot__pray .rule-label { color: #D9B450; }
-.foot__pray-num { font-family: var(--sc-font-display); font-size: 1.25rem; white-space: nowrap; color: #F6F1E5; text-decoration: none; letter-spacing: 0.01em; }
-.foot__pray-num:hover { color: #D9B450; }
-.foot__pray-digits { font-size: 0.86rem; letter-spacing: 0.04em; color: #A99C86; }
-.dd-sub { display: block; font-size: 0.86rem; letter-spacing: 0.04em; color: var(--sc-ink-soft); }
-.foot__col { display: grid; gap: var(--sc-2); align-content: start; }
-.foot__col .rule-label { margin-bottom: var(--sc-2); color: #D9B450; }
-.foot__col a { color: #C8BBA2; text-decoration: none; font-size: 0.94rem; }
-.foot__col a:hover { color: #F6F1E5; }
-/* The ministry inbox is one long unbroken string; let it wrap rather than
-   push the whole column past the edge of the page. */
-.foot__col { min-width: 0; }
-.foot__email { overflow-wrap: anywhere; }
-.foot__social { display: flex; gap: var(--sc-4); margin-top: var(--sc-2); }
-.foot__base {
-  margin-top: clamp(2.5rem, 5vw, 4rem); padding-top: var(--sc-5);
-  border-top: 1px solid color-mix(in oklab, #F6F1E5 10%, transparent);
-  display: flex; flex-wrap: wrap; gap: var(--sc-3) var(--sc-6); justify-content: space-between;
-}
-.foot__base p { margin: 0; font-size: 0.84rem; color: #A99C86; }
-.foot__note a { color: #D9B450; }
-.foot__credit {
-  flex-basis: 100%; margin: var(--sc-3) 0 0 !important;
-  font-size: 0.74rem !important; line-height: 1.5; color: #8B8377 !important; max-width: 78ch;
-}
 
 /* ----------------------------------------------------------- utilities ---- */
 .split-2 {
@@ -886,62 +337,6 @@ body { background: var(--sc-canvas); }
   }
 }
 
-/* ----------------------------------------------- stories, posts, campaigns -
-   All three render only when their array in config.mjs has entries, so these
-   rules sit unused until KAM has something real to put in them.
-   -------------------------------------------------------------------------- */
-.stories { display: grid; gap: clamp(2rem, 5vw, 4rem); }
-.story { margin: 0; padding-top: var(--sc-6); border-top: 1px solid var(--sc-hairline); }
-.story:first-child { border-top: 0; padding-top: 0; }
-.story blockquote { margin: 0 0 var(--sc-5); }
-.story blockquote p {
-  margin: 0; font-family: var(--sc-font-display); font-weight: 400;
-  font-size: clamp(1.4rem, 3.4vw, 2.1rem); line-height: 1.25; letter-spacing: -0.02em;
-  color: var(--sc-ink); text-wrap: pretty; max-width: 26ch;
-}
-.story blockquote p::before { content: "\201C"; color: var(--sc-accent); }
-.story blockquote p::after { content: "\201D"; color: var(--sc-accent); }
-.story .body + .body { margin-top: var(--sc-4); }
-.story figcaption {
-  margin-top: var(--sc-5); display: flex; flex-wrap: wrap; gap: var(--sc-2) var(--sc-4);
-  align-items: baseline;
-}
-.story__who { font-weight: 700; letter-spacing: 0.04em; color: var(--sc-ink); }
-.story__prog {
-  font-size: 0.74rem; font-weight: 600; letter-spacing: 0.14em;
-  text-transform: uppercase; color: var(--sc-accent);
-}
-
-.posts { display: grid; gap: clamp(2.5rem, 6vw, 4.5rem); }
-.post { padding-top: var(--sc-6); border-top: 1px solid var(--sc-hairline); }
-.post:first-child { border-top: 0; padding-top: 0; }
-.post h2 { margin: var(--sc-3) 0 var(--sc-4); }
-.post .body + .body { margin-top: var(--sc-4); }
-
-.plate__meter { margin-top: auto !important; font-size: 0.92rem; }
-.plate__meter b { color: var(--sc-ink); font-weight: 700; font-variant-numeric: tabular-nums; }
-.meter {
-  display: block; height: 3px; border-radius: 2px;
-  background: color-mix(in oklab, #D9B450 22%, transparent); overflow: hidden;
-}
-.meter i { display: block; height: 100%; background: #D9B450; transform-origin: left; transform: scaleX(var(--fill, 0)); }
-.plate__closes { font-size: 0.82rem !important; letter-spacing: 0.02em; }
-
-/* --------------------------------------------- bible study and galleries --
-   Both render only when their config has real content behind them. */
-.join__when {
-  font-family: var(--sc-font-display); font-size: var(--sc-t-xl);
-  line-height: 1.2; letter-spacing: -0.015em; color: var(--sc-ink) !important; margin: 0 !important;
-}
-.sessions { display: grid; gap: clamp(1.5rem, 4vw, 2.5rem); }
-.session { padding-top: var(--sc-5); border-top: 1px solid var(--sc-hairline); }
-.session:first-child { border-top: 0; padding-top: 0; }
-.session h3 { margin: var(--sc-2) 0 0; }
-.session__ref {
-  margin: var(--sc-2) 0 var(--sc-3); font-family: var(--sc-font-display); font-style: italic;
-  color: var(--sc-accent);
-}
-.session .btn-row { margin: 0; gap: var(--sc-5); }
 
 /* A column wall, not a grid. Selvin will drop in photos at whatever shape his
    phone took them, and a fixed-aspect grid either crops faces or leaves holes
@@ -971,83 +366,254 @@ body { background: var(--sc-canvas); }
   letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-accent);
 }
 
-/* The homepage reel (added 2026-11-16, first real footage): one wide clip
-   under the tabling promise, three photos under it. Same hairline and radius
-   as the column wall so it reads as part of the same system. */
-.reel { margin: var(--sc-8) 0 0; }
-.reel__v {
-  width: 100%; height: auto; aspect-ratio: 16 / 9; display: block; object-fit: cover;
-  border-radius: var(--sc-r-lg); border: 1px solid var(--sc-hairline); background: var(--sc-surface);
-}
-.reel figcaption {
-  margin-top: var(--sc-4); max-width: 62ch; font-size: 0.95rem; line-height: 1.55; color: var(--sc-ink-soft);
-}
-.reel figcaption .rule-label { display: block; margin-bottom: var(--sc-2); }
-.reel-strip {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: clamp(0.75rem, 1.6vw, 1.25rem); margin-top: var(--sc-6);
-}
-.reel-strip img {
-  width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; display: block;
-  border-radius: var(--sc-r-lg); border: 1px solid var(--sc-hairline); background: var(--sc-surface);
-}
-@media (max-width: 560px) {
-  .reel-strip { grid-template-columns: 1fr 1fr; }
-  .reel-strip img:nth-child(3) { display: none; }
-}
-
-/* ------------------------------------------------------- prayer hotline --- */
-/* Added 2026-10-22: the Nationwide Prayer Hotline as its own band. The number
-   is set large in the display face, because it is the thing to remember. */
-.pray-band__grid {
-  display: grid; gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-}
-@media (max-width: 860px) { .pray-band__grid { grid-template-columns: 1fr; } }
-.pray-band__num {
-  display: inline-block; margin: 0;
-  font-family: var(--sc-font-display); font-weight: 500;
-  font-size: clamp(1.55rem, 3.6vw, 3rem); line-height: 1.02; letter-spacing: -0.01em;
-  color: var(--sc-accent); text-decoration: none; white-space: nowrap;
-}
-a.pray-band__num:hover { color: var(--sc-ink); }
-.pray-band__digits { margin: var(--sc-2) 0 0; font-size: 0.95rem; letter-spacing: 0.04em; color: var(--sc-ink-soft); }
-.pray-band__hours { margin: var(--sc-2) 0 0; font-size: 0.95rem; color: var(--sc-ink-soft); }
-.plate-grid--core .plate { min-height: 15rem; }
-@media (min-width: 700px) { .plate-grid--core { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 860px) { .pray-band__call { margin-top: var(--sc-2); } }
-.title-page__pray { color: #D9B450; text-decoration: none; font-weight: 600; letter-spacing: 0.04em; white-space: nowrap; }
-/* Every place the number itself is the tap target gets a 44px hit area. */
-a.title-page__pray, a.foot__pray-num, a.pray-band__num, .menu__pray, .event__meta dd a[href^="tel:"] {
-  display: inline-flex; align-items: center; min-height: 44px;
-}
-.is-soon { opacity: 0.85; }
 .form__pre {
   margin: 0 0 var(--sc-2); padding: var(--sc-3) var(--sc-4);
   border-left: 2px solid var(--sc-accent); background: var(--sc-surface);
   font-size: 0.9rem; line-height: 1.55; color: var(--sc-ink-soft);
   overflow-wrap: anywhere;
 }
-.title-page__pray:hover { color: #F6F1E5; }
-.title-page__tag {
-  margin: var(--sc-4) 0 0; font-family: var(--sc-font-display); font-style: italic;
-  font-size: clamp(1.15rem, 2.2vw, 1.6rem); line-height: 1.3; color: #D9B450; max-width: 30ch;
-}
-.title-page__foot > span:last-child { color: var(--sc-ink-soft); font-size: 0.9rem; }
 .form__fallback { display: flex; flex-wrap: wrap; gap: var(--sc-3); margin: var(--sc-4) 0; }
-/* Anchor jumps (the header prayer link goes to #prayer-line) land below the
-   sticky bar, not under it. */
+.form__note { color: var(--sc-ink-soft); font-size: 0.88rem; line-height: 1.55; margin: 0; }
+/* Anchor jumps land below the sticky bar, not under it. */
 main [id] { scroll-margin-top: calc(var(--bar-h) + 1rem); }
 
-/* ------------------------------------------------- the mending, in 3D ---- */
-/* static/mending3d.js puts a WebGL canvas behind the copy across the whole
-   pinned stage (so shards can fly past the column edges) and hides the SVG
-   jar it replaces. The SVG keeps its box, so the layout never shifts. */
-.mend__gl {
-  position: absolute; inset: 0; width: 100%; height: 100%;
-  z-index: 1; pointer-events: none;
-  opacity: 0; transition: opacity 600ms var(--sc-ease-out);
+/* ------------------------------------------------------------------ bar --- */
+/* Five nav items, no dropdowns (Selvin 2026-11-25). JOIN BIBLE STUDY and
+   DONATE stay in the bar at every width; on a phone the nav moves into the
+   menu and the mark drops to the emblem so both buttons still fit. */
+.bar {
+  position: sticky; top: 0; z-index: var(--sc-z-chrome);
+  display: flex; align-items: center; gap: var(--sc-5);
+  height: var(--bar-h); padding-inline: var(--sc-gutter);
+  background: color-mix(in oklab, #0B0A08 92%, transparent);
+  backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid color-mix(in oklab, #D9B450 18%, transparent);
+  color: #F6F1E5;
 }
-.mend__fig { transition: opacity 600ms var(--sc-ease-out); }
-#mending.is-3d .mend__gl { opacity: 1; }
-#mending.is-3d .mend__fig { opacity: 0; }
+.bar__mark { display: flex; align-items: center; gap: 0.7rem; text-decoration: none; color: inherit; margin-inline-end: auto; min-height: 44px; }
+.bar__mark img { width: auto; height: 2.6rem; }
+.bar__mark-txt { display: grid; line-height: 1; }
+.bar__mark-txt b {
+  font-family: var(--sc-font-text); font-size: 0.62rem; font-weight: 600;
+  letter-spacing: 0.2em; text-transform: uppercase; color: #C8BBA2;
+}
+.bar__mark-txt i {
+  font-family: var(--sc-font-display); font-style: normal; font-weight: 600;
+  font-size: 1.12rem; letter-spacing: 0.03em; color: #F6F1E5; margin-top: 0.15em;
+}
+.bar__nav { display: flex; align-items: center; gap: clamp(1rem, 2vw, 2.1rem); }
+.bar__link {
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #CFC4AE; text-decoration: none; padding-block: 0.4rem;
+  border-bottom: 1px solid transparent; transition: color 140ms var(--sc-ease-out), border-color 140ms var(--sc-ease-out);
+}
+.bar__link:hover { color: #F6F1E5; }
+.bar__link[aria-current="page"] { color: #D9B450; border-bottom-color: #D9B450; }
+.bar__end { display: flex; align-items: center; gap: var(--sc-3); }
+.bar__give, .bar__bible { padding: 0.75em 1.25em; font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; min-height: 44px; }
+.bar__bible { color: #F6F1E5; border-color: color-mix(in oklab, #D9B450 60%, transparent); }
+.bar__bible:hover { color: #D9B450; border-color: #D9B450; }
+
+.bar__burger {
+  display: none; align-items: center; gap: 0.55rem;
+  background: none; border: 0; padding: 0.5rem 0.25rem; cursor: pointer; color: #F6F1E5;
+  min-height: 44px;
+}
+.bar__burger-ico { display: grid; gap: 4px; width: 20px; }
+.bar__burger-ico i { display: block; height: 1.5px; background: currentColor; }
+.bar__burger em {
+  font-style: normal; font-size: 0.72rem; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase;
+}
+
+@media (max-width: 1080px) {
+  .bar__nav { display: none; }
+  .bar__burger { display: inline-flex; }
+}
+@media (max-width: 600px) {
+  .bar { gap: var(--sc-2); padding-inline: var(--sc-4); }
+  .bar__mark-txt { display: none; }
+  .bar__mark img { height: 2.4rem; }
+  .bar__end { gap: var(--sc-2); }
+  .bar__give, .bar__bible { padding: 0.5em 0.8em; font-size: 0.7rem; letter-spacing: 0.06em; }
+  .bar__burger em { display: none; }
+}
+
+/* ================================================================ hero ==== */
+.hero { position: relative; overflow: clip; padding-block: clamp(3rem, 8vw, 7rem) clamp(3.5rem, 8vw, 7rem); }
+.hero__glow {
+  position: absolute; right: -10%; top: -20%; width: min(60rem, 120vw); aspect-ratio: 1;
+  pointer-events: none;
+  background: radial-gradient(circle at center, color-mix(in oklab, #D9B450 13%, transparent) 0%, transparent 60%);
+}
+.hero__grid {
+  position: relative; display: grid; align-items: center;
+  gap: clamp(2rem, 5vw, 4.5rem);
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+}
+@media (max-width: 900px) { .hero__grid { grid-template-columns: 1fr; } }
+.hero__h { margin: 0; display: grid; gap: var(--sc-3); }
+.hero__org {
+  font-family: var(--sc-font-text); font-size: clamp(0.82rem, 1.2vw, 1rem); font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase; color: #D9B450;
+}
+.hero__words {
+  font-family: var(--sc-font-display); font-weight: 500;
+  font-size: clamp(2.9rem, 6.6vw, 6.2rem); line-height: 0.98; letter-spacing: -0.03em;
+  color: #F6F1E5; text-wrap: balance;
+}
+.hero__tag {
+  margin: var(--sc-5) 0 0; font-family: var(--sc-font-display); font-style: italic; font-weight: 400;
+  font-size: clamp(1.2rem, 2.1vw, 1.6rem); line-height: 1.3; color: #E7C97A; max-width: 30ch;
+}
+.hero__sub { margin: var(--sc-5) 0 0; max-width: 54ch; color: #C8BBA2; line-height: 1.65; }
+.hero__acts { margin-top: var(--sc-7); }
+.hero__pic { margin: 0; }
+.hero__pic img {
+  display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: var(--sc-r-lg); border: 1px solid color-mix(in oklab, #D9B450 40%, transparent);
+  box-shadow: 0 30px 60px -30px rgba(0,0,0,0.7);
+}
+.hero__pic figcaption {
+  margin-top: var(--sc-3); font-size: 0.74rem; font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: #A99C86;
+}
+
+/* ============================================================== impact ==== */
+.impact__head { margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+.impact__head .h-lg { margin-top: var(--sc-3); }
+.impact__list {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.25rem, 3vw, 2.5rem);
+}
+@media (max-width: 760px) { .impact__list { grid-template-columns: 1fr; } }
+.impact__item {
+  display: grid; gap: var(--sc-3); align-content: start;
+  padding-top: var(--sc-5); border-top: 2px solid var(--sc-accent);
+}
+.impact__n {
+  font-family: var(--sc-font-display); font-weight: 500;
+  font-size: clamp(4rem, 9vw, 7.5rem); line-height: 0.9; letter-spacing: -0.04em;
+  color: var(--sc-accent); font-variant-numeric: lining-nums;
+}
+.impact__label { font-size: 1.05rem; font-weight: 600; line-height: 1.4; color: var(--sc-ink); max-width: 22ch; }
+.impact__note {
+  margin: clamp(2rem, 5vw, 3.5rem) 0 0; max-width: 56ch;
+  font-family: var(--sc-font-display); font-style: italic; font-size: var(--sc-t-lg);
+  line-height: 1.45; color: var(--sc-ink-soft);
+}
+
+/* ============================================================ pictures ==== */
+.pic {
+  display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover;
+  border-radius: var(--sc-r-lg); border: 1px solid var(--sc-hairline); background: var(--sc-surface);
+}
+.pics { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(0.6rem, 1.4vw, 1rem); }
+.pics .pic:first-child { grid-column: 1 / -1; }
+.pics--tall { grid-template-columns: 1fr; }
+
+.aside-row {
+  margin-top: clamp(3rem, 7vw, 5.5rem); padding-top: clamp(2rem, 5vw, 3.5rem);
+  border-top: 1px solid var(--sc-hairline);
+  display: grid; gap: clamp(1.5rem, 4vw, 3rem); align-items: center;
+  grid-template-columns: minmax(0, 14rem) minmax(0, 1fr);
+}
+.aside-row__pic {
+  display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover;
+  border-radius: var(--sc-r-lg); border: 1px solid var(--sc-hairline);
+}
+@media (max-width: 640px) {
+  .aside-row { grid-template-columns: 1fr; }
+  .aside-row__pic { max-width: 13rem; }
+}
+
+.side-pic { margin: 0; }
+.side-pic img {
+  display: block; width: 100%; max-width: 30rem; height: auto; aspect-ratio: 3 / 4; object-fit: cover;
+  border-radius: var(--sc-r-lg); border: 1px solid var(--sc-hairline);
+}
+.side-pic figcaption { margin-top: var(--sc-3); font-size: 0.88rem; color: var(--sc-ink-soft); }
+
+/* ============================================================= pillars ==== */
+.pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(1.5rem, 4vw, 3rem); }
+@media (max-width: 860px) { .pillars { grid-template-columns: 1fr; } }
+.pillar { padding-top: var(--sc-5); border-top: 2px solid var(--sc-accent); }
+.pillar h3 { margin: 0; font-size: var(--sc-t-2xl); line-height: 1; letter-spacing: -0.02em; color: var(--sc-accent); }
+.pillar p { margin: var(--sc-4) 0 0; color: var(--sc-ink-soft); line-height: 1.65; }
+
+/* ================================================================ ways ==== */
+.ways { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--sc-4); }
+@media (max-width: 1000px) { .ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .ways { grid-template-columns: 1fr; } }
+.way {
+  display: grid; align-content: space-between; gap: var(--sc-5);
+  padding: var(--sc-6) var(--sc-5); min-height: 15rem;
+  border: 1px solid var(--sc-hairline); border-radius: var(--sc-r-lg);
+  background: #FFFFFF; color: inherit; text-decoration: none;
+  transition: border-color 180ms var(--sc-ease-out);
+}
+.way:hover { border-color: var(--sc-accent); }
+.way__h { margin: 0; font-size: var(--sc-t-xl); line-height: 1.1; letter-spacing: -0.015em; }
+.way p { margin: var(--sc-3) 0 0; color: var(--sc-ink-soft); font-size: 0.95rem; line-height: 1.6; }
+.way__go { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--sc-accent); }
+@media (max-width: 600px) { .way { min-height: 0; } }
+
+/* ============================================================ contact ===== */
+.contact-list { margin: var(--sc-5) 0 0; display: grid; gap: var(--sc-4); }
+.contact-list div { display: grid; gap: 0.2rem; }
+.contact-list dt { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--sc-accent); }
+.contact-list dd { margin: 0; font-size: 1.05rem; color: var(--sc-ink); overflow-wrap: anywhere; }
+.contact-list a { color: inherit; text-decoration-color: var(--sc-hairline-strong); text-underline-offset: 0.2em; }
+
+/* ============================================================== donate ==== */
+.notice__big { font-family: var(--sc-font-display); font-size: var(--sc-t-lg) !important; line-height: 1.4 !important; color: var(--sc-ink) !important; }
+.give-box { padding: clamp(1.5rem, 4vw, 2.5rem); background: #FFFFFF; }
+.give-box p { font-size: 1rem; }
+.give-box__alt { margin-top: var(--sc-6) !important; padding-top: var(--sc-5); border-top: 1px solid var(--sc-hairline); }
+.give-box__alt a { color: var(--sc-accent); font-weight: 600; }
+.give-box__fine { font-size: 0.86rem !important; }
+
+/* ============================================================== prose ===== */
+.prose h2 { margin: var(--sc-7) 0 var(--sc-3); font-size: var(--sc-t-xl); line-height: 1.15; letter-spacing: -0.015em; }
+.prose h2:first-child { margin-top: 0; }
+.prose p { margin: 0; color: var(--sc-ink-soft); line-height: 1.7; max-width: 64ch; }
+.prose a { color: var(--sc-accent); font-weight: 600; }
+
+/* ============================================================ closing ===== */
+.close-band .lede { margin-inline: auto; color: #C8BBA2; }
+.close-band__line {
+  margin: 0; font-family: var(--sc-font-display); font-style: italic;
+  font-size: var(--sc-t-lg); color: #E7C97A; max-width: 34ch;
+}
+
+/* ================================================================ foot ==== */
+.foot {
+  background: #060504; color: #F6F1E5;
+  border-top: 1px solid color-mix(in oklab, #D9B450 24%, transparent);
+  padding-block: clamp(3rem, 6vw, 5rem) var(--sc-6);
+}
+.foot__grid {
+  display: grid; gap: clamp(2rem, 4vw, 3.5rem);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.2fr);
+}
+@media (max-width: 820px) { .foot__grid { grid-template-columns: 1fr 1fr; } .foot__brand { grid-column: 1 / -1; } }
+@media (max-width: 520px) { .foot__grid { grid-template-columns: 1fr; } }
+.foot__brand img { height: 4.25rem; width: auto; }
+.foot__name { margin: var(--sc-4) 0 0; font-family: var(--sc-font-display); font-size: 1.3rem; font-weight: 600; letter-spacing: 0.01em; }
+.foot__words { margin: var(--sc-2) 0 0; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: #D9B450; }
+.foot__tag { margin: var(--sc-2) 0 0; font-family: var(--sc-font-display); font-style: italic; font-size: 1rem; color: #C8BBA2; max-width: 32ch; }
+.foot__col { display: grid; gap: var(--sc-2); align-content: start; min-width: 0; }
+.foot__col .rule-label { margin-bottom: var(--sc-2); color: #D9B450; }
+.foot__col a { color: #C8BBA2; text-decoration: none; font-size: 0.95rem; padding-block: 0.15rem; }
+.foot__col a:hover { color: #F6F1E5; }
+.foot__where { color: #A99C86; font-size: 0.92rem; }
+.foot__email { overflow-wrap: anywhere; }
+.foot__social { display: flex; gap: var(--sc-4); margin-top: var(--sc-2); }
+.foot__base {
+  margin-top: clamp(2.5rem, 5vw, 4rem); padding-top: var(--sc-5);
+  border-top: 1px solid color-mix(in oklab, #F6F1E5 10%, transparent);
+  display: flex; flex-wrap: wrap; gap: var(--sc-3) var(--sc-6); justify-content: space-between;
+}
+.foot__base p { margin: 0; font-size: 0.84rem; color: #A99C86; }
+.foot__base a { color: #D9B450; }
+.esv-credit { margin: var(--sc-7) 0 0; max-width: 70ch; font-size: 0.76rem; line-height: 1.55; color: var(--sc-ink-soft); }

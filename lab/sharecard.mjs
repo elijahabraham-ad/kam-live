@@ -28,8 +28,8 @@ await p.setContent(`<!doctype html><html><head>
   <img src="http://localhost:4500/img/kam-emblem.webp" alt="">
   <div class="t">
     <p class="k">Kingdom Assembly Missions</p>
-    <h1>Call. Connect.<br><em>Restore.</em></h1>
-    <p>Feeding People Spiritually, Emotionally, and Physically.</p>
+    <h1>Love. Serve.<br><em>Impact.</em></h1>
+    <p>Demonstrating the Love of Jesus Through Action.</p>
   </div>
   <span class="r"></span>
   <span class="f">Greenville, South Carolina &nbsp;&middot;&nbsp; kingdomassemblymissions.org</span>

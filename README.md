@@ -1,30 +1,37 @@
 # Kingdom Assembly Missions
 
 The Kingdom Assembly Missions website. Static, no framework, no build
-dependencies. Nineteen pages generated from one layout by `build.mjs`.
+dependencies. Five pages (Home, About Us, Our Outreach, Get Involved, Donate)
+plus a privacy policy, generated from one layout by `build.mjs`.
+
+Simplified 2026-11-25 on KAM's direction: the site shows only what KAM is
+doing now. Love. Serve. Impact. Monthly feeding outreach, retail-location
+tabling, Zoom Bible study, discipleship.
 
 ## Editing the site
 
-Almost everything an administrator needs to change lives in **`src/config.mjs`**:
-contact details, the donation link, events, program copy, volunteer roles,
-partner types, giving designations and the verified crisis numbers.
+Almost everything an administrator changes lives in **`src/config.mjs`**:
+the impact numbers, the Bible study link, the donation link, contact email,
+social links, photos and video.
 
 Edit that file, commit to `main`, and GitHub Actions rebuilds and redeploys.
 
-Values left as `"TBD"` render on the page as a visible "to be announced"
-marker rather than an invented fact. Fill them in as they are confirmed:
-
 | What | Where |
 |---|---|
-| Public email, phone, mailing address | `site` in `src/config.mjs` |
-| Donation link (Givelify, Tithe.ly, Stripe) | `site.donateUrl` |
-| Forms endpoint | `site.formEndpoint`, after deploying `worker/` |
-| Social profiles | `site.social` |
-| Open Mic venue, time, address, ticket link | `events[0]` |
-| Live domain | `site.origin` |
+| Bible study Zoom link (every JOIN BIBLE STUDY button) | `bibleStudy.url` |
+| Impact numbers (exact figures only, never rounded up) | `impact` |
+| Donation link | `site.donateUrl` |
+| Social profiles (footer) | `site.social` |
+| Photos and video | `gallery`, files in `static/img/gallery/` and `static/media/` |
 
-Adding an event is one object in the `events` array. It appears on the
-homepage, the events page, the sitemap and the structured data automatically.
+While `bibleStudy.url` is `"TBD"`, JOIN BIBLE STUDY opens the contact form
+with "Join the Bible study" already chosen, so the button never dead-ends.
+
+## Retired addresses
+
+Every page from the old site (programs, prayer line, events, need-help and
+so on) is a small noindex stub that forwards to the page that replaced it.
+The map is `REDIRECTS` in `build.mjs`. None of the old content is published.
 
 ## Running it locally
 
@@ -33,95 +40,25 @@ npm run dev      # builds, serves on http://localhost:4500, rebuilds on refresh
 npm run build    # writes dist/
 ```
 
-Node 18 or newer. No dependencies are needed to build; `playwright-core` is
-only used by the checks in `lab/`.
-
 ## Forms
 
-All nine forms post to one Cloudflare Worker in `worker/`. See
-[`worker/README.md`](worker/README.md). Until `site.formEndpoint` is set, the
-forms tell the visitor plainly that submissions are not connected yet instead
-of pretending to send.
-
-## The safety page
-
-`/need-help/` is built for someone whose device may be monitored. It carries a
-quick-exit button (and three presses of Escape), it never asks anyone to
-describe what happened to them, and it leads with crisis numbers rather than
-with a form.
-
-**The numbers in `crisisResources` were each verified against their own primary
-source on 2026-09-10. Do not edit them without re-verifying. A wrong number on
-that page is dangerous.**
+The volunteer and contact forms post to the Cloudflare Worker in `worker/`,
+which emails kingdomassemblymissions@gmail.com. Set `site.formEndpoint` to
+`"TBD"` and the forms fall back to an email draft instead.
 
 ## Checks
 
-Run the dev server, then:
+Run the dev server, then (with `SCROLLCRAFT_CHROME` pointed at a Chromium):
 
 ```bash
-node lab/contrast.mjs   http://localhost:4500/ ...   # WCAG AA, measured on the render
-node lab/functional.mjs http://localhost:4500        # links, menu, forms, safety, a11y
-node lab/reveal.mjs     / /about/ ...                # nothing stuck invisible
-node lab/shots.mjs      http://localhost:4500/ out   # frames across the scroll
+node lab/qc-simplify.mjs http://localhost:4500 lab/simplify   # pages, links, forms (stubbed), redirects
+node lab/contrast.mjs http://localhost:4500/ ...              # WCAG AA, measured on the render
+node lab/sharecard.mjs                                        # regenerate the share image
 ```
 
-They need a Chromium binary; point `SCROLLCRAFT_CHROME` at one.
+`qc-simplify` stubs the forms endpoint, so it never emails KAM.
 
 ## Deploying
 
 GitHub Actions builds and publishes to GitHub Pages on every push to `main`.
-
-While the site previews at the project Pages URL, `.github/workflows/deploy.yml`
-sets `BASE_PATH` and `SITE_ORIGIN`, which prefixes every internal path and makes
-`robots.txt` disallow indexing so the preview never competes with the real
-domain.
-
-**When the real domain is connected:** delete those two `env` lines from the
-workflow, add a `static/CNAME` file containing the domain, point the domain's
-DNS at GitHub Pages, and set `site.origin` in `src/config.mjs`.
-
-## Reusable content components
-
-Four arrays in `src/config.mjs` drive optional sections. **Each renders only when
-its array has entries**, so an empty section never ships and there is never a
-placeholder to explain away.
-
-| Array | Renders on | Shape |
-|---|---|---|
-| `testimonials` | `/stories/` | `{ name, program, quote, body: [], consent }` |
-| `team` | `/about/` | `{ name, role, bio, email }` |
-| `campaigns` | `/give/` | `{ title, blurb, goal, raised, closes, url }` |
-| `posts` | generates `/news/` and adds it to the footer | `{ slug, title, date, summary, body: [] }` |
-| `gallery` | `/about/` | `{ src, alt, caption, event, consent, video, poster }` |
-| `bibleStudy` | generates `/bible-study/` and adds it to the nav when `active: true` | see the object in `config.mjs` |
-
-Two rules that are not negotiable:
-
-- **A testimonial without a `consent` date does not publish.** `consent` is the
-  date the person gave written permission for their story to appear.
-- **Leave `goal` and `raised` out entirely unless the figures are real.** Never
-  put an aspirational number in either one.
-- **A photo without a `consent` date does not publish either.** Same rule as a
-  testimonial. Put image files in `static/img/gallery/`.
-
-## Ticketing
-
-An event supports three states, in order of preference:
-
-1. `ticketUrl` set (a Stripe payment link or any checkout URL) plus `priceLabel`
-   gives a "Get tickets" button and shows the price.
-2. `registerUrl` set gives a "Register" button pointing at an external page.
-3. Neither set keeps the built-in RSVP form on `/events/`, which is the right
-   default for a free event: it costs the visitor nothing and the list stays
-   with KAM rather than with a ticketing company.
-
-## Bible study
-
-`bibleStudy.active = true` generates `/bible-study/` and puts it in the nav.
-
-Zoom is **linked, never embedded**. The Zoom Meeting SDK needs a server-side
-signature and behaves badly in mobile Safari, which is where most of this
-congregation will be. A Join button hands off to the Zoom app and just works.
-
-The meeting passcode is deliberately not rendered on the page. People who sign
-up get it by email.
+The custom domain is kingdomassemblymissions.org.

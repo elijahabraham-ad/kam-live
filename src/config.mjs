@@ -1,87 +1,37 @@
 /* ---------------------------------------------------------------------------
    Kingdom Assembly Missions: everything an administrator edits lives here.
-   Change a value in this file, run `npm run build`, and the whole site updates.
-   Anything still marked TBD is deliberately unset. It renders as a visible
-   "to be announced" line rather than an invented fact.
+   Change a value in this file, commit to main, and the whole site rebuilds.
+
+   SIMPLIFIED 2026-11-25 on Selvin's direction ("FINAL WEBSITE CONTENT &
+   REDESIGN DIRECTION"): the site shows only what KAM is doing right now.
+   Five pages, four areas of work, three impact numbers. Do not add programs,
+   partnerships or numbers here that KAM has not confirmed.
    ------------------------------------------------------------------------- */
 
 export const site = {
   name: "Kingdom Assembly Missions",
-  short: "Kingdom Assembly Missions",
   abbr: "KAM",
-  // Selvin's direction 2026-10-22: one framework and one tagline everywhere.
-  // "Love. Serve. Impact." stays on the emblem artwork only.
-  tagline: "Feeding People Spiritually, Emotionally, and Physically.",
-  pathwayLine: "Call. Connect. Restore.",
+  words: "Love. Serve. Impact.",
+  tagline: "Demonstrating the Love of Jesus Through Action.",
   statement:
-    "Kingdom Assembly Missions exists to call people to Christ, connect with people through prayer and practical service, and help restore lives spiritually, emotionally, and physically.",
+    "Kingdom Assembly Missions is a Christian community outreach ministry committed to sharing the Gospel, serving our communities, and making disciples of Jesus Christ through practical outreach, prayer, and the Word of God.",
+  mission:
+    "To demonstrate the love of Jesus Christ through community outreach, practical service, evangelism, and discipleship.",
   city: "Greenville",
   region: "South Carolina",
   regionCode: "SC",
 
-  // TBD values render as "To be announced". Fill them in and rebuild.
-  // The ministry's own inbox (Selvin sent the 2026-10-22 updates from it).
+  // The ministry's own inbox. Every form on the site is emailed here.
   email: "kingdomassemblymissions@gmail.com",
-  phone: "TBD",
-  mailingAddress: "TBD",
 
-  // Paste the live donation link here (Givelify, Tithe.ly, Stripe, PayPal).
-  // Until then every GIVE button routes to the on-site give page, which
-  // explains how to give and asks people to check back.
-  // Live 2026-10-22: KAM's Square checkout (donor enters any amount).
-  // The $15/month recurring link goes in hotline.partnerUrl when it exists.
+  // KAM's Square checkout (donor enters any amount). Every Donate button.
   donateUrl: "https://square.link/u/rgd06jKR",
 
-  // The forms endpoint: worker/ deployed as kam-forms on Eli's Cloudflare
-  // (2026-10-22). Every form, prayer requests and the safety form included,
-  // is emailed to kingdomassemblymissions@gmail.com through Cloudflare Email
-  // Routing. Set back to "TBD" and the forms fall back to an email draft.
+  // The forms endpoint: worker/ deployed as kam-forms on Eli's Cloudflare.
+  // Set to "TBD" and the forms fall back to an email draft to KAM.
   formEndpoint: "https://kam-forms.adova.workers.dev",
 
-  // HubSpot (Selvin's portal). When portalId and formGuid are filled in, every
-  // form on the site submits straight into HubSpot as a contact (no server, no
-  // key: HubSpot's public Forms API), and the HubSpot tracking code loads.
-  // The HubSpot form needs five fields: First name, Last name, Email, Phone, Message.
-  // Everything else a visitor types is folded into Message, labelled.
-  // portalId = the Hub ID (account menu, top right in HubSpot).
-  // formGuid = Marketing > Forms > the form > the ID in its URL.
-  // region   = "na1" for US accounts, "eu1" if the portal URL has app-eu1.
-  hubspot: { portalId: "TBD", formGuid: "TBD", region: "na1" },
-
-  /* The Nationwide Prayer Hotline. `display` is the vanity spelling people
-     remember. `digits` is what every tel: link dials, and it is ALL THIRTEEN
-     digits of 33-PRAY-4YOU, exactly what KAM dials by hand. Corrected
-     2026-10-22: the links first dialled only the first ten (888-337-7294) on
-     the theory that the network drops the extra three, and Selvin reported
-     the tap reached the wrong place while the full number dialled by hand
-     works. Then (2026-10-23) the 13-digit link WITH a "+" came back "not in
-     service": "+" marks strict international (E.164) format, and for country
-     code 1 that must be exactly ten digits, so the carrier rejects thirteen.
-     So `digits` has NO plus: it is the exact string a person types on the
-     keypad, 1 888 33 7729 4968, and the phone dials it the same way.
-     `live` was FALSE until someone had called the line and confirmed it
-     reaches KAM's prayer line (Selvin's own 2026-10-22 brief: do not promote
-     the hotline as answered until routing is verified). While false, the
-     number still shows everywhere, marked "launching soon", with no call
-     links and no schema.org contactPoint. Flip to true and rebuild once it
-     rings through. KAM_HOTLINE_LIVE=1|0 overrides it for testing.
-     `hours`: who answers and when. Leave TBD until confirmed; the site never
-     claims round-the-clock coverage it has not been told about. */
-  hotline: {
-    label: "Nationwide Prayer Hotline",
-    display: "1-888-33-PRAY-4YOU",
-    digits: "18883377294968",
-    // Shown under the vanity spelling, the way KAM writes it (Eli 2026-10-22).
-    digitsLabel: "1-888-33-7729-4968",
-    // LIVE since 2026-10-22: Eli confirmed the line is answered.
-    live: process.env.KAM_HOTLINE_LIVE ? process.env.KAM_HOTLINE_LIVE === "1" : true,
-    hours: "TBD",
-    monthly: "$15/month",
-    // Payment link for the $15/month prayer line partner gift: KAM's Square
-    // "Nationwide Prayer Hotline" checkout, monthly subscription (2026-10-22).
-    partnerUrl: "https://square.link/u/ZRt2jTp3",
-  },
-
+  // Paste a full profile URL to show it in the footer. "TBD" stays hidden.
   social: {
     instagram: "TBD",
     facebook: "TBD",
@@ -89,423 +39,152 @@ export const site = {
   },
 
   // The live domain. Used for canonical URLs, sitemap.xml and share cards.
-  // While the site is previewing on a GitHub project Pages URL, the build
-  // overrides this with SITE_ORIGIN + BASE_PATH so canonicals stay honest.
   origin:
     (process.env.SITE_ORIGIN || "https://kingdomassemblymissions.org").replace(/\/$/, "") +
     (process.env.BASE_PATH || "").replace(/\/$/, ""),
 };
 
-/* Simplified 2026-10-22 per Selvin: Mission, Programs, Events, Prayer, Get
-   Involved, with Give as the header button. About and Discipleship are still
-   full pages, reached from the menu, the footer and the Mission page. */
-export const nav = [
-  { label: "Our Mission", href: "/mission/" },
-  { label: "Programs", href: "/programs/" },
-  { label: "Events", href: "/events/" },
-  { label: "Prayer", href: "/prayer/" },
-  { label: "Get Involved", href: "/get-involved/" },
-];
-
-/* --- The journeys. This is the index on the homepage, and it is the
-   single most important piece of navigation on the site. ------------------ */
-export const journeys = [
-  { label: "I need help", href: "/need-help/", note: "Confidential. Start here." },
-  { label: "I need prayer", href: "/prayer/", note: "Call the hotline or write to us.", noteSoon: "Write to us. The prayer line is launching soon.", hotline: true },
-  { label: "I want to find community", href: "/events/", note: "Come to something." },
-  { label: "I want to follow Christ", href: "/discipleship/", note: "Take the next step." },
-  { label: "I want to serve", href: "/volunteer/", note: "Give your time." },
-  { label: "I want to give", href: "/give/", note: "Fund the work." },
-  { label: "I want to partner", href: "/partner/", note: "For churches and businesses." },
-];
-
-/* --- The KAM pathway. Replaced the six-stage outreach model 2026-10-22
-   (Selvin). Discipleship is not a step here: it is where all three lead. --- */
-export const model = [
-  { step: "Call",    line: "Connect people to prayer, encouragement, and the hope found in Jesus Christ." },
-  { step: "Connect", line: "Build relationships through community outreach, service, prayer gatherings, and fellowship." },
-  { step: "Restore", line: "Encourage spiritual growth, emotional well-being, practical stability, and discipleship." },
-];
-
-/* --- Core programs: what KAM runs as the ministry's regular rhythm.
-   The five areas of impact below are service priorities, some run directly
-   and some through partners; each of those pages says plainly what is still
-   in development. Dates for gatherings go in `events` once confirmed. ----- */
-export const corePrograms = [
-  {
-    name: "Nationwide Prayer Hotline",
-    line: "One number for prayer, from anywhere in the country. Call it, or send a request in writing.",
-    lineSoon: "One number for prayer, from anywhere in the country, launching soon. Until then, send a request in writing.",
-    hotline: true,
-    href: "/prayer/",
-  },
-  {
-    name: "Prayer breakfasts",
-    line: "Morning gatherings to pray together, open to everyone. Dates go on the events page as each one is confirmed.",
-    href: "/events/",
-  },
-  {
-    name: "Prayer dinners",
-    line: "An evening table for prayer and fellowship, open to everyone. Dates go on the events page as each one is confirmed.",
-    href: "/events/",
-  },
-  {
-    name: "Monthly community feeding",
-    // Food, clothing, hygiene items, coats and blankets: the list on KAM's own
-    // outreach flyer (Drive folder, 2026-11-16).
-    line: "A meal for the community every month, with clothing, hygiene items, coats and blankets, served with dignity and no strings attached.",
-    href: "/programs/homelessness/",
-  },
-];
-
-/* --- The five areas of impact -------------------------------------------- */
-export const programs = [
-  {
-    slug: "mental-health",
-    name: "Mental Health",
-    short: "Mental Health",
-    kicker: "You are not alone.",
-    card: "Encouragement, community, prayer and connection to real professional care, without being told to just pray harder.",
-    mission:
-      "Create spaces where people can find encouragement, community, prayer, counseling resources and hope, while recognizing that mental health struggles require compassion, support and appropriate professional care.",
-    beliefs: [
-      "You are not alone.",
-      "Your life has value.",
-      "Your story matters.",
-      "There is hope.",
-      "Faith and professional support can work alongside one another.",
-    ],
-    body: [
-      {
-        h: "What we are building",
-        p: "Mental health is not a side issue in our community. It sits underneath a great deal of what people carry silently: grief, anxiety, depression, isolation, trauma, and the exhaustion of holding everything together in public. Kingdom Assembly Missions is building spaces where a person can put that down for an hour and not be judged for it.",
-      },
-      {
-        h: "Faith and professional care are not rivals",
-        p: "We pray, and we also believe a trained counselor is a gift. KAM partners with qualified counselors and mental health professionals and connects people to them. We are a community outreach, not a clinical provider, and we will always say so plainly. What we offer is presence, encouragement, prayer, community and a clear path to the people who are trained to help.",
-      },
-      {
-        h: "What it looks like in practice",
-        p: "Community gatherings where the conversation is honest. Prayer with people rather than at them. Relationships that continue after the event ends. Referrals to counselors and local resources. And an open door back into everything else KAM does, because isolation is often the real problem underneath.",
-      },
-    ],
-    cta: { head: "You do not have to carry it by yourself.", label: "Get connected" },
-    actions: ["learn", "connect", "volunteer", "give"],
-  },
-  {
-    slug: "homelessness",
-    name: "Homelessness",
-    short: "Homelessness",
-    kicker: "We don't just want to feed someone for a day. We want to remind them that they matter.",
-    card: "A monthly community meal, plus food, hygiene, necessities, prayer and relationship for people living without a stable address.",
-    mission:
-      "Serve individuals and families experiencing homelessness through practical assistance, dignity, compassion and relationship building.",
-    beliefs: [
-      "People experiencing homelessness deserve dignity.",
-      "A meal is a beginning, not the point.",
-      "Relationship outlasts a handout.",
-    ],
-    body: [
-      {
-        h: "The work",
-        p: "Food drives. Community meals. Hygiene product distribution. Basic necessities. Prayer. Encouragement. Connection to community resources. Outreach events where people are already standing rather than where it is convenient for us.",
-      },
-      {
-        h: "Monthly community feeding",
-        p: "Once a month KAM serves a community meal, open to anyone who walks up. It is one of the core programs of the ministry. Each date goes on the events page as soon as it is confirmed.",
-      },
-      {
-        h: "Why dignity is the whole strategy",
-        p: "It is possible to hand someone a plate and still communicate that they are a problem being managed. We refuse that. Our volunteers are trained to learn names, to ask before praying, to sit down rather than stand over, and to come back. A person who has been treated as a category for years can tell the difference in about four seconds.",
-      },
-      {
-        h: "What we will not do",
-        p: "We will not photograph people at their lowest point to raise money. We will not require anyone to sit through a message before they eat. The Gospel is offered, never charged for.",
-      },
-    ],
-    cta: { head: "Help us feed the community.", label: "Sponsor an outreach" },
-    actions: ["give", "volunteer", "sponsor"],
-  },
-  {
-    slug: "youth",
-    name: "At-Risk Youth",
-    short: "At-Risk Youth",
-    kicker: "Character matters when nobody is watching.",
-    card: "Life skills, biblical principles, real role models, and a mentorship program we are building, for young people making decisions that will follow them for years.",
-    mission:
-      "Help young people develop the skills, confidence, character, relationships and biblical foundation necessary to make positive decisions and pursue a healthy future.",
-    beliefs: [
-      "Young people need positive examples they can actually reach.",
-      "Representation, relationship and relatability matter.",
-      "Doing what is right is worth it, even when it is hard.",
-    ],
-    body: [
-      {
-        h: "Life skills development",
-        p: "Practical things a young person can use the same week they learn them. Decision making. Communication. Financial literacy. Work ethic. Leadership. Conflict resolution. Personal responsibility. Goal setting. Career preparation. Healthy relationships. Accountability.",
-      },
-      {
-        h: "Biblical principles",
-        p: "Every practical lesson is tied back to Scripture, because a skill without a foundation is just a tool. We teach that integrity costs something, that doing right when it is expensive is still right, and that character is what remains when nobody is watching.",
-      },
-      {
-        h: "Positive role models",
-        p: "We bring in people young people can actually relate to. Entrepreneurs, athletes, musicians, community leaders, professionals, ministers, and people who came through the exact circumstances our students are in right now. A young person needs to see somebody they could become standing in front of them.",
-      },
-      {
-        h: "Mentorship",
-        p: "We are building a mentorship system that pairs young people with responsible adults for the long haul. Not a one-time assembly. A relationship with somebody who notices when they disappear.",
-      },
-    ],
-    cta: { head: "Help us build the next generation.", label: "Become a mentor" },
-    actions: ["mentor", "volunteer", "sponsor", "give"],
-  },
-  {
-    slug: "womens-support",
-    name: "Battered & Abused Women",
-    short: "Women's Support",
-    kicker: "Help us help her start again.",
-    card: "Confidential support and resource connection for women leaving abusive situations, with self-defense classes and transitional help in development.",
-    mission:
-      "Support women transitioning out of abusive environments by providing encouragement, practical assistance, resources and a pathway toward stability.",
-    beliefs: [
-      "Women escaping abuse deserve safety and support.",
-      "Nobody has to explain themselves to get help.",
-      "Leaving is a process, not a moment.",
-    ],
-    safety: true,
-    body: [
-      {
-        h: "Self-defense classes",
-        p: "We are building a program of regular classes to develop confidence, situational awareness and practical safety skills, taught in a setting where a woman is not asked to explain why she came. Dates go on the events page as soon as the first one is scheduled.",
-      },
-      {
-        h: "Transitional housing support",
-        p: "We are developing a fund to help provide temporary housing assistance for women transitioning out of abusive situations. This assistance is subject to available resources, eligibility, safety considerations and partner capacity. We will always tell you plainly what we can and cannot cover rather than making a promise we cannot keep.",
-      },
-      {
-        h: "Resource connection",
-        p: "We connect women to domestic violence organizations, shelters, counselors, legal resources, housing resources, employment resources and community organizations. Often the most useful thing we do is know exactly who to call.",
-      },
-      {
-        h: "How we handle your information",
-        p: "We do not ask anyone to type sensitive details into a form on a website. Our contact page asks only what we need in order to reach you safely. If it is not safe for us to call or email you, say so and we will follow your lead.",
-      },
-    ],
-    cta: { head: "Help us help her start again.", label: "Get resources" },
-    actions: ["give", "volunteer", "partner", "resources"],
-  },
-  {
-    slug: "recovery",
-    name: "Addiction & Recovery",
-    short: "Addiction & Recovery",
-    kicker: "Your story doesn't have to end where your struggle began.",
-    card: "Monthly recovery meetings, in development, built on testimony, teaching, accountability, prayer and a real path forward.",
-    mission:
-      "Create a community where people struggling with addiction can find support, accountability, prayer, testimony, professional resources and hope.",
-    beliefs: [
-      "People battling addiction deserve compassion, accountability and hope.",
-      "Nobody should be defined by their worst moment.",
-      "Community is not optional in recovery.",
-    ],
-    body: [
-      {
-        h: "Monthly recovery meetings, in development",
-        p: "This is what we are building, and it is not running yet. A community and support structure in the spirit of the meetings many people already know, built on a Christian foundation. Testimonies. Group discussion. Prayer. Worship. Gospel-centered encouragement. Accountability. Recovery resources. Qualified counselors and professionals present. And an open door into discipleship for anyone who wants it.",
-      },
-      {
-        h: "This is not treatment, and we will not pretend it is",
-        p: "KAM meetings are not a replacement for medical care or professional addiction treatment. Detox is a medical event. Withdrawal from some substances can kill you. We will help you find real treatment and we will stand with you through it, but we will never tell you that a meeting is a substitute for a doctor.",
-      },
-    ],
-    cta: { head: "Come as you are. We will tell you the moment the first one is set.", label: "Get connected" },
-    actions: ["connect", "volunteer", "give", "partner"],
-  },
-];
-
-/* --- The recovery meeting shape ------------------------------------------ */
-export const meetingFlow = [
-  "Welcome",
-  "Testimony",
-  "Teaching",
-  "Counseling and resource connection",
-  "Group support",
-  "Prayer and worship",
-  "Altar call",
-  "Discipleship opportunity",
-];
-
-/* --- Events. Add an object here and it appears everywhere on the site. ----
-   status: "upcoming" | "past". Anything left TBD renders as "To be announced".
-   ------------------------------------------------------------------------- */
-export const events = [
-  {
-    slug: "christian-open-mic",
-    title: "KAM Christian Open Mic",
-    date: "2026-10-09",
-    // dateLabel is DERIVED from `date` further down this file. Do not hand-write
-    // a weekday here: the first version of this file said "Thursday, October 9"
-    // and 9 October 2026 is a Friday.
-    time: "TBD",
-    venue: "TBD",
-    address: "TBD",
-    city: "Greenville, SC",
-    cost: "Free to attend",
-    // Paid ticketing: paste a Stripe payment link (or any checkout URL) into
-    // ticketUrl and set priceLabel. Leaving ticketUrl unset keeps the free RSVP
-    // form, which is the right default for a free event.
-    ticketUrl: "TBD",
-    priceLabel: "TBD",
-    // Moved off the calendar 2026-10-22 (Selvin): the date has passed. Past
-    // events are not listed anywhere, so nothing implies how it went.
-    status: "past",
-    featured: true,
-    blurb: "Come share your gift. Come hear a story. Come find community.",
-    body:
-      "Our first major event. An evening built around Christian music, spoken word, testimony and fellowship. Bring something to share or bring nothing at all and just sit in the room. Both are the point.",
-    forWho: [
-      "Musicians, singers, poets and spoken-word artists",
-      "Anyone with a testimony worth telling",
-      "Anyone who just wants to be around people for an evening",
-    ],
-    registerUrl: "TBD",
-  },
-];
-
-/* --- Stories of restoration.
-   Nothing goes here without explicit written permission from the person whose
-   story it is. While this array is empty the stories page says so honestly
-   rather than showing a stock photo and invented copy.
-   Shape: { name, role, quote, body, program, consent }
-   `name` may be a first name only, or "Anonymous". `consent` is the date the
-   person gave written permission, and a story without one does not publish.
-   ------------------------------------------------------------------------- */
-export const testimonials = [];
-
-/* --- Team. Renders on the About page once there is a team to show.
-   Shape: { name, role, bio, email }
-   ------------------------------------------------------------------------- */
-export const team = [];
-
-/* --- Named giving campaigns. Renders on the Give page when non-empty.
-   Shape: { title, blurb, goal, raised, closes, url }
-   Leave `goal` and `raised` out entirely unless the figures are real. Never
-   put an aspirational number in either one.
-   ------------------------------------------------------------------------- */
-export const campaigns = [];
-
-/* --- News and updates. A /news/ page is generated ONLY when this has posts,
-   so an empty blog never ships.
-   Shape: { slug, title, date, summary, body: ["paragraph", ...] }
-   ------------------------------------------------------------------------- */
-export const posts = [];
-
-/* --- Bible study.
-   Renders a /bible-study/ page and adds it to the nav ONLY when `active` is
-   true, so nothing half-built ever ships. We deliberately do NOT embed Zoom in
-   the page: the Meeting SDK needs a server-side signature and is unreliable on
-   mobile Safari, which is where most of this audience will be. A proper Join
-   button hands off to the Zoom app, which works everywhere.
-   ------------------------------------------------------------------------- */
+/* --- Bible study on Zoom.
+   Paste the direct link Selvin provides into `url` and every JOIN BIBLE STUDY
+   button on the site goes straight to it. While it is "TBD" the buttons open
+   the contact form with "Join the Bible study" already chosen, so nobody hits
+   a dead link. Never put a meeting passcode on the public site. */
 export const bibleStudy = {
-  active: false,
-
-  title: "KAM Bible Study",
-  blurb: "An hour in the Word together, on Zoom, wherever you are.",
-  schedule: "TBD",          // e.g. "Every Tuesday, 7:00 PM Eastern"
-  zoomUrl: "TBD",           // the recurring meeting join link
-  meetingId: "TBD",         // shown so people can dial in by phone
-  dialIn: "TBD",            // e.g. "+1 305 224 1968"
-
-  // Never publish a passcode on a public page. If the meeting needs one, send
-  // it to the people who sign up instead.
-  passcodeIsPrivate: true,
-
-  intro: [
-    "You do not need to know anything to come. You do not need a Bible in your hand, you do not need to read out loud, and you do not need to have your camera on. Turn up, listen, ask whatever you want to ask.",
-    "It is an hour. It is the same link every week. If you miss one, come to the next one.",
-  ],
-
-  // Past and upcoming sessions. Shape:
-  //   { date: "2026-10-14", title, passage, summary, recordingUrl, notesUrl }
-  sessions: [],
+  url: "TBD",
 };
 
+/* --- Navigation. Five items, no dropdowns (Selvin 2026-11-25). Donate is
+   drawn as the gold button at the end of the bar. --------------------------- */
+export const nav = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about/" },
+  { label: "Our Outreach", href: "/outreach/" },
+  { label: "Get Involved", href: "/get-involved/" },
+  { label: "Donate", href: "/donate/" },
+];
+
+/* --- The three words. ---------------------------------------------------- */
+export const pillars = [
+  {
+    word: "Love",
+    line: "We demonstrate the love of Jesus Christ through compassion, prayer, personal relationships, and care for people in our communities.",
+  },
+  {
+    word: "Serve",
+    line: "We put our faith into action by serving individuals experiencing homelessness, distributing meals and essential supplies, sharing Bibles, and meeting practical needs.",
+  },
+  {
+    word: "Impact",
+    line: "We believe that consistent outreach, evangelism, and discipleship can make a lasting difference in individuals and communities.",
+  },
+];
+
+/* --- Impact numbers. EXACTLY as Selvin confirmed them (2026-11-25). Never
+   round up, never add one that has not been confirmed, and never show money
+   raised. ------------------------------------------------------------------ */
+export const impact = [
+  { n: "175", label: "Individuals Experiencing Homelessness Helped" },
+  { n: "93", label: "Bibles Distributed" },
+  { n: "20", label: "Individuals in Active Discipleship" },
+];
+
+/* --- Feed the Homeless: the primary outreach program. --------------------- */
+export const feeding = {
+  name: "Feed the Homeless",
+  // Described as a place KAM serves, NOT as a formal partnership.
+  location: "Reedy Place in Greenville, South Carolina",
+  includes: [
+    "Preparing and distributing meals",
+    "Hygiene kits and personal care items",
+    "Clothing, socks, coats, blankets, and other necessities as available",
+    "Bibles",
+    "Sharing the Gospel of Jesus Christ",
+    "Praying with individuals and offering spiritual encouragement",
+    "Building personal relationships through consistent service",
+  ],
+};
+
+/* Local nonprofit and homeless-service organizations KAM donates to and
+   supports, by city. Cities only: no organization is named. */
+export const supportCities = ["Greenville", "Greer", "Spartanburg", "Clemson"];
+
+/* Where KAM tables at retail locations. */
+export const tablingArea = "Greenville, Greer, and the greater Greenville area";
+
+/* --- What a gift pays for. Only things KAM actually does. ---------------- */
+export const giftUses = [
+  "Meals for our monthly feeding outreach",
+  "Hygiene kits and personal care items",
+  "Clothing, socks, coats, and blankets",
+  "Bibles to give away",
+  "Support for local nonprofit and homeless-service organizations",
+];
+
+/* --- Ways to volunteer (the volunteer form's checkboxes). ---------------- */
+export const volunteerWays = [
+  "Monthly feeding outreach",
+  "Preparing meals and hygiene kits",
+  "Retail-location tabling",
+  "Collecting clothing and supplies",
+  "Something else",
+];
+
+/* --- The contact form's topics. The first is preselected by the JOIN BIBLE
+   STUDY fallback, so keep its wording in step with BIBLE_TOPIC below. ----- */
+export const BIBLE_TOPIC = "Join the Bible study";
+export const contactTopics = [
+  "General question",
+  BIBLE_TOPIC,
+  "Donate supplies",
+  "Volunteer",
+  "Prayer",
+];
+
 /* --- Photos and video.
-   Files go in static/img/gallery/. Every item needs a real caption and real
-   alt text: this is a ministry, and a photograph of a person who did not agree
-   to be photographed does not go on the internet.
-   Shape: { src, alt, caption, event, consent, video }
-   `consent` is the date permission was given. No consent, no publish.
-
-   Added 2026-11-16 from the Drive folder Selvin sent after the Nov 15
-   outreach (his text to Eli: "update the website with them"). That request is
-   KAM's permission for its own team, who are the subject of every item here.
-   Neighbors appear only at a distance or in passing, the way KAM's own
-   flyer shows them, and no poster frame is a neighbor's face.
-   IMG_0519 (two men served that day, filmed up close, one in a wheelchair)
-   was held at first for their consent. Eli 2026-11-16: "he sent those to me
-   so I would add it", so it publishes on KAM's say-so like the rest.
-
-   Every file was re-encoded with its metadata stripped: the iPhone originals
-   carry the GPS position of every shot. Photos: WebP at 1600 and 800 on the
-   long edge. Video: H.264 MP4 (the HEVC originals do not play in most
-   browsers), tone-mapped from the phone's HDR so it is not washed out.
-   Extra fields: `small` is the 800 version, `w`/`h` the 1600 size (stops the
-   layout jumping as images load), `program` puts an item on that program's
-   page, `home` marks the photos picked for the homepage.
-   ------------------------------------------------------------------------- */
+   Files go in static/img/gallery/ and static/media/. Every item needs a real
+   caption and real alt text, and a `consent` date (no consent, no publish).
+   Media Selvin sends for the site counts as KAM's consent (Eli 2026-11-16).
+   Every file was re-encoded with its metadata stripped (the iPhone originals
+   carry GPS). `small` is the 800px version, `w`/`h` the full size (stops the
+   layout jumping as images load), `home` marks the homepage picks. --------- */
 export const galleryEvents = [
   {
     key: "outreach-2026-11-15",
-    title: "Community outreach",
+    title: "Feeding outreach",
     date: "2026-11-15",
-    place: "Greenville, SC",
-    blurb: "Food, clothing, hygiene items, coats and blankets, set out on folding tables in a parking lot and free to anyone who walked up.",
+    blurb: "Meals, water, clothing, hygiene kits, coats, and blankets, free to anyone who walked up.",
   },
   {
     key: "belk-2026-11-09",
-    title: "Belk Charity Sale",
+    title: "Retail tabling",
     date: "2026-11-09",
-    place: "Greenville, SC",
-    blurb: "Telling shoppers about the ministry from a table inside the store.",
+    blurb: "Sharing the mission from a table at the Belk Charity Sale.",
   },
   {
     key: "be-the-light-2026-10-31",
     title: "Be the Light",
     date: "2026-10-31",
-    place: "Downtown",
     blurb: "Halloween night downtown, handing out glow sticks and candy.",
   },
 ];
 
-/* The homepage reel: a silent loop cut from two of the Nov 15 clips. */
-export const reel = {
-  src: "/media/2026-11-15-reel.mp4",
-  poster: "/img/gallery/2026-11-15-reel-poster.webp",
-  w: 1920, h: 1080,
-  event: "outreach-2026-11-15",
-  label: "The KAM outreach table in a parking lot: volunteers in gloves handing out meals, water and clothing.",
-  consent: "2026-11-15",
-};
-
 export const gallery = [
+  {
+    src: "/img/gallery/2026-11-15-kam-table-1600.webp",
+    small: "/img/gallery/2026-11-15-kam-table-800.webp",
+    w: 1600, h: 1200,
+    alt: "Two volunteers in gloves at the Kingdom Assembly Missions table, beside cases of water and stacked meal trays, sorting donated clothes.",
+    caption: "The KAM table: meals, water, and clothing.",
+    event: "outreach-2026-11-15",
+    consent: "2026-11-15",
+  },
   {
     src: "/img/gallery/2026-11-15-plates-packed-1600.webp",
     small: "/img/gallery/2026-11-15-plates-packed-800.webp",
     w: 1600, h: 1200,
     alt: "Rows of takeout trays on a folding table, each packed with chicken, green beans, a side and a dinner roll.",
     caption: "Plates packed that morning, before the team headed out.",
-    event: "outreach-2026-11-15", program: "homelessness", home: true,
-    consent: "2026-11-15",
-  },
-  {
-    src: "/img/gallery/2026-11-15-kam-table-1600.webp",
-    small: "/img/gallery/2026-11-15-kam-table-800.webp",
-    w: 1600, h: 1200,
-    alt: "Two volunteers in gloves at the Kingdom Assembly Missions table, beside cases of water and stacked meal trays, sorting donated clothes.",
-    caption: "The KAM table: meals, water and clothing.",
-    event: "outreach-2026-11-15", program: "homelessness", home: true,
+    event: "outreach-2026-11-15", home: true,
     consent: "2026-11-15",
   },
   {
@@ -514,7 +193,7 @@ export const gallery = [
     w: 1280, h: 720, video: true,
     alt: "Video: volunteers handing out meals and water at the table.",
     caption: "“Is it hamburger?” “Chicken.” “It looks good.”",
-    event: "outreach-2026-11-15", program: "homelessness",
+    event: "outreach-2026-11-15",
     consent: "2026-11-15",
   },
   {
@@ -523,7 +202,7 @@ export const gallery = [
     w: 1600, h: 1200,
     alt: "Two smiling volunteers in gloves standing beside cases of bottled water in a sunny parking lot.",
     caption: "Two of the volunteers at the water and meal table.",
-    event: "outreach-2026-11-15", program: "homelessness", home: true,
+    event: "outreach-2026-11-15", home: true,
     consent: "2026-11-15",
   },
   {
@@ -532,7 +211,7 @@ export const gallery = [
     w: 1280, h: 720, video: true,
     alt: "Video: a wide view of the outreach, with tables of clothing, water and meals and people stopping by.",
     caption: "The whole setup, in one shot.",
-    event: "outreach-2026-11-15", program: "homelessness",
+    event: "outreach-2026-11-15",
     consent: "2026-11-15",
   },
   {
@@ -540,8 +219,8 @@ export const gallery = [
     small: "/img/gallery/2026-11-15-clothing-table-800.webp",
     w: 1600, h: 1200,
     alt: "Two men at a folding table of donated clothing in a sunny parking lot.",
-    caption: "Donated clothing, coats and blankets.",
-    event: "outreach-2026-11-15", program: "homelessness",
+    caption: "Donated clothing, coats, and blankets.",
+    event: "outreach-2026-11-15", home: true,
     consent: "2026-11-15",
   },
   {
@@ -550,7 +229,7 @@ export const gallery = [
     w: 1280, h: 720, video: true,
     alt: "Video: volunteers in gloves at the table, then a close look at the packed hygiene kits.",
     caption: "Gloves on, and the hygiene kits ready to go.",
-    event: "outreach-2026-11-15", program: "homelessness",
+    event: "outreach-2026-11-15",
     consent: "2026-11-15",
   },
   {
@@ -558,8 +237,8 @@ export const gallery = [
     poster: "/img/gallery/2026-11-15-neighbors-poster.webp",
     w: 1280, h: 720, video: true,
     alt: "Video: two men who came by the outreach, one in a wheelchair and one in a navy and yellow coat, both smiling and laughing with the team.",
-    caption: "\u201CYou look so happy, man.\u201D \u201CI love it, I love it.\u201D",
-    event: "outreach-2026-11-15", program: "homelessness",
+    caption: "“You look so happy, man.” “I love it, I love it.”",
+    event: "outreach-2026-11-15",
     consent: "2026-11-16",
   },
   {
@@ -568,7 +247,7 @@ export const gallery = [
     w: 1200, h: 1600,
     alt: "A man in a suit and tie beside a red-draped table of Kingdom Assembly Missions flyers inside a Belk store.",
     caption: "Representing KAM at the Belk Charity Sale.",
-    event: "belk-2026-11-09",
+    event: "belk-2026-11-09", tabling: true,
     consent: "2026-11-15",
   },
   {
@@ -586,141 +265,15 @@ export const gallery = [
     w: 1200, h: 1600,
     alt: "A man and a woman smiling on a downtown sidewalk at dusk, holding glow sticks and a bag of candy.",
     caption: "Glow sticks and candy, ready to hand out.",
-    event: "be-the-light-2026-10-31",
+    event: "be-the-light-2026-10-31", about: true,
     consent: "2026-11-15",
   },
 ];
 
-/* --- Volunteer roles ------------------------------------------------------ */
-export const volunteerRoles = [
-  "Outreach",
-  "Prayer team",
-  "Youth mentorship",
-  "Event support",
-  "Food distribution",
-  "Hygiene product distribution",
-  "Women's support initiatives",
-  "Recovery meetings",
-  "Counseling or professional services",
-  "Media and photography",
-  "Music and worship",
-  "Hospitality",
-  "Transportation and logistics",
-  "Fundraising",
-  "Administration",
-];
-
-/* --- Partner types -------------------------------------------------------- */
-export const partnerTypes = [
-  "Churches",
-  "Businesses",
-  "Nonprofits",
-  "Counselors and therapists",
-  "Recovery organizations",
-  "Domestic violence organizations",
-  "Youth organizations",
-  "Community leaders",
-  "Schools and community organizations",
-  "Healthcare professionals",
-  "Housing organizations",
-  "Local entrepreneurs",
-  "Artists and musicians",
-];
-
-/* --- What KAM does at a table -------------------------------------------- */
-export const tabling = [
-  "Hand out Bibles",
-  "Pray with people",
-  "Introduce people to KAM",
-  "Share what is coming up",
-  "Raise funds for community outreach",
-  "Recruit volunteers",
-  "Connect people with resources",
-  "Listen to what the community actually needs",
-];
-
-/* --- Discipleship track --------------------------------------------------- */
-export const discipleshipTrack = [
-  "Biblical foundations",
-  "Prayer",
-  "Scripture study",
-  "Identity in Christ",
-  "Character development",
-  "Accountability",
-  "Spiritual growth",
-  "Serving others",
-  "Discovering purpose",
-  "Leadership development",
-];
-
-/* --- Cause-based giving levels (Selvin 2026-10-22: four levels, starting at
-   $25). The four causes and amounts have not been supplied yet, so this ships
-   EMPTY and the Give page shows nothing invented. Fill in all four and they
-   render as cards. Shape: { amount: "$25", title, line, url }
-   `url` is the payment link for that level; leave it out until it exists. */
-export const givingLevels = [];
-
-/* --- Giving designations -------------------------------------------------- */
-export const givingDesignations = [
-  "Where it is needed most",
-  "Nationwide Prayer Hotline",
-  "Monthly community feeding",
-  "Mental health outreach",
-  "Homelessness outreach",
-  "At-risk youth programs",
-  "Women's support and transitional assistance",
-  "Addiction and recovery",
-  "Bibles and outreach materials",
-  "Community events",
-];
-
-/* --- Verified crisis resources.
-   Every number here was checked against its own primary source. Do not edit
-   these without re-checking. A wrong number on this site is dangerous.
-   Last verified: 2026-09-10.
-   ------------------------------------------------------------------------- */
-export const crisisResources = [
-  {
-    name: "Emergency",
-    contact: "911",
-    href: "tel:911",
-    note: "If you are in immediate danger, call 911 before you do anything else on this page.",
-    urgent: true,
-  },
-  {
-    name: "National Domestic Violence Hotline",
-    contact: "1-800-799-7233",
-    href: "tel:18007997233",
-    note: "24/7, free, confidential, 200+ languages. Text START to 88788, or chat at thehotline.org.",
-    link: "https://www.thehotline.org/",
-  },
-  {
-    name: "988 Suicide & Crisis Lifeline",
-    contact: "988",
-    href: "tel:988",
-    note: "Call or text 988, any time, for mental health, suicide or substance use crisis. English and Spanish.",
-    link: "https://988lifeline.org/",
-  },
-  {
-    name: "SAMHSA National Helpline",
-    contact: "1-800-662-4357",
-    href: "tel:18006624357",
-    note: "24/7 free and confidential treatment referral for mental health and substance use. They do not ask for your name, though they may ask for your ZIP code to find help near you.",
-    link: "https://www.samhsa.gov/find-help/helplines/national-helpline",
-  },
-];
-
+/* --- Scripture (ESV). Checked against Bible Gateway 2026-11-25. ---------- */
 export const scriptures = {
-  jars: {
-    ref: "2 Corinthians 4:7",
-    text: "But we have this treasure in jars of clay, to show that the surpassing power belongs to God and not to us.",
-  },
-  potter: {
-    ref: "Jeremiah 18:4",
-    text: "And the vessel he was making of clay was spoiled in the potter's hand, and he reworked it into another vessel, as it seemed good to the potter to do.",
-  },
-  brokenhearted: {
-    ref: "Psalm 147:3",
-    text: "He heals the brokenhearted and binds up their wounds.",
+  light: {
+    ref: "Matthew 5:14–16",
+    text: "You are the light of the world. A city set on a hill cannot be hidden. Nor do people light a lamp and put it under a basket, but on a stand, and it gives light to all in the house. In the same way, let your light shine before others, so that they may see your good works and give glory to your Father who is in heaven.",
   },
 };
