@@ -305,6 +305,8 @@ ${pageHead({ label: "Legal", h1: "Privacy policy.", lede: "Last updated November
     <p>Form messages are delivered by email to the ministry&rsquo;s inbox, ${esc(site.email)}. We do not sell, rent, or trade your information, and we do not add you to a mailing list without asking.</p>
     <h2>Donations</h2>
     <p>Online gifts are processed by Square on Square&rsquo;s secure checkout. Kingdom Assembly Missions does not receive or store your full card number. Square&rsquo;s own privacy policy applies to the payment.</p>
+    <h2>Bible study</h2>
+    <p>Our Bible study meets on Zoom. When you join, Zoom&rsquo;s own privacy policy applies to the meeting.</p>
     <h2>Cookies and tracking</h2>
     <p>This site does not use advertising or analytics trackers. It loads its fonts from Google Fonts, which receives a standard web request from your browser when a page loads.</p>
     <h2>Photos</h2>

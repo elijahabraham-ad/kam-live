@@ -45,12 +45,14 @@ export const site = {
 };
 
 /* --- Bible study on Zoom.
-   Paste the direct link Selvin provides into `url` and every JOIN BIBLE STUDY
-   button on the site goes straight to it. While it is "TBD" the buttons open
-   the contact form with "Join the Bible study" already chosen, so nobody hits
-   a dead link. Never put a meeting passcode on the public site. */
+   Every JOIN BIBLE STUDY button on the site opens `url` directly. Set it to
+   "TBD" and the buttons fall back to the contact form with "Join the Bible
+   study" already chosen, so nobody ever hits a dead link.
+   2026-11-25: KAM's own one-tap join link (meeting 813 5340 8945). It carries
+   the passcode, by KAM's choice, so anyone with the link can join: keep Zoom's
+   Waiting Room on for this meeting. */
 export const bibleStudy = {
-  url: "TBD",
+  url: "https://us06web.zoom.us/j/81353408945?pwd=1nZeULaTevoCMlknqVkEqBeLArPgbC.1",
 };
 
 /* --- Navigation. Five items, no dropdowns (Selvin 2026-11-25). Donate is
